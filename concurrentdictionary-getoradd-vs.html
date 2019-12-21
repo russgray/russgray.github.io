@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8"> 
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Russell Gray" />
+        <meta name="copyright" content="Russell Gray" />
+
+        <link rel="author" href=https://plus.google.com/u/0/102559471807447493728 />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content=".net, coding, coding, " />
+
+<meta property="og:title" content="ConcurrentDictionary: GetOrAdd vs GetOrAdd - One Of These Things Is Not Like The Other "/>
+<meta property="og:url" content="./concurrentdictionary-getoradd-vs.html" />
+<meta property="og:description" content="Some recent performance profiling of a server application under load turned up an interesting gotcha in .Net&#39;s ConcurrentDictionary that I think is well- worth knowing about. As you probably know, ConcurrentDictionary strives for performance in concurrent environments by using more sophisticated locking strategies than simply lock(this). Briefly, it has …" />
+<meta property="og:site_name" content="Basildon Coder" />
+<meta property="og:article:author" content="Russell Gray" />
+<meta property="og:article:published_time" content="2014-01-13T18:00:00+00:00" />
+<meta property="" content="2015-02-11T10:28:00+00:00" />
+<meta name="twitter:title" content="ConcurrentDictionary: GetOrAdd vs GetOrAdd - One Of These Things Is Not Like The Other ">
+<meta name="twitter:description" content="Some recent performance profiling of a server application under load turned up an interesting gotcha in .Net&#39;s ConcurrentDictionary that I think is well- worth knowing about. As you probably know, ConcurrentDictionary strives for performance in concurrent environments by using more sophisticated locking strategies than simply lock(this). Briefly, it has …">
+
+        <title>ConcurrentDictionary: GetOrAdd vs GetOrAdd - One Of These Things Is Not Like The Other  · Basildon Coder
+</title>
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="./theme/css/pygments.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/tipuesearch/tipuesearch.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/elegant.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/custom.css" media="screen">
+    </head>
+    <body>
+        <div id="content-sans-footer">
+        <div class="navbar navbar-static-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <div class="span1"></div>
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="./"><span class=site-name>Basildon Coder</span></a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav pull-right top-menu">
+                            <li ><a href=".">Home</a></li>
+                            <li ><a href="./categories.html">Categories</a></li>
+                            <li ><a href="./tags.html">Tags</a></li>
+                            <li ><a href="./archives.html">Archives</a></li>
+                            <li><form class="navbar-search" action="./search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span1"></div>
+                <div class="span10">
+<article>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+    <h1><a href="./concurrentdictionary-getoradd-vs.html"> ConcurrentDictionary: GetOrAdd vs GetOrAdd - One Of These Things Is Not Like The Other  </a></h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+
+            
+            <p>Some recent performance profiling of a server application under load turned up
+an interesting gotcha in .Net's ConcurrentDictionary that I think is well-
+worth knowing about.</p>
+<p>As you probably know, ConcurrentDictionary strives for performance in
+concurrent environments by using more sophisticated locking strategies than
+simply <code>lock(this)</code>. Briefly, it has a lock per bucket, which means that
+parallel writes are possible where the updates are in different buckets. A few
+operations acquire all locks, which obviously is a source of contention, but
+typically these are operations like Count and IsEmpty that shouldn't be called
+frequently. Finally, and of most relevance to this post, it supports lock-free
+reads which are the holy grail for high-concurrency. Except when it doesn't.</p>
+<p>ConcurrentDictionary has two overloads of the GetOrAdd method, an atomic
+operation to get a value if it exists, or add it if not. In the case where the
+value does not exist, you can either provide the new value directly, or pass a
+factory delegate that ConcurrentDictionary will call if it needs the value.
+The Remarks section in the <a href="http://msdn.microsoft.com/en-us/library/dd287191(v=vs.110.aspx)">MSDN docs</a> warns that the factory delegate will
+be called outside the lock, but otherwise the two overloads appear identical
+functionally - in particular that "read operations on the dictionary are
+performed in a lock-free manner".</p>
+<p>This is not true, however, at least as of .Net 4.5. The factory delegate
+overload will call the lockless TryGetValue and only attempt to do an Add
+(thus acquiring a lock) if the read fails - this is sane and how I would
+expect it to be implemented. The non-delegate overload of GetOrAdd, however,
+does not call TryGetValue and will obtain the bucket lock <em>before</em> it attempts
+to read the key, meaning that it is no longer a lockless read!</p>
+<p>If you have lots of threads attempting to read from a ConcurrentDictionary
+with a small number of keys, you'll get massive lock contention with this
+method. Frankly I think this should be considered a bug since in a highly-
+concurrent environment this is a fundamental difference in behaviour for two
+methods which should be near-identical.</p>
+<p>I won't post any code here because I don't want to get into any licencing
+issues, but if you have Resharper or dotPeek you can easily decompile the
+framework and verify this behaviour yourself.</p>
+<p><em>Update</em>: Now that the code is open source, I've been able to <a href="https://github.com/dotnet/corefx/pull/631">fix this and get it merged</a>. Hurrah for open source!</p>
+            
+            
+            <hr/>
+            <aside>
+            <nav>
+            <ul class="articles-timeline">
+                <li class="previous-article">« <a href="./mysql-table-not-found-error-when.html" title="Previous: MySQL &#39;Table not found&#39; Error When Referring To A New Table In A Trigger">MySQL 'Table not found' Error When Referring To A New Table In A Trigger</a></li>
+                <li class="next-article"><a href="./git-command-to-open-branch-in-bitbucket.html" title="Next: Git command to open branch in Bitbucket">Git command to open branch in Bitbucket</a> »</li>
+            </ul>
+            </nav>
+            </aside>
+        </div>
+        <section>
+        <div class="span2" style="float:right;font-size:0.9em;">
+            <h4>Published</h4>
+            <time pubdate="pubdate" datetime="2014-01-13T18:00:00+00:00">Jan 13, 2014</time>
+
+<h4>Last Updated</h4>
+<time datetime="2015-02-11T10:28:00+00:00">Feb 11, 2015</time>
+
+            <h4>Category</h4>
+            <a class="category-link" href="./categories.html#coding-ref">coding</a>
+            <h4>Tags</h4>
+            <ul class="list-of-tags tags-in-article">
+                <li><a href="./tags.html#coding-ref">coding
+                    <span>13</span>
+</a></li>
+                <li><a href="./tags.html#net-ref">.net
+                    <span>7</span>
+</a></li>
+            </ul>
+<h4>Contact</h4>
+    <a href="http://twitter.com/russgray" title="My Twitter Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-twitter sidebar-social-links"></i></a>
+    <a href="http://github.com/russgray" title="My Github Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-github sidebar-social-links"></i></a>
+    <a href="http://uk.linkedin.com/in/russgray/" title="My LinkedIn Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-linkedin sidebar-social-links"></i></a>
+    <a href="mailto:russgray@gmail.com" title="My Email Address" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-envelope sidebar-social-links"></i></a>
+        </div>
+        </section>
+</div>
+</article>
+                </div>
+                <div class="span1"></div>
+            </div>
+        </div>
+        <div id="push"></div>
+    </div>
+<footer>
+<div id="footer">
+    <ul class="footer-content">
+        <li class="elegant-power">Powered by <a href="http://getpelican.com/" title="Pelican Home Page">Pelican</a>. Theme: <a href="http://oncrashreboot.com/pelican-elegant" title="Theme Elegant Home Page">Elegant</a> by <a href="http://oncrashreboot.com" title="Talha Mansoor Home Page">Talha Mansoor</a></li>
+    </ul>
+</div>
+</footer>            <script src="https://code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+    
+    </body>
+    <!-- Theme: Elegant built for Pelican
+    License : http://oncrashreboot.com/pelican-elegant -->
+</html>

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8"> 
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Russell Gray" />
+        <meta name="copyright" content="Russell Gray" />
+
+        <link rel="author" href=https://plus.google.com/u/0/102559471807447493728 />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content=", tools, " />
+
+<meta property="og:title" content="Blogger/Wordpress to Pelican "/>
+<meta property="og:url" content="./blogger-wordpress-to-pelican.html" />
+<meta property="og:description" content="Like all the cool kids these days, I&#39;ve migrated my blog to use a static site generator. Pelican, in my case. There are lots of tutorials about this sort of thing, but I ran into a few things that needed additional tweaking so I&#39;m documenting it here. Note this isn&#39;t …" />
+<meta property="og:site_name" content="Basildon Coder" />
+<meta property="og:article:author" content="Russell Gray" />
+<meta property="og:article:published_time" content="2014-10-03T13:38:00+01:00" />
+<meta property="" content="2014-10-06T12:44:00+01:00" />
+<meta name="twitter:title" content="Blogger/Wordpress to Pelican ">
+<meta name="twitter:description" content="Like all the cool kids these days, I&#39;ve migrated my blog to use a static site generator. Pelican, in my case. There are lots of tutorials about this sort of thing, but I ran into a few things that needed additional tweaking so I&#39;m documenting it here. Note this isn&#39;t …">
+
+        <title>Blogger/Wordpress to Pelican  · Basildon Coder
+</title>
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="./theme/css/pygments.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/tipuesearch/tipuesearch.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/elegant.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/custom.css" media="screen">
+    </head>
+    <body>
+        <div id="content-sans-footer">
+        <div class="navbar navbar-static-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <div class="span1"></div>
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="./"><span class=site-name>Basildon Coder</span></a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav pull-right top-menu">
+                            <li ><a href=".">Home</a></li>
+                            <li ><a href="./categories.html">Categories</a></li>
+                            <li ><a href="./tags.html">Tags</a></li>
+                            <li ><a href="./archives.html">Archives</a></li>
+                            <li><form class="navbar-search" action="./search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span1"></div>
+                <div class="span10">
+<article>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+    <h1><a href="./blogger-wordpress-to-pelican.html"> Blogger/Wordpress to Pelican  </a></h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+
+            
+            <p>Like all the cool kids these days, I've migrated my blog to use a static site
+generator. <a href="http://docs.getpelican.com/en/3.4.0/">Pelican</a>, in my case. There are lots of tutorials about this
+sort of thing, but I ran into a few things that needed additional tweaking so
+I'm documenting it here. Note this isn't exhaustive - you can find the basics
+of generating and publishing static blogs in the pelican docs.</p>
+<h2 id="importing">Importing</h2>
+<p>Pelican will convert Wordpress xml exports, but not Blogger. No problem -
+there are Blogger to Wordpress converters available, so get your data into
+Wordpress export format. I used <a href="http://blogger2wordpress.appspot.com">this one</a>. Save the XML file in an export
+directory off the root of your directory layout, it can be a useful reference
+later.</p>
+<h2 id="comments">Comments</h2>
+<p>I used <a href="http://blog.bstpierre.org/">Brian St Pierre's</a> <a href="https://github.com/bstpierre/pelican-comments">comments plugin</a> to extract comments from my
+Wordpress export. I had to patch it to work with pelican 3.4, but my patch has
+now been pulled into the main code so it works fine.</p>
+<h2 id="links">Links</h2>
+<p>When using markdown I prefer to use reference-style links (where all the
+actual URLs are stored as footnotes at the end of the file). The initial
+import process creates inline links though, so I wanted to fix that.</p>
+<h3 id="local-links">Local links</h3>
+<p>Check your page interlinks to make sure the import process picked them up
+correctly. If not, edit them yourself to the following format:</p>
+<div class="highlight"><pre><span></span>[my link text]({filename}/path/to/my-post.md)
+</pre></div>
+
+
+<p>Note the <code>{filename}</code> macro - that's what pelican will use to generate your
+links in the final html.</p>
+<h3 id="converting-to-reflinks">Converting to reflinks</h3>
+<p>There's a nifty project called <a href="https://drbunsen.github.io/formd/">formd</a> that can convert markdown links to
+inline or reference, or toggle between them.</p>
+<div class="highlight"><pre><span></span><span class="k">for</span> FILE in <span class="k">$(</span>find content -type f -not -path <span class="s2">&quot;content/comments/*&quot;</span> -iname <span class="s1">&#39;*.md&#39;</span><span class="k">)</span>
+<span class="k">do</span>
+    formd -r &lt; <span class="s2">&quot;</span><span class="nv">$FILE</span><span class="s2">&quot;</span> <span class="p">|</span> sponge <span class="s2">&quot;</span><span class="nv">$FILE</span><span class="s2">&quot;</span>
+<span class="k">done</span>
+</pre></div>
+
+
+<p>Note the use of sponge to allow me to overwrite the original file with the
+reformatted one without needing an intermediate file. Get it with <code>apt-get
+install moreutils</code>.</p>
+<p>This is so useful I made it a fabric task:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">reflinks</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+    <span class="n">local</span><span class="p">(</span><span class="s1">&#39;formd -r &lt; {0} | sponge {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+</pre></div>
+
+
+<p>Then I can reprocess any file quickly like so:</p>
+<div class="highlight"><pre><span></span>fab reflinks:content/My-Blog-Post.md
+</pre></div>
+
+
+<h3 id="validating">Validating</h3>
+<p>Somewhere in the process of converting content to markdown and links to
+references, sometimes links get garbled. Especially if they have characters
+that clash with markdown formatting, like parentheses and square brackets.
+There is an excellent, ancient tool called linklint written in perl (see,
+ancient) that can blast through your content, identify links, and hit them up
+to make sure they exist. It even follows redirects.</p>
+<div class="highlight"><pre><span></span>linklint -quiet -no_anchors -doc linkdoc -root output -net /@
+</pre></div>
+
+
+<p>This also verifies local links, so it double checks the work pelican has done.
+It will generate a fairly spartan but very useful report in the linkdoc
+directory.</p>
+<h2 id="redirects">Redirects</h2>
+<p>Pelican will generate your output in a flat structure, rather than the
+year/month/day URL structure used by other blogging software. All <em>your</em> links
+will be correct, but incoming links from other sites will break which will
+devastate your ranking.</p>
+<p>Fortunately you can configure your webserver to issue permanent redirects to
+keep those links alive.</p>
+<p>First get a list of your old URLs from your export dump. I used powershell for
+this because I love how it handles XML, but use any tool you like.</p>
+<div class="highlight"><pre><span></span><span class="no">[xml]</span> <span class="nv">$content</span> <span class="p">=</span> <span class="nb">get-content</span> <span class="n">export</span><span class="p">/</span><span class="n">wordpress</span><span class="p">.</span><span class="n">xml</span>
+<span class="nv">$content</span><span class="p">.</span><span class="n">SelectNodes</span><span class="p">(</span><span class="s2">&quot;//link&quot;</span><span class="p">)</span> <span class="p">&gt;</span> <span class="n">export</span><span class="p">/</span><span class="n">oldurls</span><span class="p">.</span><span class="n">txt</span>
+</pre></div>
+
+
+<p>Next, construct your redirect rules on your webserver. In my case, I was
+moving everything from a subdomain to a directory, i.e.
+<code>blog.basildoncoder.com</code> to <code>basildoncoder.com/blog</code>, as well as the
+aforementioned URL change. So I have nginx rules like this:</p>
+<div class="highlight"><pre><span></span><span class="nt">server</span> <span class="p">{</span>
+    <span class="err">server_name</span> <span class="err">blog.basildoncoder.com</span><span class="p">;</span>
+    <span class="err">return</span> <span class="err">301</span> <span class="err">$</span><span class="n">scheme</span><span class="p">:</span><span class="o">//</span><span class="n">basildoncoder</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">blog</span><span class="err">$</span><span class="n">request_uri</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>That redirects all requests off of the blog subdomain. Then, in the main
+server block for basildoncoder.com, I have this rule:</p>
+<div class="highlight"><pre><span></span>location ~ &quot;^/blog/((\d{2,4})/){1,3}&quot; {
+    rewrite &quot;^/blog/((\d{2,4})/){1,3}(.*)$&quot; /blog/$3 permanent;
+}
+</pre></div>
+
+
+<p>The regex there looks for between 1 and 3 occurrences of directories named
+with between 2 and 4 numbers, and captures the rest of the URL after it. So
+any of the following URLs will match, and capture the filename:</p>
+<div class="highlight"><pre><span></span>/blog/2014/09/30/test.html
+/blog/2014/09/test.html
+/blog/2014/test.html
+</pre></div>
+
+
+<p>Each of these will be permanently rewritten to <code>/blog/test.html</code>.</p>
+<p>Finally, bust out linklint again to check the old URLs all resolve correctly
+once the pages are deployed and the server configured:</p>
+<div class="highlight"><pre><span></span>linklint @@oldurls.txt
+</pre></div>
+
+
+<p>You'll get output like this:</p>
+<div class="highlight"><pre><span></span>found  44 urls: ok
+-----  88 urls: moved permanently (301)
+
+Linklint checked 44 urls:
+    44 were ok, 0 failed. 88 urls moved.
+</pre></div>
+
+
+<p>(In this case there were twice as many moves as there are links because I
+redirect the subdomain then redirect the path.)</p>
+            
+            
+            <hr/>
+            <aside>
+            <nav>
+            <ul class="articles-timeline">
+                <li class="previous-article">« <a href="./disabling-voice-control-on-ios-71.html" title="Previous: Disabling Voice Control on iOS 7.1">Disabling Voice Control on iOS 7.1</a></li>
+                <li class="next-article"><a href="./3-way-merge-in-vim.html" title="Next: 3-Way Merge In Vim">3-Way Merge In Vim</a> »</li>
+            </ul>
+            </nav>
+            </aside>
+        </div>
+        <section>
+        <div class="span2" style="float:right;font-size:0.9em;">
+            <h4>Published</h4>
+            <time pubdate="pubdate" datetime="2014-10-03T13:38:00+01:00">Oct 3, 2014</time>
+
+<h4>Last Updated</h4>
+<time datetime="2014-10-06T12:44:00+01:00">Oct 6, 2014</time>
+
+            <h4>Category</h4>
+            <a class="category-link" href="./categories.html#tools-ref">tools</a>
+<h4>Contact</h4>
+    <a href="http://twitter.com/russgray" title="My Twitter Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-twitter sidebar-social-links"></i></a>
+    <a href="http://github.com/russgray" title="My Github Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-github sidebar-social-links"></i></a>
+    <a href="http://uk.linkedin.com/in/russgray/" title="My LinkedIn Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-linkedin sidebar-social-links"></i></a>
+    <a href="mailto:russgray@gmail.com" title="My Email Address" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-envelope sidebar-social-links"></i></a>
+        </div>
+        </section>
+</div>
+</article>
+                </div>
+                <div class="span1"></div>
+            </div>
+        </div>
+        <div id="push"></div>
+    </div>
+<footer>
+<div id="footer">
+    <ul class="footer-content">
+        <li class="elegant-power">Powered by <a href="http://getpelican.com/" title="Pelican Home Page">Pelican</a>. Theme: <a href="http://oncrashreboot.com/pelican-elegant" title="Theme Elegant Home Page">Elegant</a> by <a href="http://oncrashreboot.com" title="Talha Mansoor Home Page">Talha Mansoor</a></li>
+    </ul>
+</div>
+</footer>            <script src="https://code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+    
+    </body>
+    <!-- Theme: Elegant built for Pelican
+    License : http://oncrashreboot.com/pelican-elegant -->
+</html>

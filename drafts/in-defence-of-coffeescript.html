@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8"> 
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Russell Gray" />
+        <meta name="copyright" content="Russell Gray" />
+
+        <link rel="author" href=https://plus.google.com/u/0/102559471807447493728 />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content="coding, javascript, coffeescript, react, gulp, coding, " />
+
+<meta property="og:title" content="In Defence Of Coffeescript "/>
+<meta property="og:url" content="../drafts/in-defence-of-coffeescript.html" />
+<meta property="og:description" content="It seems quite trendy these days to bash coffeescript as an unnecessary abstraction, proposing instead to use javascript directly. I would agree that you don&#39;t really want to be transpiling coffeescript in the browser, but assuming I&#39;m using any sort of build pipeline I much prefer it. A couple of …" />
+<meta property="og:site_name" content="Basildon Coder" />
+<meta property="og:article:author" content="Russell Gray" />
+<meta property="og:article:published_time" content="2018-05-15T15:51:37.743459+01:00" />
+<meta name="twitter:title" content="In Defence Of Coffeescript ">
+<meta name="twitter:description" content="It seems quite trendy these days to bash coffeescript as an unnecessary abstraction, proposing instead to use javascript directly. I would agree that you don&#39;t really want to be transpiling coffeescript in the browser, but assuming I&#39;m using any sort of build pipeline I much prefer it. A couple of …">
+
+        <title>In Defence Of Coffeescript  · Basildon Coder
+</title>
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="../theme/css/pygments.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="../theme/tipuesearch/tipuesearch.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="../theme/css/elegant.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="../theme/css/custom.css" media="screen">
+    </head>
+    <body>
+        <div id="content-sans-footer">
+        <div class="navbar navbar-static-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <div class="span1"></div>
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="../"><span class=site-name>Basildon Coder</span></a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav pull-right top-menu">
+                            <li ><a href="..">Home</a></li>
+                            <li ><a href="../categories.html">Categories</a></li>
+                            <li ><a href="../tags.html">Tags</a></li>
+                            <li ><a href="../archives.html">Archives</a></li>
+                            <li><form class="navbar-search" action="../search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span1"></div>
+                <div class="span10">
+<article>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+    <h1><a href="../drafts/in-defence-of-coffeescript.html"> In Defence Of Coffeescript  </a></h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+
+            
+            <p>It seems quite trendy these days to bash coffeescript as an unnecessary
+abstraction, proposing instead to use javascript directly. I would agree
+that you don't really want to be transpiling coffeescript in the
+browser, but assuming I'm using any sort of build pipeline I much prefer
+it.</p>
+<p>A couple of weeks back I had an idea for a toy site that would actually
+benefit from being a single-page app (SPA) with no real backend
+requirement, so I decided to use it as an opportunity to ship something
+using React.js and GulpJS. These are two of the more talked-about
+front-end releases of 2014 (and ye gods, do people ever <em>talk</em> about
+fashionable new front-end code!)</p>
+<p>GulpJS is the latest build system to be built in node, and many prefer
+it to the so-last-year Grunt. It allows you to write build tasks
+(including minification, concatenation etc) as pipelines, with callbacks
+everywhere you look (this <em>is</em> node, after all).</p>
+<p>It is totally possible to write your gulpfile in coffeescript with a
+simple bootstrapper in gulpfile.js. I have to say I prefer this:</p>
+<div class="highlight"><pre><span></span><span class="nx">gulp</span><span class="p">.</span><span class="nx">task</span> <span class="s">&#39;js:minify&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;browserify&#39;</span><span class="p">],</span> <span class="nf">-&gt;</span>
+    <span class="nx">gulp</span><span class="p">.</span><span class="nx">src</span> <span class="s">&#39;./output/react-monitorbox.js&#39;</span>
+        <span class="p">.</span><span class="nx">pipe</span> <span class="nx">plumber</span><span class="p">()</span>
+        <span class="p">.</span><span class="nx">pipe</span> <span class="nx">uglify</span><span class="p">()</span>
+        <span class="p">.</span><span class="nx">pipe</span> <span class="nx">rename</span> <span class="nx">suffix</span><span class="o">:</span><span class="s">&#39;.min&#39;</span>
+        <span class="p">.</span><span class="nx">pipe</span> <span class="nx">gulp</span><span class="p">.</span><span class="nx">dest</span> <span class="s">&#39;./dist&#39;</span>
+</pre></div>
+
+
+<p>to this:</p>
+<div class="highlight"><pre><span></span><span class="nx">gulp</span><span class="p">.</span><span class="nx">task</span><span class="p">(</span><span class="s1">&#39;js:minify&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;browserify&#39;</span><span class="p">],</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">gulp</span><span class="p">.</span><span class="nx">src</span><span class="p">(</span><span class="s1">&#39;./output/react-monitorbox.js&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">plumber</span><span class="p">())</span>
+        <span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">uglify</span><span class="p">())</span>
+        <span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">rename</span><span class="p">({</span> <span class="nx">suffix</span><span class="o">:</span> <span class="s1">&#39;.min&#39;</span> <span class="p">}))</span>
+        <span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">gulp</span><span class="p">.</span><span class="nx">dest</span><span class="p">(</span><span class="s1">&#39;./dist&#39;</span><span class="p">));</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>React.js is Facebook's lib for serious front-end work and is much more
+lightweight, conceptually, than Google's AngularJS. Slightly
+controversially, it uses a template language called JSX to allow you to
+write markup in your script, which gets transpiled to raw javascript API
+calls. Unsurprisingly the raw JS is a bit ugly, which is why Facebook
+hide it behind a DSL.</p>
+<div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">CommentBox</span> <span class="o">=</span> <span class="nx">React</span><span class="p">.</span><span class="nx">createClass</span><span class="p">({</span>
+    <span class="nx">render</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="s2">&quot;commentBox&quot;</span><span class="o">&gt;</span>
+            <span class="nx">Hello</span><span class="p">,</span> <span class="nx">world</span><span class="o">!</span> <span class="nx">I</span> <span class="nx">am</span> <span class="nx">a</span> <span class="nx">CommentBox</span><span class="p">.</span>
+            <span class="o">&lt;</span><span class="err">/div&gt;</span>
+        <span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="o">:::</span><span class="nx">coffeescript</span>
+<span class="nx">CommentBox</span> <span class="o">=</span> <span class="nx">React</span><span class="p">.</span><span class="nx">createClass</span>
+    <span class="nx">render</span><span class="o">:</span> <span class="o">-&gt;</span>
+        <span class="nx">R</span><span class="p">.</span><span class="nx">div</span> <span class="nx">className</span><span class="o">:</span><span class="s2">&quot;commentBox&quot;</span><span class="p">,</span>
+            <span class="s1">&#39;Hello, world! I am a CommentBox.&#39;</span>
+</pre></div>
+
+
+<p>http://neugierig.org/software/blog/2014/02/react-jsx-coffeescript.html</p>
+            
+            
+            <hr/>
+        </div>
+        <section>
+        <div class="span2" style="float:right;font-size:0.9em;">
+            <h4>Published</h4>
+            <time pubdate="pubdate" datetime="2018-05-15T15:51:37.743459+01:00">May 15, 2018</time>
+            <h4>Category</h4>
+            <a class="category-link" href="../categories.html#coding-ref">coding</a>
+            <h4>Tags</h4>
+            <ul class="list-of-tags tags-in-article">
+                <li><a href="../tags.html#coding-ref">coding
+                    <span>13</span>
+</a></li>
+                <li><a href="../tags.html#coffeescript-ref">coffeescript
+</a></li>
+                <li><a href="../tags.html#gulp-ref">gulp
+</a></li>
+                <li><a href="../tags.html#javascript-ref">javascript
+</a></li>
+                <li><a href="../tags.html#react-ref">react
+</a></li>
+            </ul>
+<h4>Contact</h4>
+    <a href="http://twitter.com/russgray" title="My Twitter Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-twitter sidebar-social-links"></i></a>
+    <a href="http://github.com/russgray" title="My Github Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-github sidebar-social-links"></i></a>
+    <a href="http://uk.linkedin.com/in/russgray/" title="My LinkedIn Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-linkedin sidebar-social-links"></i></a>
+    <a href="mailto:russgray@gmail.com" title="My Email Address" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-envelope sidebar-social-links"></i></a>
+        </div>
+        </section>
+</div>
+</article>
+                </div>
+                <div class="span1"></div>
+            </div>
+        </div>
+        <div id="push"></div>
+    </div>
+<footer>
+<div id="footer">
+    <ul class="footer-content">
+        <li class="elegant-power">Powered by <a href="http://getpelican.com/" title="Pelican Home Page">Pelican</a>. Theme: <a href="http://oncrashreboot.com/pelican-elegant" title="Theme Elegant Home Page">Elegant</a> by <a href="http://oncrashreboot.com" title="Talha Mansoor Home Page">Talha Mansoor</a></li>
+    </ul>
+</div>
+</footer>            <script src="https://code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+    
+    </body>
+    <!-- Theme: Elegant built for Pelican
+    License : http://oncrashreboot.com/pelican-elegant -->
+</html>

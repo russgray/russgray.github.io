@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8"> 
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Russell Gray" />
+        <meta name="copyright" content="Russell Gray" />
+
+        <link rel="author" href=https://plus.google.com/u/0/102559471807447493728 />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content=", development, " />
+
+<meta property="og:title" content="OOD - The Second Coming "/>
+<meta property="og:url" content="./ood-second-coming.html" />
+<meta property="og:description" content="Over the last couple of months I&#39;ve been burning up my free time on a pet project (hence the scarcity of posting here). This particular project is a web application, and since I&#39;ve always been a desktop or middle-tier dude in my day job, it&#39;s a bit of a step …" />
+<meta property="og:site_name" content="Basildon Coder" />
+<meta property="og:article:author" content="Russell Gray" />
+<meta property="og:article:published_time" content="2009-01-16T16:00:00+00:00" />
+<meta name="twitter:title" content="OOD - The Second Coming ">
+<meta name="twitter:description" content="Over the last couple of months I&#39;ve been burning up my free time on a pet project (hence the scarcity of posting here). This particular project is a web application, and since I&#39;ve always been a desktop or middle-tier dude in my day job, it&#39;s a bit of a step …">
+
+        <title>OOD - The Second Coming  · Basildon Coder
+</title>
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="./theme/css/pygments.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/tipuesearch/tipuesearch.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/elegant.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/custom.css" media="screen">
+    </head>
+    <body>
+        <div id="content-sans-footer">
+        <div class="navbar navbar-static-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <div class="span1"></div>
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="./"><span class=site-name>Basildon Coder</span></a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav pull-right top-menu">
+                            <li ><a href=".">Home</a></li>
+                            <li ><a href="./categories.html">Categories</a></li>
+                            <li ><a href="./tags.html">Tags</a></li>
+                            <li ><a href="./archives.html">Archives</a></li>
+                            <li><form class="navbar-search" action="./search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span1"></div>
+                <div class="span10">
+<article>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+    <h1><a href="./ood-second-coming.html"> OOD - The Second Coming  </a></h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+
+            
+            <p>Over the last couple of months I've been burning up my free time on a pet
+project (hence the scarcity of posting here). This particular project is a web
+application, and since I've always been a desktop or middle-tier dude in my
+day job, it's a bit of a step out of my normal environment to grapple with
+browser compatibility and suchlike.</p>
+<p>Still, I wanted it to be a decent learning experience, so after a brief
+dalliance with Rails I scrapped the idea of using any <a href="./coding-by-convention.html">framework sorcery</a>
+and decided to write everything in plain ol' <a href="http://php.net/">PHP</a>, and lean heavily on
+<a href="http://developer.yahoo.com/yui/">YUI</a> and <a href="http://jquery.com/">jQuery</a> to sort out the browser stuff.</p>
+<p>This probably isn't an approach I'd use in future projects, but I bet I'll
+appreciate those frameworks a lot more once I've encountered and understood
+the problems they attempt to solve.</p>
+<p>So, having strayed from the comfort of <a href="http://rubyonrails.org/">Rails</a> and its clones, I had to
+think about lots of things like security, validation, data access, and how to
+organise my code. Just because I'd abandoned the training wheels I had no
+intention of falling over all the time - I still wanted a nice, maintainable
+app with sensible abstractions, properly decoupled, and resilient to failure.
+Time to start reading articles and the odd open source project, obviously.</p>
+<p>It's at this point I noticed something interesting. Since I regularly read
+plenty of development websites it could scarcely have escaped my notice that
+the trendy framework players (e.g. Rails, Django, Cake, ASP.NET MVC) strongly
+advocate the <a href="http://en.wikipedia.org/wiki/Model-view-controller">MVC</a> pattern and <a href="http://en.wikipedia.org/wiki/Class-based_programming">class-based object-oriented design</a>.
+What I hadn't really realised until now is how endemic that viewpoint had
+become.</p>
+<p>In fact, beyond a few admirably out-there frameworks like <a href="http://www.seaside.st/">Seaside</a>, it's
+almost universal. OOD = good, EVERYTHING ELSE = bad. MVC = good, EVERYTHING
+ELSE = bad. No shades of grey, no room for dissenting opinion.</p>
+<p>Go anywhere where best-practices are discussed and mention you're writing some
+procedural code, and watch the fireworks. It doesn't matter if your
+application has fewer lines of code than a newly-created Rails app has source
+files - if you haven't structured it with models, views, and controllers you
+may as well have written it in Visual Basic for all the bile you're going to
+have thrown at you.</p>
+<p>If you say you're writing functional code, you might get away with it, since
+functional programming is still widely misunderstood and you'll likely be
+classified as some weird LISPer or Schemer doing something arcane and thus
+ignored.</p>
+<p>Ironically, of course, if you grab a random Rails/Django/Cake app from
+<a href="http://github.com/">github</a> or <a href="http://code.google.com/hosting/">Google Code</a>, there's a pretty fair chance that what
+you'll find isn't particularly object-oriented anyway. Hint - usage of the
+'class' keyword does not an object-oriented design make. And sweet zombie
+Jesus, I've never seen such abuse of the singleton pattern. That's a sure sign
+someone doesn't 'get' OO - the <a href="http://c2.com/cgi/wiki?SingletonsAreEvil">singleton pattern is evil</a> and basically a
+way to <a href="http://steve.yegge.googlepages.com/singleton-considered-stupid">shoehorn globals into an application</a> without admitting it to your
+friends.</p>
+<p>So, we have massive fanatical advocacy of a technique that will allegedly
+solve all your problems, coupled with large-scale real-world misunderstandings
+and misapplication. Does this remind anyone of anything? Say, for example, the
+last time OOD swept the world, panacea to all programming woes, about 20 or so
+years ago?</p>
+<p>Don't get me wrong, I'm not arguing that class-based OO itself is just a fad -
+it deserves its place as a paradigm alongside procedural, functional,
+parallel, and numerous others. It's the heralding of OO as the one true way
+that seems faddish.</p>
+<p>So, in the very best "bah, humbug" traditions I've written my app in
+unashamedly procedural PHP code. I don't mix my presentation and content. My
+data layer is decoupled and unit tested. Every bit of SQL is a parameterised
+query, to guard against injection. I don't have a single echo() statement
+containing any html tags. All my errors are exception based, and I don't have
+a single die() call anywhere. My average function size is about 10 lines, and
+my longest is about 20. I've no doubt that there's a legion of 15-year-old
+self-appointed geniuses ready to accuse me of inflicting yet more spaghetti
+code junk on the world just because "find . -iname '*php' | xargs grep class"
+comes up empty, but hey I'm OK with that.</p>
+<p>I'm writing my next app in <a href="http://en.wikipedia.org/wiki/Brainfuck">brainf*ck</a>
+using ed.</p>
+            
+            
+    <div class="accordion" id="accordion2">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#comments">
+                Comments (5) </a>
+            </div>
+
+            <div id="comments" class="accordion-body collapse">
+                <div class="accordion-inner">
+                    <div class="comments">
+                        <ul>
+                            <li>rgeyer said: <p>I've recently tossed up a quick community site.  And while it's not a "web
+app" in the truest sense, I am working on adding some unique functionality.</p>
+<p>I chose to use the Drupal CMS, and there ain't a shred of OO PHP in it at all,
+and I think it's a very well build and thought out framework.</p></li>
+                            <li>Sol said: <p>Considering that both Java and C# force you to use "OOD", can it be any
+surprise that many of the current frameworks trend that way?  We're working on
+creating an entire generation of programmers who have only worked in languages
+that force you to wrap everything in a class, no matter how inappropriate that
+approach is to the problem at hand....</p></li>
+                            <li>russ said: <p>Hi Sol,</p>
+<p>I'd agree with you if all these frameworks were written in java or C#. My
+degree required passes in courses using C++, 68000 assembly, Haskell (and,
+yes, java), and I think it's a shame that so many degrees these days are so
+narrow.</p>
+<p>However, some of the worst culprits of the framework/OO lovefest are those
+using python and ruby, both of which have reasonable functional constructs and
+don't require you to use classes (well, not explicitly anyway). Yet still the
+tunnel-vision remains.</p>
+<p>It's particularly baffling given that Seaside's continuation-passing style is
+a genuine improvement in handling complex multi-page interactions over mucking
+around shuttling stuff to and from the model in typical MVC. Yet, as someone
+on reddit pointed out recently, Seaside will probably be obsoleted soon by
+increasingly powerful client-side javascript tools that solve the same
+problems less elegantly but more fashionably. Shame.</p></li>
+                            <li>dudeguy said: <p>It's ok to have a comment.</p></li>
+                            <li>eti said: <p>Hi Russ,</p>
+<p>Great post. I guess in the end it all comes down to "Use the best tool for the
+job". And don't be afraid to mix things if it makes sense. It's also true that
+OOP has it's merits and there are cases where OOP makes expressing your code
+easier. Usually this is more visible on more complex cases than on simple
+ones.</p>
+<p>And finally about ASP.NET MVC ... i love it, even if a big part of it is using
+extension methods witch are just syntax sugar for free functions. They make
+perfect sense in the context.</p>
+<p>Again, great post and great blog.</p></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+            <hr/>
+            <aside>
+            <nav>
+            <ul class="articles-timeline">
+                <li class="previous-article">« <a href="./project-euler-problem-7.html" title="Previous: Project Euler Problem 7">Project Euler Problem 7</a></li>
+                <li class="next-article"><a href="./macros-you-oughta-know.html" title="Next: Macros: You Oughta Know">Macros: You Oughta Know</a> »</li>
+            </ul>
+            </nav>
+            </aside>
+        </div>
+        <section>
+        <div class="span2" style="float:right;font-size:0.9em;">
+            <h4>Published</h4>
+            <time pubdate="pubdate" datetime="2009-01-16T16:00:00+00:00">Jan 16, 2009</time>
+            <h4>Category</h4>
+            <a class="category-link" href="./categories.html#development-ref">development</a>
+<h4>Contact</h4>
+    <a href="http://twitter.com/russgray" title="My Twitter Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-twitter sidebar-social-links"></i></a>
+    <a href="http://github.com/russgray" title="My Github Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-github sidebar-social-links"></i></a>
+    <a href="http://uk.linkedin.com/in/russgray/" title="My LinkedIn Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-linkedin sidebar-social-links"></i></a>
+    <a href="mailto:russgray@gmail.com" title="My Email Address" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-envelope sidebar-social-links"></i></a>
+        </div>
+        </section>
+</div>
+</article>
+                </div>
+                <div class="span1"></div>
+            </div>
+        </div>
+        <div id="push"></div>
+    </div>
+<footer>
+<div id="footer">
+    <ul class="footer-content">
+        <li class="elegant-power">Powered by <a href="http://getpelican.com/" title="Pelican Home Page">Pelican</a>. Theme: <a href="http://oncrashreboot.com/pelican-elegant" title="Theme Elegant Home Page">Elegant</a> by <a href="http://oncrashreboot.com" title="Talha Mansoor Home Page">Talha Mansoor</a></li>
+    </ul>
+</div>
+</footer>            <script src="https://code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+    
+    </body>
+    <!-- Theme: Elegant built for Pelican
+    License : http://oncrashreboot.com/pelican-elegant -->
+</html>

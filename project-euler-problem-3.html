@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8"> 
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Russell Gray" />
+        <meta name="copyright" content="Russell Gray" />
+
+        <link rel="author" href=https://plus.google.com/u/0/102559471807447493728 />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content=", projecteuler, " />
+
+<meta property="og:title" content="Project Euler Problem 3 "/>
+<meta property="og:url" content="./project-euler-problem-3.html" />
+<meta property="og:description" content="Next up in the list of Project Euler problems is this one: Problem 3 The prime factors of 13195 are 5, 7, 13 and 29. What is the largest prime factor of the number 600851475143? This, obviously, is a factorisation problem. There is a colossal amount of material on the …" />
+<meta property="og:site_name" content="Basildon Coder" />
+<meta property="og:article:author" content="Russell Gray" />
+<meta property="og:article:published_time" content="2008-04-07T13:38:00+01:00" />
+<meta name="twitter:title" content="Project Euler Problem 3 ">
+<meta name="twitter:description" content="Next up in the list of Project Euler problems is this one: Problem 3 The prime factors of 13195 are 5, 7, 13 and 29. What is the largest prime factor of the number 600851475143? This, obviously, is a factorisation problem. There is a colossal amount of material on the …">
+
+        <title>Project Euler Problem 3  · Basildon Coder
+</title>
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="./theme/css/pygments.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/tipuesearch/tipuesearch.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/elegant.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/custom.css" media="screen">
+    </head>
+    <body>
+        <div id="content-sans-footer">
+        <div class="navbar navbar-static-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <div class="span1"></div>
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="./"><span class=site-name>Basildon Coder</span></a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav pull-right top-menu">
+                            <li ><a href=".">Home</a></li>
+                            <li ><a href="./categories.html">Categories</a></li>
+                            <li ><a href="./tags.html">Tags</a></li>
+                            <li ><a href="./archives.html">Archives</a></li>
+                            <li><form class="navbar-search" action="./search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span1"></div>
+                <div class="span10">
+<article>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+    <h1><a href="./project-euler-problem-3.html"> Project Euler Problem 3  </a></h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+
+            
+            <p>Next up in the list of Project Euler problems is this one:</p>
+<p><strong><em><a href="http://projecteuler.net/index.php?section=problems&amp;id=3">Problem 3</a></em></strong></p>
+<blockquote>
+<p>The prime factors of 13195 are 5, 7, 13 and 29.</p>
+<p>What is the largest prime factor of the number 600851475143?</p>
+</blockquote>
+<p>This, obviously, is a factorisation problem. There is a colossal amount of
+material on the web for dealing with prime factorisation - a simple <a href="http://www.google.co.uk/search?q=prime+factorization">google
+search</a> pulls up lots of information. Prime factorisation (and the
+difficulty of doing it with sufficiently large numbers) is at the heart of the
+cryptographic methods we currently use on the internet - every time you buy
+something from Amazon, you are protected by the fact that evil black-hats
+can't find the prime factors of your encryption key fast enough to steal your
+credit card number (OK, bit of a generalisation, but that's the gist).</p>
+<p>One of the key phrases in the above paragraph is 'sufficiently large
+numbers'. For a computer, 600851475143 is not a particularly big number,
+so this problem can be brute-forced fairly easily. Of course, not all
+brute force approaches are created equal. The most naive algorithm would
+be something along the lines of a three-pass sweep - firstly test <em>every
+single number</em> between 2 and 600851475143 to see if it divides cleanly
+into 600851475143 (pass 1); then test each factor from pass 1 to see if
+it is prime (pass 2); and finally take the biggest of the pass 2 numbers
+to get your answer (pass 3).</p>
+<p>This would work, but it sucks.</p>
+<p>Fortunately, it's easy to optimise. Let the prime factors of our number
+N be f<sub>1</sub>, f<sub>2</sub> ... f<sub>n</sub>. If I start with the lowest prime number and
+work up from there looking for a factor, I know that the first factor I
+find will be prime (since if it wasn't prime, it would have factors of
+its own, which by definition would also be factors of our target
+number). This number is f<sub>1</sub>. I can divide the target number by f<sub>1</sub> and
+then factorise the result to find f<sub>2</sub>. Continuing this process will
+result in a list of prime factors, and then it's simply a case of
+selecting the largest.</p>
+<p>I can optimise further by not resetting the factor to the lowest prime
+number each time - since having found f<sub>1</sub> I know that there aren't any
+smaller factors, so I don't have to waste time looking for them. Here's
+the implementation in python:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">primeFactors</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">factor</span><span class="p">):</span>
+    <span class="n">factors</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">n</span> <span class="o">%</span> <span class="n">factor</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="n">factor</span> <span class="o">=</span> <span class="n">factor</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="n">factors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">factor</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="n">factor</span><span class="p">:</span>
+        <span class="n">factors</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">primeFactors</span><span class="p">(</span><span class="n">n</span> <span class="o">/</span> <span class="n">factor</span><span class="p">,</span> <span class="n">factor</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">factors</span>
+
+<span class="k">print</span> <span class="nb">max</span><span class="p">(</span><span class="n">primeFactors</span><span class="p">(</span><span class="mi">600851475143</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+</pre></div>
+
+
+<p>Note that in the recursive call the current factor is retained, so that
+the code doesn't repeat itself.</p>
+<p>This executes pretty quickly, but it could be better. For a start, since
+600851475143 is odd there's no need to start with the only even prime
+number (2). Instead, I could just start at 3, and in the while loop skip
+over even numbers. This would cut the number of tested numbers in half.</p>
+<p>A more efficient trial division approach, however, would be to generate
+a list of primes, divide 600851475143 by each prime to find the prime
+factors, then simply select the largest. To use this solution, a prime
+number generator is needed.</p>
+<p>This is an interesting diversion - I've peeked at some of the other
+Project Euler problems and know that prime numbers will pop up again, so
+it may prove useful to have a generator handy for when I get to those.
+Some languages, like Ruby, have library functions that can give you
+primes, but other languages don't. If you're not interested in
+generating primes and just want to know the answer to problem 3, execute
+the code above and you're free to get down from the table.</p>
+<p><strong><em>A Random Walk Off-Topic</em></strong></p>
+<p>The simplest way to generate primes is known as the <a href="http://en.wikipedia.org/wiki/Sieve_of_Eratosthenes">Sieve of
+Eratosthenes</a> after
+the Greek mathematician who invented it. In principle it's
+straightforward - take a list of all integers up to an arbitrary limit,
+then starting from 2 (the smallest prime), mark all the numbers that are
+multiples of 2. Then move to the next unmarked number (i.e. 3) and mark
+all the multiples of 3. Then you move to the next unmarked number (5,
+since 4 was marked as a multiple of 2) and mark all multiples. And so
+on, until you get to the end of your list. Whatever numbers remain
+unmarked are all the primes up to your arbitrary limit.</p>
+<p>.Net lacks a built-in prime generator, so to demonstrate the algorithm
+I'll create a simple C# implementation. The list of numbers is
+represented as an array of booleans, all set to true by default except
+indexes 0 and 1 (since we aren't interested in evaluating those numbers
+as prime).</p>
+<p>The other requirement for a funky contemporary .Net implementation is,
+of course, to expose the results with IEnumerable. This achieves two
+things - firstly, it lets the sieve class control enumeration and thus
+skip over the marked numbers (making the calling code cleaner), and
+secondly it lets me use LINQ to query it.</p>
+<p>So, here's the code:</p>
+<div class="highlight"><pre><span></span><span class="k">public</span> <span class="k">class</span> <span class="nc">SieveOfEratosthenes</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="kt">bool</span><span class="p">[]</span> <span class="n">m_numbers</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nf">SieveOfEratosthenes</span><span class="p">(</span><span class="kt">long</span> <span class="n">limit</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">m_numbers</span> <span class="p">=</span> <span class="k">new</span> <span class="kt">bool</span><span class="p">[</span><span class="n">limit</span> <span class="p">+</span> <span class="m">1</span><span class="p">];</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">long</span> <span class="n">l</span> <span class="p">=</span> <span class="m">2</span><span class="p">;</span> <span class="n">l</span> <span class="p">&lt;</span> <span class="n">m_numbers</span><span class="p">.</span><span class="n">LongLength</span><span class="p">;</span> <span class="p">++</span><span class="n">l</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">m_numbers</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">2</span><span class="p">;</span> <span class="n">i</span> <span class="p">!=</span> <span class="p">-</span><span class="m">1</span><span class="p">;</span>
+                <span class="n">i</span> <span class="p">=</span> <span class="n">Array</span><span class="p">.</span><span class="n">FindIndex</span><span class="p">(</span><span class="n">m_numbers</span><span class="p">,</span> <span class="n">i</span> <span class="p">+</span> <span class="m">1</span><span class="p">,</span>
+                    <span class="n">b</span> <span class="p">=&gt;</span> <span class="n">b</span> <span class="p">==</span> <span class="k">true</span><span class="p">))</span>
+        <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="p">=</span> <span class="n">i</span> <span class="p">*</span> <span class="m">2</span><span class="p">;</span> <span class="n">j</span> <span class="p">&lt;</span> <span class="n">m_numbers</span><span class="p">.</span><span class="n">Length</span><span class="p">;</span> <span class="n">j</span> <span class="p">+=</span> <span class="n">i</span><span class="p">)</span>
+                <span class="n">m_numbers</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="p">=</span> <span class="k">false</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="kt">long</span><span class="p">&gt;</span> <span class="n">Primes</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">long</span> <span class="n">i</span> <span class="p">=</span> <span class="m">2</span><span class="p">;</span> <span class="n">i</span> <span class="p">&lt;</span> <span class="n">m_numbers</span><span class="p">.</span><span class="n">LongLength</span><span class="p">;</span> <span class="p">++</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">m_numbers</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="k">yield</span> <span class="k">return</span> <span class="n">i</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Fairly straightforward. Basically, I start by marking 2 as prime. Then,
+an inner loop sets all multiples of 2 to false, since no (other) even
+numbers are prime. Each time round the loop, we find the next true
+element of the array (which will have a prime index), and mark all
+multiples false as per the description above. The loop terminates when
+FindIndex fails to find any more true elements.</p>
+<p>This results in an array where the only elements with a value of true
+are those with a prime index. This makes the actual IEnumerable
+generator very easy to write - it yield returns the index whenever it
+finds a true element.</p>
+<p>There's a problem with this code, however, that makes it unusable with
+Euler problem 3 (at least in .Net - hence why I called it a 'diversion'
+earlier, rather than an alternative solution). In .Net, you can't create
+an array with 600851475143 elements, since an array with 600851475143
+elements is way above the maximum array size limit of 2GB. Even if each
+element is only a single byte, 600851475143 bytes is about 560GB.</p>
+<p>Therefore, you can't create a sieve big enough to solve the problem.</p>
+<p>When using trial division it seems that it is enough to only generate
+primes up to the square root of N, though there are cases when this is
+not true (e.g. where N=15, sqrt(N) = \~3.873, but the largest prime
+factor of 15 is 5), and I don't have the maths (yet!) to know how big a
+fudge-factor is needed. I've seen a solution on the Project Euler forum
+that generates primes up to sqrt(N) + 10, which solves the example of
+N=15 above, but does it solve ALL cases? Another approach might be to
+generate the list of primes such that the largest prime in the list is
+the first prime &gt; sqrt(N) - but now I'm completely guessing.</p>
+<p>Still, for numbers that fit inside the 2GB limit, we can find the
+largest factor easily.</p>
+<div class="highlight"><pre><span></span><span class="kt">var</span> <span class="n">sieve</span> <span class="p">=</span> <span class="k">new</span> <span class="n">SieveOfEratosthenes</span><span class="p">(</span><span class="m">15</span><span class="p">);</span>
+</pre></div>
+
+
+<p>Now I have my IEnumerable sieve, I can craft a LINQ query to find the
+largest factor. All I need to do is filter my list of primes for those
+which divide directly into 15 and call the Max() method:</p>
+<div class="highlight"><pre><span></span><span class="k">return</span> <span class="p">(</span><span class="k">from</span> <span class="n">p</span> <span class="k">in</span> <span class="n">sieve</span><span class="p">.</span><span class="n">Primes</span><span class="p">()</span> <span class="k">where</span> <span class="m">15</span> <span class="p">%</span> <span class="n">p</span> <span class="p">==</span> <span class="m">0</span> <span class="k">select</span> <span class="n">p</span><span class="p">).</span><span class="n">Max</span><span class="p">();</span>
+</pre></div>
+
+
+<p>Done! And I have a handy reusable prime generator for later on.</p>
+            
+            
+    <div class="accordion" id="accordion2">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#comments">
+                Comments (14) </a>
+            </div>
+
+            <div id="comments" class="accordion-body collapse">
+                <div class="accordion-inner">
+                    <div class="comments">
+                        <ul>
+                            <li>Prime time programming « Sliding up the banister said: <p>[...] noticed that Basildon Coder had a post on this same problem. I held off reading it until after working through my own approach, [...]</p></li>
+                            <li>-jn- said: <p>Interesting! I learned a bit more Python by reading your post.</p>
+<p>With respect to "only generate primes up to the square root of N", no fudge-
+factor is needed. Simply keep track of the running quotient. After dividing 15
+by 3 to get a quotient of 5, and verifying that 4 is &gt; √15, you know that 5 is
+prime.</p>
+<p>It can't have two factors greater than √15 else it woud be &gt; 15 itself. It
+can't have a factor less than √15, because all of those factors have already
+been eliminated.</p>
+<p>Thanks for keeping it going!</p></li>
+                            <li>Project Euler - Problem 3 - Javascript | alt42 said: <p>[...] completed the problem I Googled it and found Basildon Coder's blog. He explains the various approaches and improvements well. I  felt a bit better when he introduced [...]</p></li>
+                            <li>uberlieder said: <p>Thanks for this, massively shortened the time needed. This is a great way to pick up a new language.</p></li>
+                            <li>pyNewb said: <p>Interesting approach.</p>
+<p>I was letting my solution run when I decided to see how others solved this question.</p>
+<p>My code is STILL running while I'm typing this (~5mins), so I was really
+impressed at how fast this was.</p>
+<p>Thanks.</p></li>
+                            <li>UltraL0rd said: <p>A lot of questions are made easier if you do this problem right the first time.</p>
+<p>After using Sieve's algorithm I cut down my execution from over 4000ms down to 47ms :D</p>
+<p>More info about my struggle with this little bastard of a problem : 
+http://www.ultralord.za.net/2010/05/14/project-euler-problem-3-solved/</p></li>
+                            <li>Meenakshi Sundaram said: <p>A slightly modified version. I have avoided the use of recursion.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">primeFactors</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">factor</span><span class="p">):</span>
+    <span class="n">factors</span><span class="o">=</span><span class="p">[]</span>
+    <span class="n">newn</span><span class="o">=</span><span class="n">n</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">factor</span><span class="o">*</span><span class="n">factor</span> <span class="o">&lt;=</span> <span class="n">newn</span><span class="p">):</span>
+        <span class="k">while</span><span class="p">(</span><span class="n">newn</span> <span class="o">%</span> <span class="n">factor</span> <span class="o">!=</span><span class="mi">0</span><span class="p">):</span>
+            <span class="n">factor</span><span class="o">=</span><span class="n">factor</span><span class="o">+</span><span class="mi">1</span>
+
+        <span class="n">factors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">factor</span><span class="p">)</span>
+        <span class="n">newn</span><span class="o">=</span><span class="n">newn</span><span class="o">/</span><span class="n">factor</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">factor</span><span class="o">!=</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">factors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newn</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">factors</span>
+</pre></div></li>
+                            <li>Meenakshi Sundaram said: <p>sorry a correction</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">primeFactors</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">factor</span><span class="p">):</span>
+    <span class="n">factors</span><span class="o">=</span><span class="p">[]</span>
+    <span class="n">newn</span><span class="o">=</span><span class="n">n</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">factor</span><span class="o">*</span><span class="n">factor</span> <span class="o">&lt;=</span> <span class="n">newn</span><span class="p">):</span>
+        <span class="k">while</span><span class="p">(</span><span class="n">newn</span> <span class="o">%</span> <span class="n">factor</span> <span class="o">!=</span><span class="mi">0</span><span class="p">):</span>
+            <span class="n">factor</span><span class="o">=</span><span class="n">factor</span><span class="o">+</span><span class="mi">1</span>
+
+    <span class="n">factors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">factor</span><span class="p">)</span>
+    <span class="n">newn</span><span class="o">=</span><span class="n">newn</span><span class="o">/</span><span class="n">factor</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">newn</span><span class="o">!=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">factors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newn</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">factors</span>
+</pre></div></li>
+                            <li>Meenakshi Sundaram said: <p>Two while loops slow down the process in case the number is a prime. So one
+can replace the inner while loop as follows:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">primeFactors</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">factor</span><span class="p">):</span>
+    <span class="n">factors</span><span class="o">=</span><span class="mi">1</span>
+    <span class="n">newn</span><span class="o">=</span><span class="n">n</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">factor</span><span class="o">*</span><span class="n">factor</span> <span class="o">&lt;=</span> <span class="n">newn</span><span class="p">):</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">newn</span> <span class="o">%</span> <span class="n">factor</span> <span class="o">!=</span><span class="mi">0</span><span class="p">):</span>
+            <span class="n">factor</span><span class="o">=</span><span class="n">factor</span><span class="o">+</span><span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">factors</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">factors</span><span class="p">,</span><span class="n">factor</span><span class="p">)</span>
+    <span class="n">newn</span><span class="o">=</span><span class="n">newn</span><span class="o">/</span><span class="n">factor</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">newn</span><span class="o">!=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">factors</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">factors</span><span class="p">,</span><span class="n">newn</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">factors</span>
+</pre></div></li>
+                            <li>Up said: <p>It should work. Thanks.</p></li>
+                            <li>lolpium said: <p>Hey I'm very much a beginner but was pretty stoked I could run this in 3164ms.
+Heres the code --</p>
+<div class="highlight"><pre><span></span><span class="c1">#The prime factors of 13195 are 5, 7, 13 and 29.</span>
+<span class="c1">#What is the largest prime factor of the number 600851475143?</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">math</span><span class="o">,</span> <span class="nn">sets</span><span class="o">,</span> <span class="nn">time</span>
+
+<span class="n">time1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">clock</span><span class="p">()</span>
+<span class="n">iniList</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">var</span> <span class="o">=</span> <span class="mi">600851475143</span>
+
+<span class="k">def</span> <span class="nf">factorize</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+<span class="n">templist</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="nb">max</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">num</span><span class="p">))</span>
+<span class="k">print</span> <span class="s2">&quot;max = &quot;</span><span class="p">,</span><span class="nb">max</span>
+<span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="k">while</span> <span class="n">i</span> <span class="n">m</span> <span class="ow">and</span> <span class="n">i</span><span class="o">%</span><span class="n">m</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+<span class="k">pass</span>
+<span class="k">else</span><span class="p">:</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+<span class="n">templist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+<span class="k">pass</span>
+<span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="k">return</span> <span class="n">templist</span>
+
+<span class="n">mylist</span> <span class="o">=</span> <span class="n">factorize</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">mylist</span>
+<span class="n">time2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">clock</span><span class="p">()</span>
+<span class="k">print</span> <span class="s1">&#39;time = &#39;</span><span class="p">,</span><span class="n">time2</span><span class="o">-</span><span class="n">time1</span>
+</pre></div></li>
+                            <li>nfb7 said: <p>I am using C++ to write my solution to this problem, and I am having trouble
+with the mod operator. How can I mod this huge number when it is out of the
+range for an int?</p></li>
+                            <li>sa6eto said: <p>Using Eratosthenes method for finding primes in Java this problem takes 47ms
+and about 100KB of ram. I guess the performance will be the same in any
+programming language.</p></li>
+                            <li>Thebigcheeze said: <p>Check into using the BitArray class for your C# implementation.  It's meant
+for holding large volumes of binary data.  Obviously, it can't hold everything
+(69.9GB) but you gain an 8x datasize improvement over using booleans (assuming
+booleans use 1 byte per bool).</p></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+            <hr/>
+            <aside>
+            <nav>
+            <ul class="articles-timeline">
+                <li class="previous-article">« <a href="./lightbulb-moment.html" title="Previous: The Lightbulb Moment">The Lightbulb Moment</a></li>
+                <li class="next-article"><a href="./evil-important-apparently.html" title="Next: Evil = Important. Apparently.">Evil = Important. Apparently.</a> »</li>
+            </ul>
+            </nav>
+            </aside>
+        </div>
+        <section>
+        <div class="span2" style="float:right;font-size:0.9em;">
+            <h4>Published</h4>
+            <time pubdate="pubdate" datetime="2008-04-07T13:38:00+01:00">Apr 7, 2008</time>
+            <h4>Category</h4>
+            <a class="category-link" href="./categories.html#projecteuler-ref">projecteuler</a>
+<h4>Contact</h4>
+    <a href="http://twitter.com/russgray" title="My Twitter Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-twitter sidebar-social-links"></i></a>
+    <a href="http://github.com/russgray" title="My Github Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-github sidebar-social-links"></i></a>
+    <a href="http://uk.linkedin.com/in/russgray/" title="My LinkedIn Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-linkedin sidebar-social-links"></i></a>
+    <a href="mailto:russgray@gmail.com" title="My Email Address" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-envelope sidebar-social-links"></i></a>
+        </div>
+        </section>
+</div>
+</article>
+                </div>
+                <div class="span1"></div>
+            </div>
+        </div>
+        <div id="push"></div>
+    </div>
+<footer>
+<div id="footer">
+    <ul class="footer-content">
+        <li class="elegant-power">Powered by <a href="http://getpelican.com/" title="Pelican Home Page">Pelican</a>. Theme: <a href="http://oncrashreboot.com/pelican-elegant" title="Theme Elegant Home Page">Elegant</a> by <a href="http://oncrashreboot.com" title="Talha Mansoor Home Page">Talha Mansoor</a></li>
+    </ul>
+</div>
+</footer>            <script src="https://code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+    
+    </body>
+    <!-- Theme: Elegant built for Pelican
+    License : http://oncrashreboot.com/pelican-elegant -->
+</html>

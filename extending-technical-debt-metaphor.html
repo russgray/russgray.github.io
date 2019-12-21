@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8"> 
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Russell Gray" />
+        <meta name="copyright" content="Russell Gray" />
+
+        <link rel="author" href=https://plus.google.com/u/0/102559471807447493728 />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content=", development, " />
+
+<meta property="og:title" content="Extending the Technical Debt Metaphor "/>
+<meta property="og:url" content="./extending-technical-debt-metaphor.html" />
+<meta property="og:description" content="A few months ago, the inestimable Steve McConnell (he of Code Complete fame) wrote about technical debt. McConnell looks to extend the metaphor beyond the simple idea of &#39;code that is going to be a liability in the future&#39;, identifying two main types of technical debt (deliberate and accidental), and …" />
+<meta property="og:site_name" content="Basildon Coder" />
+<meta property="og:article:author" content="Russell Gray" />
+<meta property="og:article:published_time" content="2008-02-21T16:07:00+00:00" />
+<meta name="twitter:title" content="Extending the Technical Debt Metaphor ">
+<meta name="twitter:description" content="A few months ago, the inestimable Steve McConnell (he of Code Complete fame) wrote about technical debt. McConnell looks to extend the metaphor beyond the simple idea of &#39;code that is going to be a liability in the future&#39;, identifying two main types of technical debt (deliberate and accidental), and …">
+
+        <title>Extending the Technical Debt Metaphor  · Basildon Coder
+</title>
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="./theme/css/pygments.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/tipuesearch/tipuesearch.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/elegant.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/custom.css" media="screen">
+    </head>
+    <body>
+        <div id="content-sans-footer">
+        <div class="navbar navbar-static-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <div class="span1"></div>
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="./"><span class=site-name>Basildon Coder</span></a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav pull-right top-menu">
+                            <li ><a href=".">Home</a></li>
+                            <li ><a href="./categories.html">Categories</a></li>
+                            <li ><a href="./tags.html">Tags</a></li>
+                            <li ><a href="./archives.html">Archives</a></li>
+                            <li><form class="navbar-search" action="./search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span1"></div>
+                <div class="span10">
+<article>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+    <h1><a href="./extending-technical-debt-metaphor.html"> Extending the Technical Debt Metaphor  </a></h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+
+            
+            <p>A few months ago, the inestimable Steve McConnell (he of <em><a href="http://www.amazon.co.uk/Code-Complete-Practical-Handbook-Construction/dp/0735619670/">Code Complete</a></em>
+fame) <a href="http://blogs.construx.com/blogs/stevemcc/archive/2007/11/01/technical-debt-2.aspx">wrote</a> about <a href="http://www.martinfowler.com/bliki/TechnicalDebt.html">technical debt</a>. McConnell looks to extend the
+metaphor beyond the simple idea of 'code that is going to be a liability in
+the future', identifying two main types of technical debt (deliberate and
+accidental), and identifying further correlations between the worlds of
+financial debt and technical debt.</p>
+<p>For instance, based on the technical debt already accumulated, one team
+may have a worse 'credit rating' than another:</p>
+<blockquote>
+<p>Different teams will have different technical debt credit ratings. The
+credit rating reflects a team's ability to pay off technical debt
+after it has been incurred.</p>
+<p><cite>(McConnell, 2007)</cite></p>
+</blockquote>
+<p>There is a lot of insight in McConnell's article, and I recommend you
+nip over and read it right now if you haven't already. Technical debt is
+indeed a useful and rich analogy for communicating a particular class of
+technical problem to non-technical users.</p>
+<p>I wonder, however, if McConnell hasn't extended the metaphor in slightly
+the wrong direction. When considering technical debt, I like to think of
+the product managers as the debtors, and the development team as the
+creditors. The actual underlying concept remains the same, it's just a
+shift in responsibilities.</p>
+<p>Why?</p>
+<p>As a developer, I don't always get to make the decisions about whether
+something should be done in a quick 'n' dirty hack, or a
+properly-architected solution. Of course, I'm likely to recommend the
+latter where I can, but it's a fact of life that I will often be
+overruled, and rightly so. There are occasions when incurring technical
+debt is the right thing to do. McConnell lists a few examples, e.g:</p>
+<blockquote>
+<p><em>Time to Market</em>. When time to market is critical, incurring an extra
+$1 in development might equate to a loss of $10 in revenue. Even if
+the development cost for the same work rises to $5 later, incurring
+the $1 debt now is a good business decision.</p>
+<p><cite>(McConnell, 2007)</cite></p>
+</blockquote>
+<p>This is a key issue. Software development considerations are not the
+be-all and end-all, no matter how much I (or any other developer) would
+like them to be. It's the <em>product teams</em> that make these business
+decisions, however, and therefore <strong>it should be the product teams that
+incur the debt</strong>.</p>
+<p>As developers, <strong>we are the ones who give the product guys what they
+want, and we take on the risk of that debt not being repaid</strong>, and
+that's why we are the creditors.</p>
+<p>So what does this mean? It means that, when considering whether to
+create some additional technical debt, it's the product team that should
+have a credit rating. Have they been making quick-win decisions
+excessively over the last six months? Well then, maybe they're at their
+<em>credit limit</em>, and cannot incur any more debt until they have used some
+of their budget on a project that reduces debt.</p>
+<p>How about if a product manager hasn't incurred any debt recently, but
+made a load of bandito decisions on a major project a year ago, and now
+the codebase is starting to feel the impact? Charge them <em>interest</em> on
+the debt, so that now it will cost more of their budget to pay off their
+debt. This is entirely fair, since with a longstanding debt it is often
+the case that more code has been built on top of it in the interim,
+which may have been written well but is inherently unstable due to the
+shaky foundations. Paying off the debt in full will involve refactoring
+this new code, too.</p>
+<p>Of course, you need a fairly enlightened product team if this metaphor
+is to be accepted, not to mention significant buy-in from senior
+management if you are seriously at risk of jeopardising the product
+roadmap by sticking to your guns. However, since the technical debt
+metaphor is something of a meme at the moment, why not suggest it? If
+the technical debt metaphor really does improve understanding on the
+part of non-technical stakeholders, maybe it isn't a hopeless daydream
+that they'll also accept the logical extensions of the idea.</p>
+            
+            
+    <div class="accordion" id="accordion2">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#comments">
+                Comments (4) </a>
+            </div>
+
+            <div id="comments" class="accordion-body collapse">
+                <div class="accordion-inner">
+                    <div class="comments">
+                        <ul>
+                            <li>RyanG said: <p>Excellent metaphor, and I like the finer point you've put on it.</p>
+<p>Having been the lone, inexperienced engineer on a project that's nearing 4
+years old I incurred some heavy technical debt.  Our (still small) group is
+putting the finishing touches on the first release of a total rewrite of this
+product, hopefully significantly reducing our principle.</p></li>
+                            <li>hans said: <p>While I like idea of the product team owning the debt, unfortunately all to
+often they don't pay the price for debt overload, at least not directly in a
+way they understand. Frequently the development team pays the price through
+things like late night support or pager duty due to low-quality rushed into
+production code.</p>
+<p>Like any metaphor, technical debt has its limits.</p></li>
+                            <li>Freud said: <p>There is obviously a lot to know about this.  I think you made some good
+points in Features also.</p></li>
+                            <li>Siobhan Brauner said: <p>A Fantastic blog post, I will be sure to save this in my Reddit account. Have
+a awesome day.</p></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+            <hr/>
+            <aside>
+            <nav>
+            <ul class="articles-timeline">
+                <li class="previous-article">« <a href="./reporting-on-ncover-exclusions.html" title="Previous: Reporting on NCover Exclusions">Reporting on NCover Exclusions</a></li>
+                <li class="next-article"><a href="./code-can-be-beautiful.html" title="Next: Code CAN Be Beautiful">Code CAN Be Beautiful</a> »</li>
+            </ul>
+            </nav>
+            </aside>
+        </div>
+        <section>
+        <div class="span2" style="float:right;font-size:0.9em;">
+            <h4>Published</h4>
+            <time pubdate="pubdate" datetime="2008-02-21T16:07:00+00:00">Feb 21, 2008</time>
+            <h4>Category</h4>
+            <a class="category-link" href="./categories.html#development-ref">development</a>
+<h4>Contact</h4>
+    <a href="http://twitter.com/russgray" title="My Twitter Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-twitter sidebar-social-links"></i></a>
+    <a href="http://github.com/russgray" title="My Github Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-github sidebar-social-links"></i></a>
+    <a href="http://uk.linkedin.com/in/russgray/" title="My LinkedIn Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-linkedin sidebar-social-links"></i></a>
+    <a href="mailto:russgray@gmail.com" title="My Email Address" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-envelope sidebar-social-links"></i></a>
+        </div>
+        </section>
+</div>
+</article>
+                </div>
+                <div class="span1"></div>
+            </div>
+        </div>
+        <div id="push"></div>
+    </div>
+<footer>
+<div id="footer">
+    <ul class="footer-content">
+        <li class="elegant-power">Powered by <a href="http://getpelican.com/" title="Pelican Home Page">Pelican</a>. Theme: <a href="http://oncrashreboot.com/pelican-elegant" title="Theme Elegant Home Page">Elegant</a> by <a href="http://oncrashreboot.com" title="Talha Mansoor Home Page">Talha Mansoor</a></li>
+    </ul>
+</div>
+</footer>            <script src="https://code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+    
+    </body>
+    <!-- Theme: Elegant built for Pelican
+    License : http://oncrashreboot.com/pelican-elegant -->
+</html>

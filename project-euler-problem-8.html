@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8"> 
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Russell Gray" />
+        <meta name="copyright" content="Russell Gray" />
+
+        <link rel="author" href=https://plus.google.com/u/0/102559471807447493728 />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content=", projecteuler, " />
+
+<meta property="og:title" content="Project Euler Problem 8 "/>
+<meta property="og:url" content="./project-euler-problem-8.html" />
+<meta property="og:description" content="Problem 8 &#34;Find the greatest product of five consecutive digits in the 1000-digit number. 73167176531330624919225119674426574742355349194934 96983520312774506326239578318016984801869478851843 85861560789112949495459501737958331952853208805511 12540698747158523863050715693290963295227443043557 66896648950445244523161731856403098711121722383113 62229893423380308135336276614282806444486645238749 30358907296290491560440772390713810515859307960866 70172427121883998797908792274921901699720888093776 65727333001053367881220235421809751254540594752243 52584907711670556013604839586446706324415722155397 53697817977846174064955149290862569321978468622482 83972241375657056057490261407972968652414535100474 82166370484403199890008895243450658541227588666881 16427171479924442928230863465674813919123162824586 17866458359124566529476545682848912883142607690042 24219022671055626321111109370544217506941658960408 07198403850962455444362981230987879927244284909188 84580156166097919133875499200524063689912560717606 05886116467109405077541002256983155200055935729725 71636269561882670428252483600823257530420752963450&#34; The first step here is to find a representation for that fairly humungous number. Obviously it&#39;s …" />
+<meta property="og:site_name" content="Basildon Coder" />
+<meta property="og:article:author" content="Russell Gray" />
+<meta property="og:article:published_time" content="2009-02-09T19:30:00+00:00" />
+<meta name="twitter:title" content="Project Euler Problem 8 ">
+<meta name="twitter:description" content="Problem 8 &#34;Find the greatest product of five consecutive digits in the 1000-digit number. 73167176531330624919225119674426574742355349194934 96983520312774506326239578318016984801869478851843 85861560789112949495459501737958331952853208805511 12540698747158523863050715693290963295227443043557 66896648950445244523161731856403098711121722383113 62229893423380308135336276614282806444486645238749 30358907296290491560440772390713810515859307960866 70172427121883998797908792274921901699720888093776 65727333001053367881220235421809751254540594752243 52584907711670556013604839586446706324415722155397 53697817977846174064955149290862569321978468622482 83972241375657056057490261407972968652414535100474 82166370484403199890008895243450658541227588666881 16427171479924442928230863465674813919123162824586 17866458359124566529476545682848912883142607690042 24219022671055626321111109370544217506941658960408 07198403850962455444362981230987879927244284909188 84580156166097919133875499200524063689912560717606 05886116467109405077541002256983155200055935729725 71636269561882670428252483600823257530420752963450&#34; The first step here is to find a representation for that fairly humungous number. Obviously it&#39;s …">
+
+        <title>Project Euler Problem 8  · Basildon Coder
+</title>
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="./theme/css/pygments.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/tipuesearch/tipuesearch.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/elegant.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/custom.css" media="screen">
+    </head>
+    <body>
+        <div id="content-sans-footer">
+        <div class="navbar navbar-static-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <div class="span1"></div>
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="./"><span class=site-name>Basildon Coder</span></a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav pull-right top-menu">
+                            <li ><a href=".">Home</a></li>
+                            <li ><a href="./categories.html">Categories</a></li>
+                            <li ><a href="./tags.html">Tags</a></li>
+                            <li ><a href="./archives.html">Archives</a></li>
+                            <li><form class="navbar-search" action="./search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span1"></div>
+                <div class="span10">
+<article>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+    <h1><a href="./project-euler-problem-8.html"> Project Euler Problem 8  </a></h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+
+            
+            <p><a href="http://projecteuler.net/index.php?section=problems&amp;id=8"><strong><em>Problem 8</em></strong></a></p>
+<blockquote>
+<p>"Find the greatest product of five consecutive digits in the
+1000-digit number.</p>
+<p>73167176531330624919225119674426574742355349194934
+96983520312774506326239578318016984801869478851843
+85861560789112949495459501737958331952853208805511
+12540698747158523863050715693290963295227443043557
+66896648950445244523161731856403098711121722383113
+62229893423380308135336276614282806444486645238749
+30358907296290491560440772390713810515859307960866
+70172427121883998797908792274921901699720888093776
+65727333001053367881220235421809751254540594752243
+52584907711670556013604839586446706324415722155397
+53697817977846174064955149290862569321978468622482
+83972241375657056057490261407972968652414535100474
+82166370484403199890008895243450658541227588666881
+16427171479924442928230863465674813919123162824586
+17866458359124566529476545682848912883142607690042
+24219022671055626321111109370544217506941658960408
+07198403850962455444362981230987879927244284909188
+84580156166097919133875499200524063689912560717606
+05886116467109405077541002256983155200055935729725
+71636269561882670428252483600823257530420752963450"</p>
+</blockquote>
+<p>The first step here is to find a representation for that fairly humungous
+number. Obviously it's not going to fit into a paltry 32-bit int...but then we
+don't need it to. The problem description requires us to think in terms of
+smaller (5-digit) numbers, not one giant 1000-digit number.</p>
+<p>So, it is sufficient for us to consider the number as an enumerable stream of
+single digits, which we can conveniently represent as <code>IEnumerable&lt;int&gt;</code>. I
+could use a macro to convert the number into a collection initialiser, but
+it's much easier to treat the string as an <code>IEnumerable&lt;char&gt;</code> and let LINQ do
+the heavy lifting.</p>
+<div class="highlight"><pre><span></span><span class="kt">var</span> <span class="n">nums</span> <span class="p">=</span> <span class="n">Enumerable</span><span class="p">.</span><span class="n">AsEnumerable</span><span class="p">(</span>
+    <span class="s">&quot;73167176531330624919225119674426574742355349194934&quot;</span> <span class="p">+</span>
+    <span class="s">&quot;96983520312774506326239578318016984801869478851843&quot;</span> <span class="p">+</span>
+
+    <span class="c1">// ..... etc etc ......</span>
+
+    <span class="s">&quot;05886116467109405077541002256983155200055935729725&quot;</span> <span class="p">+</span>
+    <span class="s">&quot;71636269561882670428252483600823257530420752963450&quot;</span>
+    <span class="p">).</span><span class="n">Select</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">Convert</span><span class="p">.</span><span class="n">ToInt32</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">ToString</span><span class="p">()));</span>
+</pre></div>
+
+
+<p>This gives us an <code>IEnumerable&lt;int&gt;</code> containing every digit in the 1000-digit
+number. Now, the 'obvious' way to solve the problem is to iterate through the
+collection, and at each index multiply the value against the next four
+indexes. A simple loop should deal with it:</p>
+<div class="highlight"><pre><span></span><span class="k">private</span> <span class="k">static</span> <span class="kt">int</span> <span class="nf">SimpleSolver</span><span class="p">(</span><span class="kt">int</span><span class="p">[]</span> <span class="n">ints</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">max</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="p">&lt;</span> <span class="n">ints</span><span class="p">.</span><span class="n">Length</span> <span class="p">-</span> <span class="m">4</span><span class="p">;</span> <span class="n">i</span><span class="p">++)</span>
+    <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">tmp</span> <span class="p">=</span> <span class="n">ints</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="p">*</span> <span class="n">ints</span><span class="p">[</span><span class="n">i</span> <span class="p">+</span> <span class="m">1</span><span class="p">]</span> <span class="p">*</span> <span class="n">ints</span><span class="p">[</span><span class="n">i</span> <span class="p">+</span> <span class="m">2</span><span class="p">]</span>
+            <span class="p">*</span> <span class="n">ints</span><span class="p">[</span><span class="n">i</span> <span class="p">+</span> <span class="m">3</span><span class="p">]</span> <span class="p">*</span> <span class="n">ints</span><span class="p">[</span><span class="n">i</span> <span class="p">+</span> <span class="m">4</span><span class="p">];</span>
+        <span class="n">max</span> <span class="p">=</span> <span class="n">Math</span><span class="p">.</span><span class="n">Max</span><span class="p">(</span><span class="n">max</span><span class="p">,</span> <span class="n">tmp</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">max</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>As ever, though, that's pretty ugly - the loop condition and product
+calculation is tied to the sequence size of 5, and messing with an index
+variable is tedious.</p>
+<p>An alternative approach is to take advantage of LINQ's Skip and Take methods
+to split the problem domain into overlapping 'slices'. Similar to the for loop
+above, the core of the approach is to iterate through the digits, and at each
+digit grab a number of subsequent digits and calculate the product.</p>
+<p>Lets look at the 5-digit slices available from the first 10 digits:</p>
+<div class="highlight"><pre><span></span>  7   3   1   6   7   1   7   6   5   3
+|       73167       |
+    |       31671       |
+        |       16717       |
+            |       67176       |
+                |       71765       |
+                    |       17653       |
+</pre></div>
+
+
+<p>We can use Skip to progressively move the starting index forward, and Take to
+grab the 5 digits we need. So, starting with i=0, each successive slice can be
+sliced from the whole with:</p>
+<div class="highlight"><pre><span></span><span class="kt">var</span> <span class="n">slice</span> <span class="p">=</span> <span class="n">ints</span><span class="p">.</span><span class="n">Skip</span><span class="p">(</span><span class="n">i</span><span class="p">++).</span><span class="n">Take</span><span class="p">(</span><span class="m">5</span><span class="p">);</span>
+</pre></div>
+
+
+<p>To calculate the product of the digits in the slice, we can use the Aggregate
+operation:</p>
+<div class="highlight"><pre><span></span><span class="n">slice</span><span class="p">.</span><span class="n">Aggregate</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="p">(</span><span class="n">curr</span><span class="p">,</span> <span class="n">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="n">curr</span><span class="p">*</span><span class="n">next</span><span class="p">);</span>
+</pre></div>
+
+
+<p>We've met Aggregate before - it's basically a fold, which collapses a sequence
+to a single item by repeatedly applying an operation to an accumulating
+result.</p>
+<p>This can all be wrapped up as an iterator block, like so:</p>
+<div class="highlight"><pre><span></span><span class="k">private</span> <span class="k">static</span> <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="n">EnumerateSlices</span><span class="p">(</span>
+        <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="n">ints</span><span class="p">,</span> <span class="kt">int</span> <span class="n">sliceSize</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="k">true</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="kt">var</span> <span class="n">slice</span> <span class="p">=</span> <span class="n">ints</span><span class="p">.</span><span class="n">Skip</span><span class="p">(</span><span class="n">i</span><span class="p">++).</span><span class="n">Take</span><span class="p">(</span><span class="n">sliceSize</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">slice</span><span class="p">.</span><span class="n">Count</span><span class="p">()</span> <span class="p">&lt;</span> <span class="n">sliceSize</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="k">break</span><span class="p">;</span> <span class="c1">// end</span>
+
+        <span class="k">yield</span> <span class="k">return</span> <span class="n">slice</span><span class="p">.</span><span class="n">Aggregate</span><span class="p">(</span><span class="m">1</span><span class="p">,</span>
+                <span class="p">(</span><span class="n">curr</span><span class="p">,</span> <span class="n">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="n">curr</span><span class="p">*</span><span class="n">next</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Note the termination condition - when we have enumerated every slice, our next
+slice will contain only 4 elements (3, 4, 5, and 0 from the end of the
+sequence) - that's our cue to exit the loop.</p>
+<p>Also note that this approach makes the algorithm trivial to parameterize - it
+will work just as well with slice sizes other than 5.</p>
+<p>This iterator will produce an <code>IEnumerable&lt;int&gt;</code> containing the products of all
+slices, so the final step is to select the largest:</p>
+<div class="highlight"><pre><span></span><span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="n">EnumerateSlices</span><span class="p">(</span><span class="n">nums</span><span class="p">,</span> <span class="m">5</span><span class="p">).</span><span class="n">Max</span><span class="p">();</span>
+</pre></div>
+            
+            
+    <div class="accordion" id="accordion2">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#comments">
+                Comments (3) </a>
+            </div>
+
+            <div id="comments" class="accordion-body collapse">
+                <div class="accordion-inner">
+                    <div class="comments">
+                        <ul>
+                            <li>Sol said: <p>Blast, that didn't go well, posting-wise....</p></li>
+                            <li>Solution for Problem 8 of Project Euler in C# | Geekfun said: <p>[...] at Basildon Coder he has chosen to represent the input as an list of integers, that means he will not have to convert [...]</p></li>
+                            <li>Solution for Problem 8 of Project Euler in C# | Mathblog said: <p>[...] I have chose to represent the input number as a string, and then converting them on the fly.Over at Basildon Coder he has chosen to represent the input as an list of integers, that means he will not have to convert [...]</p></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+            <hr/>
+            <aside>
+            <nav>
+            <ul class="articles-timeline">
+                <li class="previous-article">« <a href="./killing-and-reviving-aspire-one.html" title="Previous: Killing and Reviving an Aspire One">Killing and Reviving an Aspire One</a></li>
+                <li class="next-article"><a href="./marshalling-variable-length-array-from.html" title="Next: Marshalling a Variable-Length Array From Unmanaged Code In C#">Marshalling a Variable-Length Array From Unmanaged Code In C#</a> »</li>
+            </ul>
+            </nav>
+            </aside>
+        </div>
+        <section>
+        <div class="span2" style="float:right;font-size:0.9em;">
+            <h4>Published</h4>
+            <time pubdate="pubdate" datetime="2009-02-09T19:30:00+00:00">Feb 9, 2009</time>
+            <h4>Category</h4>
+            <a class="category-link" href="./categories.html#projecteuler-ref">projecteuler</a>
+<h4>Contact</h4>
+    <a href="http://twitter.com/russgray" title="My Twitter Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-twitter sidebar-social-links"></i></a>
+    <a href="http://github.com/russgray" title="My Github Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-github sidebar-social-links"></i></a>
+    <a href="http://uk.linkedin.com/in/russgray/" title="My LinkedIn Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-linkedin sidebar-social-links"></i></a>
+    <a href="mailto:russgray@gmail.com" title="My Email Address" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-envelope sidebar-social-links"></i></a>
+        </div>
+        </section>
+</div>
+</article>
+                </div>
+                <div class="span1"></div>
+            </div>
+        </div>
+        <div id="push"></div>
+    </div>
+<footer>
+<div id="footer">
+    <ul class="footer-content">
+        <li class="elegant-power">Powered by <a href="http://getpelican.com/" title="Pelican Home Page">Pelican</a>. Theme: <a href="http://oncrashreboot.com/pelican-elegant" title="Theme Elegant Home Page">Elegant</a> by <a href="http://oncrashreboot.com" title="Talha Mansoor Home Page">Talha Mansoor</a></li>
+    </ul>
+</div>
+</footer>            <script src="https://code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+    
+    </body>
+    <!-- Theme: Elegant built for Pelican
+    License : http://oncrashreboot.com/pelican-elegant -->
+</html>

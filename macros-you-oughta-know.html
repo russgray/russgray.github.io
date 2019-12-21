@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8"> 
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Russell Gray" />
+        <meta name="copyright" content="Russell Gray" />
+
+        <link rel="author" href=https://plus.google.com/u/0/102559471807447493728 />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content=", tools, " />
+
+<meta property="og:title" content="Macros: You Oughta Know "/>
+<meta property="og:url" content="./macros-you-oughta-know.html" />
+<meta property="og:description" content="One of the most useful tools available in any decent text editor is the macro recorder, but it&#39;s criminally underused. It seems most people either don&#39;t know the functionality exists, or simply ignore it. This is a shame, since it&#39;s a great timesaver. I don&#39;t know why macros are so …" />
+<meta property="og:site_name" content="Basildon Coder" />
+<meta property="og:article:author" content="Russell Gray" />
+<meta property="og:article:published_time" content="2009-02-06T15:03:00+00:00" />
+<meta name="twitter:title" content="Macros: You Oughta Know ">
+<meta name="twitter:description" content="One of the most useful tools available in any decent text editor is the macro recorder, but it&#39;s criminally underused. It seems most people either don&#39;t know the functionality exists, or simply ignore it. This is a shame, since it&#39;s a great timesaver. I don&#39;t know why macros are so …">
+
+        <title>Macros: You Oughta Know  · Basildon Coder
+</title>
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="./theme/css/pygments.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/tipuesearch/tipuesearch.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/elegant.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/custom.css" media="screen">
+    </head>
+    <body>
+        <div id="content-sans-footer">
+        <div class="navbar navbar-static-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <div class="span1"></div>
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="./"><span class=site-name>Basildon Coder</span></a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav pull-right top-menu">
+                            <li ><a href=".">Home</a></li>
+                            <li ><a href="./categories.html">Categories</a></li>
+                            <li ><a href="./tags.html">Tags</a></li>
+                            <li ><a href="./archives.html">Archives</a></li>
+                            <li><form class="navbar-search" action="./search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span1"></div>
+                <div class="span10">
+<article>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+    <h1><a href="./macros-you-oughta-know.html"> Macros: You Oughta Know  </a></h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+
+            
+            <p>One of the most useful tools available in any decent text editor is the macro
+recorder, but it's criminally underused. It seems most people either don't
+know the functionality exists, or simply ignore it. This is a shame, since
+it's a great timesaver.</p>
+<p>I don't know why macros are so underused. It might be a mindset thing - it can
+take a little while to develop the ability to spot repetitive editing tasks
+quickly (i.e. not when you're 75% of the way through thinking <em>dang, I have to
+do this again?</em>), so maybe many people never quite make the leap.</p>
+<p>It's worth it though, because once you get your eye in you see chances to use
+macros everywhere.</p>
+<p>I had a useful example just yesterday, in which I needed to make a change to a
+colossal switch statement (220 branches! Run the cyclomatic-complexity
+doohickey on THAT!) and had no unit tests to fall back on.</p>
+<p>If I had to modify (and hopefully refactor) such a huge construct I wanted to
+be able to compare before-and-after test results, but I didn't much fancy
+hand-cranking a few hundred unit tests.</p>
+<p>By recording a temporary macro, however, it took just a couple of minutes to
+cover every branch. I've decided to post a detailed walkthrough of the process
+here in the hopes that a fairly simple example will be illustrative for those
+that don't already lean heavily on macros.</p>
+<p>Note that <em>this is not an advanced tutorial</em>. Please refrain from leaving
+snarky comments about how macros are so much more powerful than this - I'm
+just doing some introductory material here :-)</p>
+<p>Here is a representative snippet of the C# source. It's part of a legacy
+permissioning system that, under certain circumstances, needs to check for the
+existence of a permission represented by an enum against a permission table
+containing a string-based hierarchy (application/role/permission). The code I
+was modifying did the appropriate conversion:</p>
+<div class="highlight"><pre><span></span><span class="k">case</span> <span class="n">PermissionKey</span><span class="p">.</span><span class="n">SecurityParameterManagementAdd</span><span class="p">:</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="kt">string</span><span class="p">[]</span> <span class="p">{</span><span class="s">&quot;Security&quot;</span><span class="p">,</span> <span class="s">&quot;ParameterManagement&quot;</span><span class="p">,</span> <span class="s">&quot;Add&quot;</span><span class="p">};</span>
+<span class="p">}</span>
+<span class="k">case</span> <span class="n">PermissionKey</span><span class="p">.</span><span class="n">SecurityRoleManagementAdd</span><span class="p">:</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="kt">string</span><span class="p">[]</span> <span class="p">{</span><span class="s">&quot;Security&quot;</span><span class="p">,</span> <span class="s">&quot;RoleManagement&quot;</span><span class="p">,</span> <span class="s">&quot;Add&quot;</span><span class="p">};</span>
+<span class="p">}</span>
+<span class="k">case</span> <span class="n">PermissionKey</span><span class="p">.</span><span class="n">SecurityRoleManagementModify</span><span class="p">:</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="kt">string</span><span class="p">[]</span> <span class="p">{</span><span class="s">&quot;Security&quot;</span><span class="p">,</span> <span class="s">&quot;RoleManagement&quot;</span><span class="p">,</span> <span class="s">&quot;Modify&quot;</span><span class="p">};</span>
+<span class="p">}</span>
+<span class="k">case</span> <span class="n">PermissionKey</span><span class="p">.</span><span class="n">SecurityUserManagementDelete</span><span class="p">:</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="kt">string</span><span class="p">[]</span> <span class="p">{</span><span class="s">&quot;Security&quot;</span><span class="p">,</span> <span class="s">&quot;UserManagement&quot;</span><span class="p">,</span> <span class="s">&quot;Delete&quot;</span><span class="p">};</span>
+<span class="p">}</span>
+<span class="k">case</span> <span class="n">PermissionKey</span><span class="p">.</span><span class="n">SecurityPermissionManagementAdd</span><span class="p">:</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="kt">string</span><span class="p">[]</span> <span class="p">{</span><span class="s">&quot;Security&quot;</span><span class="p">,</span> <span class="s">&quot;PermissionManagement&quot;</span><span class="p">,</span> <span class="s">&quot;Add&quot;</span><span class="p">};</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>I needed to add a couple of branches to this, but I also wanted to tidy
+up the code by removing the superfluous braces, as a precursor to
+converting it into something a bit more robust and maintainable. I
+wanted unit test coverage to give me confidence that I hadn't mucked up
+some logic and inadvertantly granted admin access to the helpdesk
+trainee role or something.</p>
+<p>So, I copied the entire switch body into Notepad++ (well, vim really,
+but I'll pretend it's Notepad++ for the sake of making this post a bit
+more accessible) and set to work<sup id="fnref-1"><a class="footnote-ref" href="#fn-1">1</a></sup>.</p>
+<p>Before recording my macro, I needed to do a bit of preprocessing to trim
+the code down to just the data I wanted to work with. The following
+steps show the 'find' regexes I used (in each case, the value of the
+replace field was empty, so these are effectively deletes), and the
+effect on the first switch branch from the list above:</p>
+<ol>
+<li>
+<p>Remove opening and closing braces from every switch branch:</p>
+<p><code>^\s+[\{\}]$</code></p>
+<div class="highlight"><pre><span></span><span class="k">case</span> <span class="n">PermissionKey</span><span class="p">.</span><span class="n">SecurityParameterManagementAdd</span><span class="p">:</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="kt">string</span><span class="p">[]</span> <span class="p">{</span><span class="s">&quot;Security&quot;</span><span class="p">,</span> <span class="s">&quot;ParameterManagement&quot;</span><span class="p">,</span> <span class="s">&quot;Add&quot;</span><span class="p">};</span>
+</pre></div>
+
+
+</li>
+<li>
+<p>Remove blanks - TextFX/Edit/Delete Blank Lines</p>
+<div class="highlight"><pre><span></span><span class="k">case</span> <span class="n">PermissionKey</span><span class="p">.</span><span class="n">SecurityParameterManagementAdd</span><span class="p">:</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="kt">string</span><span class="p">[]</span> <span class="p">{</span><span class="s">&quot;Security&quot;</span><span class="p">,</span> <span class="s">&quot;ParameterManagement&quot;</span><span class="p">,</span> <span class="s">&quot;Add&quot;</span><span class="p">};</span>
+</pre></div>
+
+
+</li>
+<li>
+<p>Remove case statements and leading whitespace:</p>
+<p><code>^\s+case\s+</code></p>
+<div class="highlight"><pre><span></span><span class="n">PermissionKey</span><span class="p">.</span><span class="n">SecurityParameterManagementAdd</span><span class="p">:</span>
+<span class="n">PermissionKey</span><span class="p">.</span><span class="n">SecurityParameterManagementAdd</span><span class="p">:</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="kt">string</span><span class="p">[]</span> <span class="p">{</span><span class="s">&quot;Security&quot;</span><span class="p">,</span> <span class="s">&quot;ParameterManagement&quot;</span><span class="p">,</span> <span class="s">&quot;Add&quot;</span><span class="p">};</span>
+</pre></div>
+
+
+</li>
+<li>
+<p>Remove colon from end of case statement:</p>
+<p><code>:$</code></p>
+</li>
+<li>
+<p>Remove return statement and leading whitespace:</p>
+<p><code>^\s+return new string\[\]\s*</code></p>
+</li>
+</ol>
+<p>I ended up with a sequence of couplets looking similar to this one:</p>
+<div class="highlight"><pre><span></span><span class="n">PermissionKey</span><span class="p">.</span><span class="n">SecurityParameterManagementAdd</span><span class="p">{</span><span class="s">&quot;Security&quot;</span><span class="p">,</span> <span class="s">&quot;ParameterManagement&quot;</span><span class="p">,</span> <span class="s">&quot;Add&quot;</span><span class="p">};</span>
+</pre></div>
+
+
+<p>Now the fun starts - lets walk through the process.</p>
+<p>We want to convert the first couplet into a simple unit test fixture, and
+record the process. This will be our macro - the instructions for converting
+one couplet into one unit test. We can then play the macro multiple times to
+convert all the others effortlessly.</p>
+<p>Start by moving the cursor to the start of the line, before the 'P' of
+PermissionKey. This is the start point of the macro, so for the macro to be
+repeatable we must make sure that we finish recording the macro in perfect
+position to run it again, i.e. before the 'P' of PermissionKey for the next
+couplet (column 0 line 3). Hit Ctrl-Shift-R to start recording.</p>
+<p>It is important not to use the mouse when editing - stick to the keyboard.
+It's also important not to record keystrokes that are too specific to one bit
+of code. For instance, don't use the arrow keys to move left and right
+character-by-character, because it won't work on longer or shorter lines.</p>
+<p>Instead, use the Home and End keys to jump to the start or end of the line,
+and hold Ctrl whilst arrowing left or right to move a word at a time instead
+of a character at a time (this is one of the areas where vim's movement
+commands really differentiate it from wannabes like Notepad++...but I
+digress). See the 'Detailed Instructions' section below for more information.</p>
+<p>Assume the original switch body is in a method called 'LookupEnumPermission'.
+The couplet should be edited to look like this (without the linewrap...):</p>
+<div class="highlight"><pre><span></span><span class="na">[Test]</span>
+<span class="k">public</span> <span class="k">void</span> <span class="nf">TestSecurityParameterManagementAdd</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">string</span><span class="p">[]</span> <span class="n">result</span> <span class="p">=</span> <span class="n">LookupEnumPermission</span><span class="p">(</span>
+                <span class="n">PermissionKey</span><span class="p">.</span><span class="n">SecurityParameterManagementAdd</span><span class="p">);</span>
+    <span class="n">Assert</span><span class="p">.</span><span class="n">AreEqual</span><span class="p">(</span><span class="s">&quot;Security&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="m">0</span><span class="p">]);</span>
+    <span class="n">Assert</span><span class="p">.</span><span class="n">AreEqual</span><span class="p">(</span><span class="s">&quot;ParameterManagement&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="m">1</span><span class="p">]);</span>
+    <span class="n">Assert</span><span class="p">.</span><span class="n">AreEqual</span><span class="p">(</span><span class="s">&quot;Add&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="m">2</span><span class="p">]);</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Make sure you finish by moving the cursor into position for the next couplet,
+and hit Ctrl-Shift-R again to stop recording.</p>
+<p>Now, hit Ctrl-Shift-P to play back the macro. If you've done everything right,
+the next couplet should magically format itself into a unit test. Hit Ctrl-
+Shift-P again, and the next couplet will change too. Under the Macro menu,
+select 'Run a macro multiple times...' and you can enter a fixed number of
+iterations, or just apply the macro over and over again until the end of the
+file is reached.</p>
+<p>Finally, you can copy the unit tests into a new or existing test fixture, and
+you're done! In much less time (hopefully) and with fewer errors than if the
+tests had been written one-by-one.</p>
+<p><strong><em>Detailed Instructions:</em></strong></p>
+<p>These are ley-by-key instructions in Notepad++, in case something in the
+description above is unclear. Visual Studio should be similar. Vim will be
+faster once you've learned how, but I'll assume if you use vim you're already
+au fait with this sort of editing :-)</p>
+<ol>
+<li>
+<p>Type [Test], and hit enter to start a new line.</p>
+</li>
+<li>
+<p>Type 'public void Test' and hit Enter.</p>
+</li>
+<li>
+<p>Type '{' and hit Enter, then Tab.</p>
+</li>
+<li>
+<p>Hold Ctrl and tap the right arrow twice to jump over a couple of words and
+place the cursor at the start of the word SecurityParameterManagementAdd, then
+hold Ctrl-Shift and right arrow again to select the word. Ctrl-C to copy, then
+arrow up two lines and paste it after the word 'Test' to create the full
+function name TestSecurityParameterManagementAdd. Type () for the empty
+parameter list.</p>
+</li>
+<li>
+<p>Arrow down two lines and hit Home to jump to the start of the line. Type
+'string[] result = LookupEnumPermission(', then hit End to jump to the end of
+the line and type ');'.</p>
+</li>
+<li>
+<p>Arrow down one line, hit Home, then Tab. Type 'Assert.Equals(' then hit
+Delete to remove the '{'. Hold Ctrl and move right three times (to move the
+cursor just past the comma) and type 'result[0]);' and hit Enter.</p>
+</li>
+<li>
+<p>Repeat variations of step 7 a couple of times to convert the next two
+lines. Remember to use the correct indexes (result[1] and result[2]). Hit
+Enter after the last line and type '}' to close the function body.</p>
+</li>
+<li>
+<p>Arrow down one line and hit Home to place the cursor at the correct start
+position for the next couplet, and end the macro by hitting Ctrl-Shift-R
+again.</p>
+</li>
+</ol>
+<div class="footnote">
+<hr>
+<ol>
+<li id="fn-1">
+<p>I could have just done this in a new file in Visual Studio, but for
+some reason I find VS intolerably slow at running macros once recorded.
+So slow, in fact, that you can watch the cursor laboriously complete
+each step - I wind up thinking it would have been quicker to do it
+manually. That might just be something odd about my VS installation
+though, as no-one else seems to think it's slow.&#160;<a class="footnote-backref" href="#fnref-1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+            
+            
+            <hr/>
+            <aside>
+            <nav>
+            <ul class="articles-timeline">
+                <li class="previous-article">« <a href="./ood-second-coming.html" title="Previous: OOD - The Second Coming">OOD - The Second Coming</a></li>
+                <li class="next-article"><a href="./killing-and-reviving-aspire-one.html" title="Next: Killing and Reviving an Aspire One">Killing and Reviving an Aspire One</a> »</li>
+            </ul>
+            </nav>
+            </aside>
+        </div>
+        <section>
+        <div class="span2" style="float:right;font-size:0.9em;">
+            <h4>Published</h4>
+            <time pubdate="pubdate" datetime="2009-02-06T15:03:00+00:00">Feb 6, 2009</time>
+            <h4>Category</h4>
+            <a class="category-link" href="./categories.html#tools-ref">tools</a>
+<h4>Contact</h4>
+    <a href="http://twitter.com/russgray" title="My Twitter Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-twitter sidebar-social-links"></i></a>
+    <a href="http://github.com/russgray" title="My Github Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-github sidebar-social-links"></i></a>
+    <a href="http://uk.linkedin.com/in/russgray/" title="My LinkedIn Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-linkedin sidebar-social-links"></i></a>
+    <a href="mailto:russgray@gmail.com" title="My Email Address" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-envelope sidebar-social-links"></i></a>
+        </div>
+        </section>
+</div>
+</article>
+                </div>
+                <div class="span1"></div>
+            </div>
+        </div>
+        <div id="push"></div>
+    </div>
+<footer>
+<div id="footer">
+    <ul class="footer-content">
+        <li class="elegant-power">Powered by <a href="http://getpelican.com/" title="Pelican Home Page">Pelican</a>. Theme: <a href="http://oncrashreboot.com/pelican-elegant" title="Theme Elegant Home Page">Elegant</a> by <a href="http://oncrashreboot.com" title="Talha Mansoor Home Page">Talha Mansoor</a></li>
+    </ul>
+</div>
+</footer>            <script src="https://code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+    
+    </body>
+    <!-- Theme: Elegant built for Pelican
+    License : http://oncrashreboot.com/pelican-elegant -->
+</html>

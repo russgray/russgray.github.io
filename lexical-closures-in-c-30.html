@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8"> 
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Russell Gray" />
+        <meta name="copyright" content="Russell Gray" />
+
+        <link rel="author" href=https://plus.google.com/u/0/102559471807447493728 />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content=", coding, " />
+
+<meta property="og:title" content="Lexical Closures in C# 3.0 "/>
+<meta property="og:url" content="./lexical-closures-in-c-30.html" />
+<meta property="og:description" content="There&#39;s a slightly weird article up on Dobbs Code Talk this week, speculating that aggregate functions are &#34;the next big programming language feature&#34; after closures. The slight weirdness comes from the fact that both features have been around for decades, and not just in dusty academic languages either. Still, there&#39;s …" />
+<meta property="og:site_name" content="Basildon Coder" />
+<meta property="og:article:author" content="Russell Gray" />
+<meta property="og:article:published_time" content="2008-07-01T17:49:00+01:00" />
+<meta name="twitter:title" content="Lexical Closures in C# 3.0 ">
+<meta name="twitter:description" content="There&#39;s a slightly weird article up on Dobbs Code Talk this week, speculating that aggregate functions are &#34;the next big programming language feature&#34; after closures. The slight weirdness comes from the fact that both features have been around for decades, and not just in dusty academic languages either. Still, there&#39;s …">
+
+        <title>Lexical Closures in C# 3.0  · Basildon Coder
+</title>
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="./theme/css/pygments.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/tipuesearch/tipuesearch.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/elegant.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/custom.css" media="screen">
+    </head>
+    <body>
+        <div id="content-sans-footer">
+        <div class="navbar navbar-static-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <div class="span1"></div>
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="./"><span class=site-name>Basildon Coder</span></a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav pull-right top-menu">
+                            <li ><a href=".">Home</a></li>
+                            <li ><a href="./categories.html">Categories</a></li>
+                            <li ><a href="./tags.html">Tags</a></li>
+                            <li ><a href="./archives.html">Archives</a></li>
+                            <li><form class="navbar-search" action="./search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span1"></div>
+                <div class="span10">
+<article>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+    <h1><a href="./lexical-closures-in-c-30.html"> Lexical Closures in C# 3.0  </a></h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+
+            
+            <p>There's a <a href="http://dobbscodetalk.com/index.php?show=The-next-big-programming-language-feature-after-closures.html">slightly weird article</a> up on <a href="http://dobbscodetalk.com/">Dobbs Code Talk</a> this week,
+speculating that aggregate functions are "the next big programming language
+feature" after closures. The slight weirdness comes from the fact that both
+features have been around for decades, and not just in dusty academic
+languages either.</p>
+<p>Still, there's some interesting discussion in the comments about whether
+.Net's closures are proper first-class lexically-scoped closures. The answer
+is yes - but with a fun twist.</p>
+<p>The twist has been around for a long time - <a href="http://blogs.msdn.com/brada/default.aspx">Brad Abrams</a> blogged about it
+<a href="http://blogs.msdn.com/brada/archive/2004/08/03/207164.aspx">way back in 2004</a>, for instance - but it's probably worth going over it
+again, since the recent arrival of LINQ and lambda syntax in C# 3.0 will
+presumably lead to more people being bitten by this as the use of closures
+becomes more mainstream.</p>
+<p>A key thing to remember is that C# lambdas are just anonymous delegates in
+skimpy syntax. Behind the scenes the compiler turns them into classes - if you
+were looking at disassembled MSIL you wouldn't be able to tell whether the
+code was written with lambda syntax or anonymous delegate syntax. Therefore,
+the issue discussed by Brad has not gone anywhere.</p>
+<p>Lets revisit the problem, with a 2008 sheen applied (i.e. I'll use lambda
+syntax rather than anonymous delegate syntax). What does the following code
+display?</p>
+<div class="highlight"><pre><span></span><span class="n">Func</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;[]</span> <span class="n">funcs</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Func</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;[</span><span class="m">10</span><span class="p">];</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="p">&lt;</span> <span class="m">10</span><span class="p">;</span> <span class="p">++</span><span class="n">i</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">funcs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="n">i</span> <span class="p">*</span> <span class="n">i</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="n">funcs</span><span class="p">.</span><span class="n">ForEach</span><span class="p">(</span><span class="n">f</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">f</span><span class="p">()));</span>
+</pre></div>
+
+
+<p>If you answered something along the lines of "prints the square of every
+number between 0 and 9" you'd be...wrong. Really, try it out. See?</p>
+<p>Now, a lexical closure is supposed to capture its environment, meaning
+that the lambda stored on the first loop would capture i when i==0, the
+second loop would capture i when i==1, and so on. If this happened, then
+executing all the lambdas would indeed result in the squares of the
+numbers 0-9 being printed. So what gives?</p>
+<p>The problem stems from the fact that the lambda is binding itself to a
+variable that is accessible outside the closure, which is being changed
+in every iteration of the loop. The closure doesn't capture the value of
+i, it captures a reference to i itself, which is mutable.</p>
+<p>You could actually make a case that this is bad code anyway, since it
+gives two responsibilities to the loop index - control the loop, and act
+as data in the closures. If we were being pedantic, we could split the
+responsibilities by creating a new variable, j, to be the closure data
+each iteration, and let i concentrate on being an index:</p>
+<div class="highlight"><pre><span></span><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="p">&lt;</span> <span class="m">10</span><span class="p">;</span> <span class="p">++</span><span class="n">i</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">j</span> <span class="p">=</span> <span class="n">i</span><span class="p">;</span>
+    <span class="n">funcs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="n">j</span> <span class="p">*</span> <span class="n">j</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Lo and behold, the code now works! Pedantry rules! Take a look with
+Reflector or ildasm to see what's going on here. The executive summary
+is that the compiler captures the environment (i in the first example, j
+in the second) by creating a member variable within the class it
+generates for the closure. Previously, since the same instance of i
+lived for the entire duration of the loop, only one instance of the
+generated class was created and shared. Now, however, a new instance of
+the generated class is created in each iteration of the loop (since j is
+scoped within the loop body and thus we have a new j every time round).
+Thus, the data is not shared and we get the expected output.</p>
+<p>There are two important points to consider here:</p>
+<ol>
+<li>
+<p>The problem goes away if you write code more declaratively. Do away
+with the clunky for loop and everything works OK.</p>
+<div class="highlight"><pre><span></span><span class="n">Enumerable</span><span class="p">.</span><span class="n">Range</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">10</span><span class="p">).</span><span class="n">Select</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span> <span class="p">*</span> <span class="n">x</span><span class="p">);</span>
+</pre></div>
+
+
+</li>
+<li>
+<p>It isn't always bad that multiple closures can capture a reference -
+since one closure can 'see' updates made to the shared data by another
+closure, you could use this as a coordination mechanism.</p>
+</li>
+</ol>
+<p>This is not an issue that's going to crop up every day - the example
+above is fairly contrived - but knowing about it will save some painful
+debugging sessions when inevitably you do run into it. The fix is always
+to take a local copy of the mutable data to coerce the compiler into
+generating code that creates multiple instances of the class generated
+to represent the closure.</p>
+<p>Simple, yes? ;-)</p>
+            
+            
+    <div class="accordion" id="accordion2">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#comments">
+                Comments (3) </a>
+            </div>
+
+            <div id="comments" class="accordion-body collapse">
+                <div class="accordion-inner">
+                    <div class="comments">
+                        <ul>
+                            <li>mabra said: <p>Hi !</p>
+<p>I am just dealing with captured variables in creating Tasks and came onto the
+same idea (using a local variable, copying the loop vars value).</p>
+<p>Just don't work and return different results on each run!</p>
+<p>BTW, I find lambda's too abstract and cannot understand them. So you also?</p>
+<p>Your code:</p>
+<div class="highlight"><pre><span></span><span class="n">funcs</span><span class="p">.</span><span class="n">ForEach</span><span class="p">(</span><span class="n">f</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">f</span><span class="p">()));</span>
+</pre></div>
+
+
+<p>does not compile ....
+(No overload for method 'ForEach' takes '1' arguments)</p>
+<p>br--mabra</p></li>
+                            <li>Mark Giese said: <p>Don't know where "funcs.ForEach" is coming from, but the following replacement
+works.  The main point of the article is important and certainly not
+invalidated by the typo.</p>
+<div class="highlight"><pre><span></span><span class="k">foreach</span> <span class="p">(</span><span class="n">Func</span> <span class="n">f</span> <span class="k">in</span> <span class="n">funcs</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">f</span><span class="p">());</span>
+<span class="p">}</span>
+</pre></div></li>
+                            <li>Russ Gray said: <p>Yeah, at some point I wrote the code using List&lt;T>, which <a href="http://msdn.microsoft.com/en-us/library/bwabdf9z.aspx">does</a> have a
+ForEach method, but for some reason switched it to an array for this blog post
+without re-testing it. My bad. Either change funcs to a List&lt;Func> or
+implement ForEach as an extension for IEnumerable, which is trivial. Or, as
+you say, use a normal loop.</p></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+            <hr/>
+            <aside>
+            <nav>
+            <ul class="articles-timeline">
+                <li class="previous-article">« <a href="./project-euler-problem-5.html" title="Previous: Project Euler Problem 5">Project Euler Problem 5</a></li>
+                <li class="next-article"><a href="./comment-discontent.html" title="Next: Comment Discontent">Comment Discontent</a> »</li>
+            </ul>
+            </nav>
+            </aside>
+        </div>
+        <section>
+        <div class="span2" style="float:right;font-size:0.9em;">
+            <h4>Published</h4>
+            <time pubdate="pubdate" datetime="2008-07-01T17:49:00+01:00">Jul 1, 2008</time>
+            <h4>Category</h4>
+            <a class="category-link" href="./categories.html#coding-ref">coding</a>
+<h4>Contact</h4>
+    <a href="http://twitter.com/russgray" title="My Twitter Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-twitter sidebar-social-links"></i></a>
+    <a href="http://github.com/russgray" title="My Github Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-github sidebar-social-links"></i></a>
+    <a href="http://uk.linkedin.com/in/russgray/" title="My LinkedIn Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-linkedin sidebar-social-links"></i></a>
+    <a href="mailto:russgray@gmail.com" title="My Email Address" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-envelope sidebar-social-links"></i></a>
+        </div>
+        </section>
+</div>
+</article>
+                </div>
+                <div class="span1"></div>
+            </div>
+        </div>
+        <div id="push"></div>
+    </div>
+<footer>
+<div id="footer">
+    <ul class="footer-content">
+        <li class="elegant-power">Powered by <a href="http://getpelican.com/" title="Pelican Home Page">Pelican</a>. Theme: <a href="http://oncrashreboot.com/pelican-elegant" title="Theme Elegant Home Page">Elegant</a> by <a href="http://oncrashreboot.com" title="Talha Mansoor Home Page">Talha Mansoor</a></li>
+    </ul>
+</div>
+</footer>            <script src="https://code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+    
+    </body>
+    <!-- Theme: Elegant built for Pelican
+    License : http://oncrashreboot.com/pelican-elegant -->
+</html>

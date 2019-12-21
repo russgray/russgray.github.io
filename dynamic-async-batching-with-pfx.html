@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8"> 
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Russell Gray" />
+        <meta name="copyright" content="Russell Gray" />
+
+        <link rel="author" href=https://plus.google.com/u/0/102559471807447493728 />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content=", coding, " />
+
+<meta property="og:title" content="Dynamic Async Batching with PFX "/>
+<meta property="og:url" content="./dynamic-async-batching-with-pfx.html" />
+<meta property="og:description" content="The PFX Team blog has been posting some excellent articles recently on the subject of task batching using the June 2008 CTP release of the Task Parallel Library. It&#39;s really cool to see some of these techniques abstracted properly in .Net, and I hope it eventually becomes part of the …" />
+<meta property="og:site_name" content="Basildon Coder" />
+<meta property="og:article:author" content="Russell Gray" />
+<meta property="og:article:published_time" content="2008-08-08T17:41:00+01:00" />
+<meta name="twitter:title" content="Dynamic Async Batching with PFX ">
+<meta name="twitter:description" content="The PFX Team blog has been posting some excellent articles recently on the subject of task batching using the June 2008 CTP release of the Task Parallel Library. It&#39;s really cool to see some of these techniques abstracted properly in .Net, and I hope it eventually becomes part of the …">
+
+        <title>Dynamic Async Batching with PFX  · Basildon Coder
+</title>
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="./theme/css/pygments.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/tipuesearch/tipuesearch.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/elegant.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/custom.css" media="screen">
+    </head>
+    <body>
+        <div id="content-sans-footer">
+        <div class="navbar navbar-static-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <div class="span1"></div>
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="./"><span class=site-name>Basildon Coder</span></a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav pull-right top-menu">
+                            <li ><a href=".">Home</a></li>
+                            <li ><a href="./categories.html">Categories</a></li>
+                            <li ><a href="./tags.html">Tags</a></li>
+                            <li ><a href="./archives.html">Archives</a></li>
+                            <li><form class="navbar-search" action="./search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span1"></div>
+                <div class="span10">
+<article>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+    <h1><a href="./dynamic-async-batching-with-pfx.html"> Dynamic Async Batching with PFX  </a></h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+
+            
+            <p>The <a href="http://blogs.msdn.com/pfxteam/default.aspx">PFX Team blog</a> has been posting some excellent articles recently on
+the subject of <a href="http://blogs.msdn.com/pfxteam/archive/2008/08/05/8835612.aspx">task batching</a> using the June 2008 CTP release of the Task
+Parallel Library. It's really cool to see some of these techniques abstracted
+properly in .Net, and I hope it eventually becomes part of the core libraries.</p>
+<p>I've been playing around a bit recently with the June CTP in the context of
+batching up web service calls, as that's something I do quite a lot. One
+particular problem that comes up occasionally is a two-stage series of
+requests to download a complete set of paged data. I might do this if I wanted
+to download an entire discussion thread, for instance, or a large account
+statement from my online bank.</p>
+<p>Typically in this situation the web service will limit the number of records I
+can retrieve in one request, and allow me to specify start and count
+parameters to the request. The response will also include a total record
+count, so I know how much data there is.</p>
+<p>The normal use case for this is to request the first page of data, and use the
+total record count to display a list of page links that my user can click on
+to navigate the data or jump to any page. In my case, however, I want ALL the
+data as quickly as possible.</p>
+<p>So, imagine a situation where I am using a service that lets me download a
+maximum of 200 records per request. My first step is to request the maximum
+200 records starting from index 0, i.e. the first page of data. In the
+response will be a total record count - if that number is equal to the number
+of records I got back (i.e. &lt;= 200) I've got everything in one hit and can
+stop. But what if the total record count is, say, 1000? I need to make four
+more requests (since I've already got records 1-200, I have 800 more to get in
+batches of 200 each).</p>
+<p>Naturally I want to do this asynchronously, using as few resources as I can.
+This means all webservice calls should be using the APM pattern (thus using IO
+completion ports, and not consuming worker threads from the thread pool or
+creating my own threads) and, preferably, not blocking anywhere except when I
+actually need some data before continuing.</p>
+<p>The two-stage process can be successfully captured asynchronously by combining
+a future and a continuation. I encapsulate the initial request in a Future
+object (which is a subclass of Task), and handle the check-record-count-and-
+get-more-records-if-required logic in the continuation. The code for this
+basically looks as follows:</p>
+<div class="highlight"><pre><span></span><span class="k">public</span> <span class="n">Future</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">Item</span><span class="p">&gt;&gt;</span> <span class="n">GetAllItemsAsync</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">var</span> <span class="n">f</span> <span class="p">=</span> <span class="n">Create</span><span class="p">&lt;</span><span class="n">GetItemsResponse</span><span class="p">&gt;(</span>
+            <span class="n">ac</span> <span class="p">=&gt;</span> <span class="n">Service</span><span class="p">.</span><span class="n">BeginGetItems</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">ac</span><span class="p">,</span> <span class="k">null</span><span class="p">),</span>
+            <span class="n">Service</span><span class="p">.</span><span class="n">EndGetItems</span><span class="p">);</span>
+
+    <span class="kt">var</span> <span class="n">start</span> <span class="p">=</span> <span class="m">200</span><span class="p">;</span>
+    <span class="kt">var</span> <span class="n">resultFuture</span> <span class="p">=</span> <span class="n">f</span><span class="p">.</span><span class="n">ContinueWith</span><span class="p">(</span>
+        <span class="n">r</span> <span class="p">=&gt;</span> <span class="p">{</span> <span class="cm">/* Batch retrieval here... */</span><span class="p">});</span>
+    <span class="k">return</span> <span class="n">resultFuture</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>In order to support the APM pattern neatly, I'm using the following
+method <a href="http://blogs.msdn.com/pfxteam/archive/2008/03/16/8272833.aspx">from the PFX
+blog</a>:</p>
+<div class="highlight"><pre><span></span><span class="k">private</span> <span class="k">static</span> <span class="n">Future</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="n">Create</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;(</span>
+        <span class="n">Action</span><span class="p">&lt;</span><span class="n">AsyncCallback</span><span class="p">&gt;</span> <span class="n">beginFunc</span><span class="p">,</span>
+        <span class="n">Func</span><span class="p">&lt;</span><span class="n">IAsyncResult</span><span class="p">,</span> <span class="n">T</span><span class="p">&gt;</span> <span class="n">endFunc</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">var</span> <span class="n">f</span> <span class="p">=</span> <span class="n">Future</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;.</span><span class="n">Create</span><span class="p">();</span>
+    <span class="n">beginFunc</span><span class="p">(</span><span class="n">iar</span> <span class="p">=&gt;</span>
+        <span class="p">{</span>
+            <span class="k">try</span>
+            <span class="p">{</span>
+                <span class="n">f</span><span class="p">.</span><span class="n">Value</span> <span class="p">=</span> <span class="n">endFunc</span><span class="p">(</span><span class="n">iar</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="n">e</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">f</span><span class="p">.</span><span class="n">Exception</span> <span class="p">=</span> <span class="n">e</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">});</span>
+    <span class="k">return</span> <span class="n">f</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>This could be coded as an extension method, though I haven't bothered
+yet as I'm hopeful this immensely useful snippet will be integrated into
+the library itself.</p>
+<p>Now I need to make a number of calls to get the rest of the data, so I
+loop until I've made the required number of async service calls:</p>
+<div class="highlight"><pre><span></span><span class="kt">var</span> <span class="n">resultFuture</span> <span class="p">=</span> <span class="n">f</span><span class="p">.</span><span class="n">ContinueWith</span><span class="p">(</span><span class="n">r</span> <span class="p">=&gt;</span>
+    <span class="p">{</span>
+        <span class="kt">var</span> <span class="n">items</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ConcurrentQueue</span><span class="p">&lt;</span><span class="n">Item</span><span class="p">&gt;();</span>
+        <span class="kt">var</span> <span class="n">handles</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">WaitHandle</span><span class="p">&gt;();</span>
+
+        <span class="k">while</span> <span class="p">(</span><span class="n">start</span> <span class="p">&lt;</span> <span class="n">r</span><span class="p">.</span><span class="n">Value</span><span class="p">.</span><span class="n">TotalRecordCount</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="kt">var</span> <span class="n">asyncResult</span> <span class="p">=</span> <span class="n">Service</span><span class="p">.</span><span class="n">BeginGetItems</span><span class="p">(</span><span class="m">200</span><span class="p">,</span>
+                <span class="n">ar</span> <span class="p">=&gt;</span> <span class="n">Service</span><span class="p">.</span><span class="n">EndGetItems</span><span class="p">(</span><span class="n">ar</span><span class="p">).</span><span class="n">Items</span>
+                    <span class="p">.</span><span class="n">ForEach</span><span class="p">(</span><span class="n">items</span><span class="p">.</span><span class="n">Enqueue</span><span class="p">),</span> <span class="k">null</span><span class="p">);</span>
+
+            <span class="n">handles</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="n">asyncResult</span><span class="p">.</span><span class="n">AsyncWaitHandle</span><span class="p">);</span>
+            <span class="n">start</span> <span class="p">+=</span> <span class="m">200</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="n">handles</span><span class="p">.</span><span class="n">ForEach</span><span class="p">(</span><span class="n">h</span> <span class="p">=&gt;</span> <span class="n">h</span><span class="p">.</span><span class="n">WaitOne</span><span class="p">());</span>
+        <span class="k">return</span> <span class="n">items</span><span class="p">.</span><span class="n">ToList</span><span class="p">();</span>
+    <span class="p">});</span>
+</pre></div>
+
+
+<p>I'm about 85% happy with this as an approach. I'm not completely happy,
+however, because of the WaitOne calls, which mean that I'm blocking on a
+threadpool thread until all the calls complete. Given that this is all
+wrapped up in a future, I may not actually need to access the data until
+well after the calls have completed, in which case I am wastefully
+consuming a threadpool thread for some period of time. So the $64,000
+question is, how do I get rid of it? I'm sure there's a way to do it,
+but my brain has gone on a protest march about all the time I'm forcing
+it to spend thinking about this stuff.</p>
+            
+            
+            <hr/>
+            <aside>
+            <nav>
+            <ul class="articles-timeline">
+                <li class="previous-article">« <a href="./comment-discontent.html" title="Previous: Comment Discontent">Comment Discontent</a></li>
+                <li class="next-article"><a href="./ubuntu-xmonad-and-ode-to-apt.html" title="Next: Ubuntu, Xmonad, and an Ode to Apt">Ubuntu, Xmonad, and an Ode to Apt</a> »</li>
+            </ul>
+            </nav>
+            </aside>
+        </div>
+        <section>
+        <div class="span2" style="float:right;font-size:0.9em;">
+            <h4>Published</h4>
+            <time pubdate="pubdate" datetime="2008-08-08T17:41:00+01:00">Aug 8, 2008</time>
+            <h4>Category</h4>
+            <a class="category-link" href="./categories.html#coding-ref">coding</a>
+<h4>Contact</h4>
+    <a href="http://twitter.com/russgray" title="My Twitter Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-twitter sidebar-social-links"></i></a>
+    <a href="http://github.com/russgray" title="My Github Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-github sidebar-social-links"></i></a>
+    <a href="http://uk.linkedin.com/in/russgray/" title="My LinkedIn Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-linkedin sidebar-social-links"></i></a>
+    <a href="mailto:russgray@gmail.com" title="My Email Address" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-envelope sidebar-social-links"></i></a>
+        </div>
+        </section>
+</div>
+</article>
+                </div>
+                <div class="span1"></div>
+            </div>
+        </div>
+        <div id="push"></div>
+    </div>
+<footer>
+<div id="footer">
+    <ul class="footer-content">
+        <li class="elegant-power">Powered by <a href="http://getpelican.com/" title="Pelican Home Page">Pelican</a>. Theme: <a href="http://oncrashreboot.com/pelican-elegant" title="Theme Elegant Home Page">Elegant</a> by <a href="http://oncrashreboot.com" title="Talha Mansoor Home Page">Talha Mansoor</a></li>
+    </ul>
+</div>
+</footer>            <script src="https://code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+    
+    </body>
+    <!-- Theme: Elegant built for Pelican
+    License : http://oncrashreboot.com/pelican-elegant -->
+</html>

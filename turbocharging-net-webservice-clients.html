@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8"> 
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Russell Gray" />
+        <meta name="copyright" content="Russell Gray" />
+
+        <link rel="author" href=https://plus.google.com/u/0/102559471807447493728 />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content=".net, coding, software engineering, coding, " />
+
+<meta property="og:title" content="Turbocharging .Net Webservice Clients "/>
+<meta property="og:url" content="./turbocharging-net-webservice-clients.html" />
+<meta property="og:description" content="Since the first version of .Net and its associated toolset, Microsoft have sought to make it easy to write SOAP services and SOAP clients. And, generally, they have succeeded quite well. Whilst the open-source world has tended to prefer the simpler REST approach, MS (and Sun, and Apache) have done …" />
+<meta property="og:site_name" content="Basildon Coder" />
+<meta property="og:article:author" content="Russell Gray" />
+<meta property="og:article:published_time" content="2007-12-15T19:51:00+00:00" />
+<meta name="twitter:title" content="Turbocharging .Net Webservice Clients ">
+<meta name="twitter:description" content="Since the first version of .Net and its associated toolset, Microsoft have sought to make it easy to write SOAP services and SOAP clients. And, generally, they have succeeded quite well. Whilst the open-source world has tended to prefer the simpler REST approach, MS (and Sun, and Apache) have done …">
+
+        <title>Turbocharging .Net Webservice Clients  · Basildon Coder
+</title>
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="./theme/css/pygments.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/tipuesearch/tipuesearch.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/elegant.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/custom.css" media="screen">
+    </head>
+    <body>
+        <div id="content-sans-footer">
+        <div class="navbar navbar-static-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <div class="span1"></div>
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="./"><span class=site-name>Basildon Coder</span></a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav pull-right top-menu">
+                            <li ><a href=".">Home</a></li>
+                            <li ><a href="./categories.html">Categories</a></li>
+                            <li ><a href="./tags.html">Tags</a></li>
+                            <li ><a href="./archives.html">Archives</a></li>
+                            <li><form class="navbar-search" action="./search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span1"></div>
+                <div class="span10">
+<article>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+    <h1><a href="./turbocharging-net-webservice-clients.html"> Turbocharging .Net Webservice Clients  </a></h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+
+            
+            <p>Since the first version of .Net and its associated toolset, Microsoft have
+sought to make it easy to write <a href="http://en.wikipedia.org/wiki/SOAP">SOAP</a> services and SOAP clients. And,
+generally, they have succeeded quite well. Whilst the open-source world has
+tended to prefer the simpler <a href="http://en.wikipedia.org/wiki/Representational_State_Transfer">REST</a> approach, MS (and Sun, and Apache) have
+done an admirable job of taking the large, complex SOAP protocol and making it
+reasonably straightforward to work with most of the time.</p>
+<p>One of the areas in which things get somewhat less straightforward is high
+performance. Granted, most web services don't have particularly eye-popping
+requirements in terms of hits or transactions, but occasionally you find an
+exception. <a href="http://www.betfair.com">Betfair</a>, for instance, have an <a href="http://bdp.betfair.com">API</a> that has peak rates in
+excess of 13,000 requests <em>per second</em>, many of which hit the database, with
+individual users making tens or even hundreds of requests per second.
+Betfair's data changes at a breathtaking rate and there is a perceived
+advantage to getting hold of up-to- the-millisecond information.</p>
+<p>To put that in context, the <a href="http://en.wikipedia.org/wiki/Digg_effect">Digg Effect</a> is estimated to peak at around
+6K-8K hits per hour as I write in December 2007, which translates to
+a piffling couple of hits per second (8000 / 60 / 60 = 2.2). Even a more
+extreme prediction of <a href="http://creativebits.org/webdev/surviving_the_digg_effect">50K hits per hour</a> is only around 14 hits per
+second, so we're talking about handling three orders of magnitude more
+requests than Digg generates.</p>
+<p>If you are writing a .Net client and want to get the best out of this sort of
+situation, you are hamstrung unless you learn a few tricks. Read on to learn
+five of the best. I'll be using the Betfair API as an example throughout, but
+the techniques apply to any high-performance web service where the usage
+profile involves frequent small (&lt;1KB) SOAP requests.</p>
+<p>For those who normally turn to the back of the book for answers and don't
+really care about the whys and wherefores, here's the executive summary:</p>
+<ol>
+<li>
+<p><strong>Switch off Expect 100 Continue</strong>. This should be done in your App.config
+file (see below).</p>
+</li>
+<li>
+<p><strong>Switch off Nagle's Algorithm</strong>. This should be done in your App.config
+file (see below).</p>
+</li>
+<li>
+<p><strong>Use multithreading</strong>. Unfortunately this is not a simple configuration
+file setting, it is a fundamental part of your application design.</p>
+</li>
+<li>
+<p><strong>Remove the maximum connection bottleneck</strong>. This should be done in your
+App.config file (see below). This is <em>vital</em> if your application is
+multithreaded.</p>
+</li>
+<li>
+<p><strong>Use gzip compression</strong>. .Net 2 has this built-in if you switch it on;
+.Net 1.1 needs a helping hand.</p>
+</li>
+</ol>
+<p>The XML snippet that configures these settings is shown below, and
+should be added to your App.config file:</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;system.net&gt;</span>
+    <span class="nt">&lt;connectionManagement&gt;</span>
+        <span class="nt">&lt;add</span> <span class="na">address=</span><span class="s">&quot;*&quot;</span> <span class="na">maxconnection=</span><span class="s">&quot;20&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/connectionManagement&gt;</span>
+    <span class="nt">&lt;settings&gt;</span>
+        <span class="nt">&lt;servicePointManager</span> <span class="na">expect100Continue=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;servicePointManager</span> <span class="na">useNagleAlgorithm=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/settings&gt;</span>
+<span class="nt">&lt;/system.net&gt;</span>
+</pre></div>
+
+
+<p>For those who share my distrust of <a href="./coding-by-convention.html">unexplained sorcery</a>, here's the gory
+details.</p>
+<p><strong><em>Expect-100 the Unexpected</em></strong></p>
+<p><a href="http://www.ietf.org/rfc/rfc2616.txt">RFC 2616</a> (the specification for HTTP 1.1) includes a request header and
+response code that together are known as 'Expect 100 Continue'. When using the
+Expect header, the client will send the request headers and wait for the
+server to respond with a response code of 100 <em>before</em> sending the request
+body, i.e. splitting the request into two parts with a whole round-trip in-
+between.</p>
+<p>Why would you ever want to do this? Well, imagine you are trying to upload a
+101MB file to a web server with a 100MB file size limit. If you just submit
+the whole thing as one request, you'll sit there for ages waiting for the
+upload to complete, only to have it fail right at the last minute when you hit
+the 100MB limit. Using Expect 100 Continue, you submit just the headers
+initially, and wait for the server's permission to continue; in our example,
+this gives the server a chance to look at the Content-Length parameter and
+identify that your file is too big, and return an error code instead of
+permission to continue. This way you know the upload will fail, without
+needlessly transmitting a single byte of the large file.</p>
+<p>By default, the .Net Framework uses the Expect 100 Continue approach. Most
+SOAP requests are not, however, anywhere near 101MB in size, and a server
+designed to deal with thousands of requests per second is not likely to be
+returning anything other than 100 Continue if the Expect header is sent.
+Depending on latency, the round-trip penalty may be unacceptable.</p>
+<p>For example, Betfair's Australian exchange (physically located in Australia)
+contains all their Australian markets, so if you're in the UK and want to
+trade on the Australian Open tennis you're subject to a round-trip time of
+about 350ms. If you allow your requests to be split into two, then you have
+two round-trips, so your request will take 700ms plus processing time.</p>
+<p><img alt="Expect-100 on" src="./images/expect100_on.png"></p>
+<p>You don't want that, so switch it off. Note that the request headers and body
+are still sent separately, but the latter is no longer dependent on the
+response to the former (so they are shown as sent together in this diagram).</p>
+<p><img alt="Expect-100 off" src="./images/expect100_off.png"></p>
+<p>The setting corresponding to this in the XML snippet above is:</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;servicePointManager</span> <span class="na">expect100Continue=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+</pre></div>
+
+
+<p><strong><em>Nagle's Algorithm</em></strong></p>
+<p><a href="http://en.wikipedia.org/wiki/Nagle%27s_algorithm">Nagle's algorithm</a> is a low-level algorithm that tries to minimise the
+number of TCP packets on the network, by trying to fill a TCP packet before
+sending it. TCP packets have a 40-byte header, so if you try to send a single
+byte you incur a lot of overhead as you are sending 41 bytes to represent 1
+byte of information. This 4000% overhead causes chaos on congested networks. A
+TCP packet size is configurable, but is often set to 1500 bytes, and so
+Nagle's algorithm will buffer outgoing data in an attempt to send a small
+number of full packets rather than a huge amount of mostly empty packets.</p>
+<p>Nagle's algorithm can be paraphrased in English like this:</p>
+<p><em>If I have less than a full packet's worth of data, and I have not yet
+received an acknowledgement from the server for the last data I sent, I will
+buffer new outbound data. When I get a server acknowledgement or have enough
+data to fill a whole packet, I will send the data across the network.</em></p>
+<p>Now, with our use case (frequent SOAP requests, each &lt;1KB) a request doesn't
+fill a packet, so requests are subject to buffering. Furthermore, as explained
+above, even with Expect 100 Continue switched off the request headers are
+still sent separately from the request body, so the body of the first request
+is buffered until the request headers reach their destination and the server
+sends back a TCP ACK.</p>
+<p>Let us again consider a UK client communicating with Betfair's Australian API.
+Your application issues two requests one for current prices and one for your
+current market position (Req1 and Req2 in the diagram below). Together, both
+these requests are less than 1500 bytes. The headers for the first request are
+transmitted, but Nagle's algorithm buffers the request body, plus the whole
+second request, since they don't fill a TCP packet.</p>
+<p>Due to the round trip latency, the acknowledgment of the first request's
+headers is not received for 350ms, so that is how long the requests are
+buffered for. When the requests do get sent, they too are subject to 350ms
+latency around the world, so again you end up with around 700ms added to each
+of your Australian API calls.</p>
+<p><img alt="Nagle on" src="./images/nagle_on.png"></p>
+<p>Without Nagle, we dispense with the buffering and send out our smaller
+packets immediately, saving a round-trip.</p>
+<p><img alt="Nagle off" src="./images/nagle_off.png"></p>
+<p>One word of warning - disabling Nagle can cause problems if you are on a
+highly-congested network or have overworked routers and switches, since it
+increases the number of network packets flying around. If you don't own your
+network, or are deploying your web service client to a large number of users,
+you might want to think about this carefully as you won't be popular if your
+software saturates the network. The setting corresponding to this in the XML
+snippet above is:</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;servicePointManager</span> <span class="na">useNagleAlgorithm=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+</pre></div>
+
+
+<p><strong><em>Happenin' Threads</em></strong></p>
+<p>This one should be pretty obvious. A single-threaded application can
+only do one thing at a time. A multi-threaded application can do
+multiple things at a time. So if, for example, you want to display some
+information and need to collate the results from four web service
+requests to build your view, calling them one after another is going to
+be slower than calling them all simultaneously (not to mention freezing
+your UI if you're writing a WinForms application and making calls on the
+UI thread).</p>
+<p>Explaining how to design and write multi-threaded .Net applications is
+way out of scope for this blog post, but any time you spend reading and
+learning about it either online or in books is going to be time
+well-spent. Go on, do it now. <strong>Also read the next section</strong>, otherwise
+your application will not get as much benefit as you expect.</p>
+<p><strong><em>Walk and Chew Gum</em></strong></p>
+<p>.Net, by default, has a bottleneck on simultaneous web service calls
+against the same host. This one catches loads of people out - they write
+clever multi-threaded applications that issue many, many requests, and
+never realise that beneath the application layer a lot of their requests
+are called in sequence rather than in parallel.</p>
+<p>Tsk, damn Microsoft for unnecessarily crippling their framework, right?
+Well no, actually, since this is an example of Microsoft following
+standards and recommendations and is to be applauded, lest they go back
+to their old ways of "embrace and extend". The recommendation in
+question is from <a href="http://www.ietf.org/rfc/rfc2616.txt">RFC 2616</a> again,
+and states:</p>
+<blockquote>
+<p>A single-user client SHOULD NOT maintain more than 2 connections with
+any server or proxy.</p>
+<p><cite>(<em>RFC 2616</em>, section 8.1.4)</cite></p>
+</blockquote>
+<p>.Net uses HTTP 1.1 persistent connections by default (this is a good
+thing - you don't want to incur the cost of establishing a TCP
+connection with every request,<em>especially</em> if you have long round-trip
+times as well since it involves multiple round-trips), so MS have done
+the right thing and restricted processes to two simultaneous connections
+by default.</p>
+<p>What does this mean for your application? It means that if you want to
+make 20 requests, and do so on 20 threads as recommended above, under
+the hood .Net only makes two at a time and queues the rest up. Therefore
+your 20 threads are wasted, as your throughput is no better than if
+you'd only created two threads, and innocent web servers are protected
+from overzealous clients.</p>
+<p>When we know that we're talking to an insane city-flattening
+Godzilla-on-steroids of a server, however, the two-connection limit is
+unreasonable and we can ramp-up safely. The corresponding setting in the
+XML snippet above is:</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;connectionManagement&gt;</span>
+    <span class="nt">&lt;add</span> <span class="na">address=</span><span class="s">&quot;*&quot;</span> <span class="na">maxconnection=</span><span class="s">&quot;20&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/connectionManagement&gt;</span>
+</pre></div>
+
+
+<p>Sorted. You can, of course, change the number 20 to whatever is
+appropriate for your application.</p>
+<p><strong>Warning:</strong> Do not, under any circumstances, get into the habit of
+configuring this for all your web service applications. With all 20
+threads issuing one request per second, you are exceeding the
+14-request-per-second Digg Effect example I used above; with this
+technique and enough bandwidth your application will be quite capable of
+taking a lot of websites down, and those that manage to weather the
+storm will probably blacklist your IP address and/or close your account.
+<em>Only use this if you are absolutely sure the server is up to it and
+such aggressive behaviour is permitted by the owners</em>.</p>
+<p><strong><em>Small is Beautiful</em></strong></p>
+<p>The last step is to enable compression on your responses. Depending on
+the nature of the service you are using, the value of this tip may vary,
+but it's likely to be of some benefit given the number of requests per
+second we are issuing. Of course, it is dependent on the web service
+actually supporting compression, but it's been a standard feature of
+just about every web server for years, so this shouldn't be a problem.</p>
+<p>Lets look at a worked example. The getMarketPrices response from the
+Betfair API is about 30KB of XML. If, as above, we have 20 threads
+issuing one request per second, and each thread is interested in prices
+from a different market, that's about 600KB of data per second, which
+will quite easily saturate a lot of home broadband connections.</p>
+<p>With gzip compression, however, each response comes down to about 5KB
+(XML compresses very well, generally, since it is just text with a lot
+of repetition and whitespace), so the 20 threads now demand a more
+manageable 100KB per second.</p>
+<p>Great. So how do we use it? In .Net 2.0 and above it's very easy - just set
+the EnableDecompression property of your web service proxy object (ignore
+IntelliSense, which incorrectly claims the value is true by default; it's
+actually false by default, <a href="http://msdn2.microsoft.com/en-us/library/system.web.services.protocols.httpwebclientprotocol.enabledecompression.aspx">as stated on MSDN</a>. For example, to get
+compressed responses from Betfair's <a href="https://api.betfair.com/global/v3/BFGlobalService.wsdl">global server</a>:</p>
+<div class="highlight"><pre><span></span><span class="n">BFGlobalService</span> <span class="n">service</span> <span class="p">=</span> <span class="k">new</span> <span class="n">BFGlobalService</span><span class="p">();</span><span class="n">service</span><span class="p">.</span><span class="n">EnableDecompression</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
+</pre></div>
+
+
+<p>If you're still using .Net 1.1, you have a bit more work to do, since
+support for gzip was inexplicably left out of the framework. First, you
+need to subclass the generated BFGlobalService proxy class, and override
+some key methods so you can a) include the Accept-Encoding header to
+tell the server that you understand gzip, and b) decompress the gzipped
+response before the XML deserializer sees it, otherwise it'll choke.</p>
+<div class="highlight"><pre><span></span><span class="k">public</span> <span class="k">class</span> <span class="nc">BFGlobalWithGzip</span> <span class="p">:</span> <span class="n">BFGlobalService</span>
+<span class="p">{</span>
+    <span class="c1">/// &lt;summary&gt;</span>
+    <span class="c1">/// Adds compression header to request header</span>
+    <span class="c1">/// &lt;/summary&gt;</span>
+    <span class="k">protected</span> <span class="k">override</span> <span class="n">System</span><span class="p">.</span><span class="n">Net</span><span class="p">.</span><span class="n">WebRequest</span>  <span class="n">GetWebRequest</span><span class="p">(</span><span class="n">Uri</span> <span class="n">uri</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">HttpWebRequest</span> <span class="n">request</span> <span class="p">=</span> <span class="p">(</span><span class="n">HttpWebRequest</span><span class="p">)</span><span class="k">base</span><span class="p">.</span><span class="n">GetWebRequest</span><span class="p">(</span><span class="n">uri</span><span class="p">);</span> <span class="c1">// Turn on compression</span>
+        <span class="n">request</span><span class="p">.</span><span class="n">Headers</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s">&quot;Accept-Encoding&quot;</span><span class="p">,</span> <span class="s">&quot;gzip, deflate&quot;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">request</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">/// &lt;summary&gt;</span>
+    <span class="c1">/// Decompress response before the Xml serializer gets</span>
+    <span class="c1">/// its hands on it</span>
+    <span class="c1">/// &lt;/summary&gt;</span>
+    <span class="k">protected</span> <span class="k">override</span> <span class="n">WebResponse</span> <span class="nf">GetWebResponse</span><span class="p">(</span> <span class="n">WebRequest</span> <span class="n">request</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">HttpWebResponseDecompressed</span><span class="p">(</span><span class="n">request</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="c1">/// &lt;summary&gt;</span>
+    <span class="c1">/// Need to override this method if performing</span>
+    <span class="c1">/// asynchronous calls, otherwise de-compression</span>
+    <span class="c1">/// will not be performed and will throw an error</span>
+    <span class="c1">/// &lt;/summary&gt;</span>
+    <span class="k">protected</span> <span class="k">override</span> <span class="n">WebResponse</span> <span class="nf">GetWebResponse</span><span class="p">(</span><span class="n">WebRequest</span> <span class="n">request</span><span class="p">,</span> <span class="n">IAsyncResult</span> <span class="n">result</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">HttpWebResponseDecompressed</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">result</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Next, implement the HttpWebResponseDecompressed class. This subclasses
+.Net's WebResponse class and knows how to decompress a response if it
+has ContentEncoding 'gzip':</p>
+<div class="highlight"><pre><span></span><span class="k">public</span> <span class="k">class</span> <span class="nc">HttpWebResponseDecompressed</span> <span class="p">:</span> <span class="n">WebResponse</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="n">HttpWebResponse</span> <span class="n">m_response</span><span class="p">;</span>
+    <span class="k">private</span> <span class="n">MemoryStream</span> <span class="n">m_decompressedStream</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nf">HttpWebResponseDecompressed</span><span class="p">(</span><span class="n">WebRequest</span> <span class="n">request</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">m_response</span> <span class="p">=</span> <span class="p">(</span><span class="n">HttpWebResponse</span><span class="p">)</span><span class="n">request</span><span class="p">.</span><span class="n">GetResponse</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="nf">HttpWebResponseDecompressed</span><span class="p">(</span><span class="n">WebRequest</span> <span class="n">request</span><span class="p">,</span>
+        <span class="n">IAsyncResult</span> <span class="n">result</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">m_response</span> <span class="p">=</span> <span class="p">(</span><span class="n">HttpWebResponse</span><span class="p">)</span>
+            <span class="n">request</span><span class="p">.</span><span class="n">EndGetResponse</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">override</span> <span class="kt">long</span> <span class="n">ContentLength</span>
+    <span class="p">{</span>
+        <span class="k">get</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">m_decompressedStream</span> <span class="p">==</span> <span class="k">null</span>
+                <span class="p">||</span> <span class="n">m_decompressedStream</span><span class="p">.</span><span class="n">Length</span> <span class="p">==</span> <span class="m">0</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">m_response</span><span class="p">.</span><span class="n">ContentLength</span><span class="p">;</span>
+            <span class="k">else</span> <span class="k">return</span> <span class="n">m_decompressedStream</span><span class="p">.</span><span class="n">Length</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">set</span> <span class="p">{</span> <span class="n">m_response</span><span class="p">.</span><span class="n">ContentLength</span> <span class="p">=</span> <span class="k">value</span><span class="p">;</span> <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">override</span> <span class="kt">string</span> <span class="n">ContentType</span>
+    <span class="p">{</span>
+        <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="n">m_response</span><span class="p">.</span><span class="n">ContentType</span><span class="p">;</span> <span class="p">}</span>
+        <span class="k">set</span> <span class="p">{</span> <span class="n">m_response</span><span class="p">.</span><span class="n">ContentType</span> <span class="p">=</span> <span class="k">value</span><span class="p">;</span> <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">override</span> <span class="n">Uri</span> <span class="n">ResponseUri</span>
+    <span class="p">{</span>
+        <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="n">m_response</span><span class="p">.</span><span class="n">ResponseUri</span><span class="p">;</span> <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">override</span> <span class="n">WebHeaderCollection</span> <span class="n">Headers</span>
+    <span class="p">{</span>
+        <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="n">m_response</span><span class="p">.</span><span class="n">Headers</span><span class="p">;</span> <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">override</span> <span class="n">System</span><span class="p">.</span><span class="n">IO</span><span class="p">.</span><span class="n">Stream</span> <span class="n">GetResponseStream</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">Stream</span> <span class="n">compressedStream</span> <span class="p">=</span> <span class="k">null</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">m_response</span><span class="p">.</span><span class="n">ContentEncoding</span> <span class="p">==</span> <span class="s">&quot;gzip&quot;</span><span class="p">)</span>
+            <span class="n">compressedStream</span> <span class="p">=</span> <span class="k">new</span> <span class="n">GZipInputStream</span><span class="p">(</span>
+                <span class="n">m_response</span><span class="p">.</span><span class="n">GetResponseStream</span><span class="p">());</span>
+        <span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">m_response</span><span class="p">.</span><span class="n">ContentEncoding</span> <span class="p">==</span> <span class="s">&quot;deflate&quot;</span><span class="p">)</span>
+            <span class="n">compressedStream</span> <span class="p">=</span> <span class="k">new</span> <span class="n">InflaterInputStream</span><span class="p">(</span>
+                <span class="n">m_response</span><span class="p">.</span><span class="n">GetResponseStream</span><span class="p">());</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">compressedStream</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">m_decompressedStream</span> <span class="p">=</span> <span class="k">new</span> <span class="n">MemoryStream</span><span class="p">();</span>
+            <span class="kt">int</span> <span class="n">size</span> <span class="p">=</span> <span class="m">4096</span><span class="p">;</span>
+            <span class="kt">byte</span><span class="p">[]</span> <span class="n">buffer</span> <span class="p">=</span> <span class="k">new</span> <span class="kt">byte</span><span class="p">[</span><span class="n">size</span><span class="p">];</span>
+            <span class="k">while</span> <span class="p">(</span><span class="k">true</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">size</span> <span class="p">=</span> <span class="n">compressedStream</span><span class="p">.</span><span class="n">Read</span><span class="p">(</span>
+                    <span class="n">buffer</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="n">size</span><span class="p">);</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="n">size</span> <span class="p">&gt;</span> <span class="m">0</span><span class="p">)</span>
+                    <span class="n">m_decompressedStream</span><span class="p">.</span><span class="n">Write</span><span class="p">(</span>
+                        <span class="n">buffer</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="n">size</span><span class="p">);</span>
+                <span class="k">else</span>
+                    <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="n">m_decompressedStream</span><span class="p">.</span><span class="n">Seek</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">SeekOrigin</span><span class="p">.</span><span class="n">Begin</span><span class="p">);</span>
+            <span class="n">compressedStream</span><span class="p">.</span><span class="n">Close</span><span class="p">();</span>
+            <span class="k">return</span> <span class="n">m_decompressedStream</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">return</span> <span class="n">m_response</span><span class="p">.</span><span class="n">GetResponseStream</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>To decompress the data, we need a decompression library since .Net 1.1 doesn't
+provide one. In most cases, <a href="http://www.icsharpcode.net/OpenSource/SharpZipLib/">SharpZipLib</a> will do the business:</p>
+<div class="highlight"><pre><span></span><span class="k">using</span> <span class="nn">ICSharpCode.SharpZipLib.GZip</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">ICSharpCode.SharpZipLib.Zip.Compression.Streams</span><span class="p">;</span>
+</pre></div>
+
+
+<p>Now, when creating an instance of BFGlobalService you can use the
+gzip-supporting subclass and everything else happens automatically.</p>
+<div class="highlight"><pre><span></span><span class="n">BFGlobalService</span> <span class="n">service</span> <span class="p">=</span> <span class="k">new</span> <span class="n">BFGlobalServiceWithGzip</span><span class="p">();</span>
+</pre></div>
+
+
+<p><strong><em>Fin</em></strong></p>
+<p>Jebus, that went on for a bit. Now, go forth and write high-performance
+clients at will - but heed the warnings about only doing this when you
+know the server is on-the-ball, because these tips really can cause
+havoc if used irresponsibly.</p>
+            
+            
+    <div class="accordion" id="accordion2">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#comments">
+                Comments (13) </a>
+            </div>
+
+            <div id="comments" class="accordion-body collapse">
+                <div class="accordion-inner">
+                    <div class="comments">
+                        <ul>
+                            <li>Joann everman said: <p>Hi,</p>
+<p>Excellent tips. Thank you for this.</p>
+<p>I wonder why Web Services are selected to implemented such a high performance
+solution. Twitter has the same problem with the REST based API and thus they
+provide an XMPP backend for high polling applications.</p>
+<p>Joann.</p></li>
+                            <li>russ said: <p>Hi Joann, thanks for the comment. Hope the tips come in useful!</p>
+<p>It is an interesting point about the use of web services for such a high
+performance application. However, I happen to know that XML
+serialisation/deserialisation is the largest bottleneck in the system from
+Betfair's perspective, so I'm not sure XMPP would help much.</p>
+<p>For pure performance, a custom binary protocol would be superior, but then you
+have the additional burden of writing and maintaining the protocol, and can
+run into all sorts of interesting problems with byte ordering and encoding
+across different platforms and processor architectures. Interoperability is
+the trump card here.</p></li>
+                            <li>David said: <p>Everything works great except when the web service throws an Exception the
+client receives "The remote server returned an error: (500) Internal Server
+Error."  With decompression turned off the client receives our normal
+customized application exceptions and we can trap them appropriately.  Is
+there something else we need to implement when overriding WebResponse so the
+client receives our custom exceptions?  The 500 error is thrown at
+request.GetResponse() in the HttpWebResponseDecompressed constructor.</p>
+<p>Great article btw.</p></li>
+                            <li>John Wiess said: <p>Hello,</p>
+<p>A very informative, and enjoyable read, and although I understand the
+articles aims, I cannot figure where to actually put the code that ups the
+maxconnection, I have tried pasting the following code into an app.config file
+as per your instructions with no luck. is there anything else i need to do?</p></li>
+                            <li>feed said: <p>Easy and simple information to follow. Great share, thanks</p></li>
+                            <li>Glyn said: <p>Hmmm, looks like tags in the xml request haven't posted correctly (not
+surprisingly), but please take my work for it that the body of the request and
+the response is not encoded.</p>
+<p>Cheers,
+Glyn.</p></li>
+                            <li>elmariachi said: <p>its seems that in .NET 3.5 the lines:</p>
+<div class="highlight"><pre><span></span>BFGlobalService service = new BFGlobalService();
+service.EnableDecompression = true;
+</pre></div>
+
+
+<p>dont work, since there is no EnableDecompression Property anymore.
+Im using the VS2008.</p>
+<p>What would be the proper way todo this in .NET 3.5</p></li>
+                            <li>russ said: <p>Glyn,</p>
+<p>I'm actually not sure what's going on there - the same thing is now happening
+to me, but I can't figure out why. I think it's something at Betfair's end -
+if I use the little python lib I cooked up, and switch on detailed tracing, I
+see this (headers only):</p>
+<div class="highlight"><pre><span></span><span class="nf">POST</span> <span class="nn">/global/v3/BFGlobalService</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">api.betfair.com:443</span>
+<span class="na">Content-Length</span><span class="o">:</span> <span class="l">960</span>
+<span class="na">SOAPAction</span><span class="o">:</span> <span class="l">urn:getEvents</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">text/xml</span>
+<span class="na">Accept-Encoding</span><span class="o">:</span> <span class="l">gzip</span>
+<span class="na">User-Agent</span><span class="o">:</span> <span class="l">pybetfair/0.4alpha</span>
+
+HTTP/1.1 200 OK
+header: Server: Apache-Coyote/1.1
+header: Date: Thu, 11 Sep 2008 16:12:56 GMT
+header: Server: TME-GLUE/5.0.2
+header: Content-Type: text/xml;charset=UTF-8
+header: ntCoent-Length: 19715
+header: Cache-Control: private
+header: Content-Encoding: gzip
+header: Content-Length:       1498
+</pre></div>
+
+
+<p>So Betfair's servers definitely have compression switched on. It looks like
+it's doing something weird with the headers (the jumbled ntCoent-Length header
+contains the uncompressed size of the response), but the data is undoubtedly
+compressed, and correctly represented in the Content-Length header. Weird.
+I'll see if I can find out what's going on.</p>
+<p>BTW, when using gzip, I believe only the response is compressed, not the
+request.</p></li>
+                            <li>russ said: <p>elmariachi,</p>
+<p>The new .Net 3.5 Add Service wizard (using WCF) seems to have gone out of its
+way to make this difficult. When I use 3.5, I always create 2.0-style web
+references. There are two ways to do this:</p>
+<ol>
+<li>
+<p>Use wsdl.exe directly (e.g. from the command line or a build script</p>
+</li>
+<li>
+<p>In VS2008, in the Add Service Reference dialog, click Advanced... (bottom
+left corner), then click Add Web Reference... in the Service Reference
+Settings dialog that pops up. You should then be able to use
+EnableDecompression as usual.</p>
+</li>
+</ol></li>
+                            <li>Depois eu leio » Parallel, F# e no fim, de volta ao básico said: <p>[...] de perder um tempo no MSDN, o Google me fez parar neste e neste post. Ambos têm a resposta que eu procurava, mas no primeiro ainda têm uma mega aula de debug e o [...]</p></li>
+                            <li>Madan said: <p>Excellent tips</p></li>
+                            <li>TheBotanist said: <p>i have been caught out by this, my thread pool (10 threads) has been beavering
+away placing bets, on the surface it looks ok. The reality is only 2 threads
+have ever been calling the api concurrently.</p>
+<p>This was highlighted when I was making lots of bets on an in play match - the
+5 second delay highlighted the fact that calls were being serialized ie they
+were backing up. As a result I got timout exceptions which caused me to
+research and ended up here.. I will implement all these suggestions - these
+are excellent easy wins for a performace boost coding againt the betfair API.</p></li>
+                            <li>Storm said: <p>Thanks for this. It boosted my call rate from 3 per second to 40 per second,
+however I cannot get past 40 per second. Even if I open a new instance of my
+app the calls per second equals around 20 per app, so I still have the max of
+40 per second. Any thoughts or is that about as much as I could expect?</p>
+<p>Thanks again for the great info.</p></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+            <hr/>
+            <aside>
+            <nav>
+            <ul class="articles-timeline">
+                <li class="previous-article">« <a href="./legacy-code-refactoring-and-ownership.html" title="Previous: Legacy Code, Refactoring, and Ownership">Legacy Code, Refactoring, and Ownership</a></li>
+                <li class="next-article"><a href="./fab-fib.html" title="Next: Fab Fib">Fab Fib</a> »</li>
+            </ul>
+            </nav>
+            </aside>
+        </div>
+        <section>
+        <div class="span2" style="float:right;font-size:0.9em;">
+            <h4>Published</h4>
+            <time pubdate="pubdate" datetime="2007-12-15T19:51:00+00:00">Dec 15, 2007</time>
+            <h4>Category</h4>
+            <a class="category-link" href="./categories.html#coding-ref">coding</a>
+            <h4>Tags</h4>
+            <ul class="list-of-tags tags-in-article">
+                <li><a href="./tags.html#coding-ref">coding
+                    <span>13</span>
+</a></li>
+                <li><a href="./tags.html#net-ref">.net
+                    <span>7</span>
+</a></li>
+                <li><a href="./tags.html#software-engineering-ref">software engineering
+                    <span>8</span>
+</a></li>
+            </ul>
+<h4>Contact</h4>
+    <a href="http://twitter.com/russgray" title="My Twitter Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-twitter sidebar-social-links"></i></a>
+    <a href="http://github.com/russgray" title="My Github Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-github sidebar-social-links"></i></a>
+    <a href="http://uk.linkedin.com/in/russgray/" title="My LinkedIn Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-linkedin sidebar-social-links"></i></a>
+    <a href="mailto:russgray@gmail.com" title="My Email Address" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-envelope sidebar-social-links"></i></a>
+        </div>
+        </section>
+</div>
+</article>
+                </div>
+                <div class="span1"></div>
+            </div>
+        </div>
+        <div id="push"></div>
+    </div>
+<footer>
+<div id="footer">
+    <ul class="footer-content">
+        <li class="elegant-power">Powered by <a href="http://getpelican.com/" title="Pelican Home Page">Pelican</a>. Theme: <a href="http://oncrashreboot.com/pelican-elegant" title="Theme Elegant Home Page">Elegant</a> by <a href="http://oncrashreboot.com" title="Talha Mansoor Home Page">Talha Mansoor</a></li>
+    </ul>
+</div>
+</footer>            <script src="https://code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+    
+    </body>
+    <!-- Theme: Elegant built for Pelican
+    License : http://oncrashreboot.com/pelican-elegant -->
+</html>

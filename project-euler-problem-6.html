@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8"> 
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Russell Gray" />
+        <meta name="copyright" content="Russell Gray" />
+
+        <link rel="author" href=https://plus.google.com/u/0/102559471807447493728 />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content=", projecteuler, " />
+
+<meta property="og:title" content="Project Euler Problem 6 "/>
+<meta property="og:url" content="./project-euler-problem-6.html" />
+<meta property="og:description" content="Onwards to... Problem 6 The sum of the squares of the first ten natural numbers is, 1^2^ + 2^2^ + ... + 10^2^ = 385 The square of the sum of the first ten natural numbers is, (1 + 2 + ... + 10)^2^ = 55^2^ = 3025 Hence the difference between the sum of the …" />
+<meta property="og:site_name" content="Basildon Coder" />
+<meta property="og:article:author" content="Russell Gray" />
+<meta property="og:article:published_time" content="2008-08-14T01:00:00+01:00" />
+<meta name="twitter:title" content="Project Euler Problem 6 ">
+<meta name="twitter:description" content="Onwards to... Problem 6 The sum of the squares of the first ten natural numbers is, 1^2^ + 2^2^ + ... + 10^2^ = 385 The square of the sum of the first ten natural numbers is, (1 + 2 + ... + 10)^2^ = 55^2^ = 3025 Hence the difference between the sum of the …">
+
+        <title>Project Euler Problem 6  · Basildon Coder
+</title>
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="./theme/css/pygments.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/tipuesearch/tipuesearch.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/elegant.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/custom.css" media="screen">
+    </head>
+    <body>
+        <div id="content-sans-footer">
+        <div class="navbar navbar-static-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <div class="span1"></div>
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="./"><span class=site-name>Basildon Coder</span></a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav pull-right top-menu">
+                            <li ><a href=".">Home</a></li>
+                            <li ><a href="./categories.html">Categories</a></li>
+                            <li ><a href="./tags.html">Tags</a></li>
+                            <li ><a href="./archives.html">Archives</a></li>
+                            <li><form class="navbar-search" action="./search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span1"></div>
+                <div class="span10">
+<article>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+    <h1><a href="./project-euler-problem-6.html"> Project Euler Problem 6  </a></h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+
+            
+            <p>Onwards to...</p>
+<p><strong><em><a href="http://projecteuler.net/index.php?section=problems&amp;id=6">Problem 6</a></em></strong></p>
+<blockquote>
+<p>The sum of the squares of the first ten natural numbers is,</p>
+<p>1^2^ + 2^2^ + ... + 10^2^ = 385</p>
+<p>The square of the sum of the first ten natural numbers is,</p>
+<p>(1 + 2 + ... + 10)^2^ = 55^2^ = 3025</p>
+<p>Hence the difference between the sum of the squares of the first ten
+natural numbers and the square of the sum is 3025 - 385 = 2640.</p>
+<p>Find the difference between the sum of the squares of the first one
+hundred natural numbers and the square of the sum.</p>
+</blockquote>
+<p>Bit of a disappointment, problem 6; it's too easy. <a href="http://projecteuler.net/index.php?section=problems&amp;sort=difficulty">It's rated as the third-
+easiest</a>, i.e. easier than problems <a href="./project-euler-problem-3.html">3</a>, <a href="./project-euler-problem-4.html">4</a>, and <a href="./project-euler-problem-5.html">5</a> which I've
+already covered. In fact, for my money it's easier than problem <a href="./project-euler-problems-1-and-2.html">2</a> as
+well. Ah well, the difficulty ramps up soon enough, trust me. Here's the very
+simple python solution:</p>
+<div class="highlight"><pre><span></span><span class="n">sum_sq</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span> <span class="n">x</span><span class="o">*</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">101</span><span class="p">)])</span>
+<span class="n">sq_sum</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">xrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">101</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span>
+
+<span class="k">print</span> <span class="n">sq_sum</span> <span class="o">-</span> <span class="n">sum_sq</span>
+</pre></div>
+
+
+<p>As you can see, it's pretty intuitive. You sum the squares, square the sum,
+and calculate the difference. The answer is basically in the description, you
+just have to scale up a little.</p>
+<p>There's not much else to say about this one. Even if I abandon the functional
+approach and write a straightforward imperative solution it's still very
+straightforward. In (deliberately non-idiomatic, so don't whine at me) ruby:</p>
+<div class="highlight"><pre><span></span><span class="n">sum_of_squares</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="mi">1</span><span class="o">.</span><span class="n">upto</span> <span class="mi">100</span> <span class="k">do</span> <span class="o">|</span><span class="n">x</span><span class="o">|</span>
+    <span class="n">sum_of_squares</span> <span class="o">+=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span>
+    <span class="n">sum</span> <span class="o">+=</span> <span class="n">x</span>
+<span class="k">end</span>
+
+<span class="nb">p</span> <span class="p">(</span><span class="n">sum</span> <span class="o">*</span> <span class="n">sum</span><span class="p">)</span> <span class="o">-</span> <span class="n">sum_of_squares</span>
+</pre></div>
+            
+            
+    <div class="accordion" id="accordion2">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#comments">
+                Comments (4) </a>
+            </div>
+
+            <div id="comments" class="accordion-body collapse">
+                <div class="accordion-inner">
+                    <div class="comments">
+                        <ul>
+                            <li>ASk said: <p>This is actually not a really good general solution.
+Rephrase the question to say "first 10^200 natural numbers". Solve it using your method.</p>
+<p>On the other hand, there are short formulas for the sum and the sum of
+squares, with number of terms that does not depend on n.</p></li>
+                            <li>wrf3 said: <p>To continue with ASk's line of thought:</p>
+<p>The sum of the first n numbers is:</p>
+<div class="highlight"><pre><span></span>1 + 2 + 3 + ... + n = n^2/2 + n/2
+</pre></div>
+
+
+<p>The sum of the squares of the first n numbers is:</p>
+<div class="highlight"><pre><span></span>1^2 + 2^ + 3^2 + ... + n^2 = n^3/3 + n^2/2 + n/6
+</pre></div>
+
+
+<p>So another solution to the problem is:</p>
+<div class="highlight"><pre><span></span>(n^2/2 + n/2)^2 - (n^3/3 + n^2/2 + n/6)
+</pre></div>
+
+
+<p>or, simplified,</p>
+<div class="highlight"><pre><span></span>n^4/4 + n^3/6 - n^2/4 - n/6
+</pre></div></li>
+                            <li>Eugene said: <p>looking forward for more information about this. thanks for sharing. Eugene</p></li>
+                            <li>10 one-line solutions for project euler | united-coders.com said: <p>[...] found a groovy one-liner on jared.cacurak.com and the correct O(1) comment solution on basildoncoder.com and [...]</p></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+            <hr/>
+            <aside>
+            <nav>
+            <ul class="articles-timeline">
+                <li class="previous-article">« <a href="./magic-numbers-and-other-numerical.html" title="Previous: Magic Numbers and Other Numerical Nightmares">Magic Numbers and Other Numerical Nightmares</a></li>
+                <li class="next-article"><a href="./look-before-you-look-before-you-leap.html" title="Next: Look Before You Look Before You Leap">Look Before You Look Before You Leap</a> »</li>
+            </ul>
+            </nav>
+            </aside>
+        </div>
+        <section>
+        <div class="span2" style="float:right;font-size:0.9em;">
+            <h4>Published</h4>
+            <time pubdate="pubdate" datetime="2008-08-14T01:00:00+01:00">Aug 14, 2008</time>
+            <h4>Category</h4>
+            <a class="category-link" href="./categories.html#projecteuler-ref">projecteuler</a>
+<h4>Contact</h4>
+    <a href="http://twitter.com/russgray" title="My Twitter Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-twitter sidebar-social-links"></i></a>
+    <a href="http://github.com/russgray" title="My Github Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-github sidebar-social-links"></i></a>
+    <a href="http://uk.linkedin.com/in/russgray/" title="My LinkedIn Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-linkedin sidebar-social-links"></i></a>
+    <a href="mailto:russgray@gmail.com" title="My Email Address" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-envelope sidebar-social-links"></i></a>
+        </div>
+        </section>
+</div>
+</article>
+                </div>
+                <div class="span1"></div>
+            </div>
+        </div>
+        <div id="push"></div>
+    </div>
+<footer>
+<div id="footer">
+    <ul class="footer-content">
+        <li class="elegant-power">Powered by <a href="http://getpelican.com/" title="Pelican Home Page">Pelican</a>. Theme: <a href="http://oncrashreboot.com/pelican-elegant" title="Theme Elegant Home Page">Elegant</a> by <a href="http://oncrashreboot.com" title="Talha Mansoor Home Page">Talha Mansoor</a></li>
+    </ul>
+</div>
+</footer>            <script src="https://code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+    
+    </body>
+    <!-- Theme: Elegant built for Pelican
+    License : http://oncrashreboot.com/pelican-elegant -->
+</html>

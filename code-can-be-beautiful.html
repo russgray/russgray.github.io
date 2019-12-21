@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8"> 
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Russell Gray" />
+        <meta name="copyright" content="Russell Gray" />
+
+        <link rel="author" href=https://plus.google.com/u/0/102559471807447493728 />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content="rants, commentary, " />
+
+<meta property="og:title" content="Code CAN Be Beautiful "/>
+<meta property="og:url" content="./code-can-be-beautiful.html" />
+<meta property="og:description" content="In his review of Code Is Beautiful, Jeff Atwood decides that no, actually it isn&#39;t. He&#39;s fairly adamant about it too: Ideas are beautiful. Algorithms are beautiful. Well executed ideas and algorithms are even more beautiful. But the code itself is not beautiful. The beauty of code lies in the …" />
+<meta property="og:site_name" content="Basildon Coder" />
+<meta property="og:article:author" content="Russell Gray" />
+<meta property="og:article:published_time" content="2008-02-22T17:57:00+00:00" />
+<meta name="twitter:title" content="Code CAN Be Beautiful ">
+<meta name="twitter:description" content="In his review of Code Is Beautiful, Jeff Atwood decides that no, actually it isn&#39;t. He&#39;s fairly adamant about it too: Ideas are beautiful. Algorithms are beautiful. Well executed ideas and algorithms are even more beautiful. But the code itself is not beautiful. The beauty of code lies in the …">
+
+        <title>Code CAN Be Beautiful  · Basildon Coder
+</title>
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="./theme/css/pygments.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/tipuesearch/tipuesearch.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/elegant.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/custom.css" media="screen">
+    </head>
+    <body>
+        <div id="content-sans-footer">
+        <div class="navbar navbar-static-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <div class="span1"></div>
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="./"><span class=site-name>Basildon Coder</span></a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav pull-right top-menu">
+                            <li ><a href=".">Home</a></li>
+                            <li ><a href="./categories.html">Categories</a></li>
+                            <li ><a href="./tags.html">Tags</a></li>
+                            <li ><a href="./archives.html">Archives</a></li>
+                            <li><form class="navbar-search" action="./search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span1"></div>
+                <div class="span10">
+<article>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+    <h1><a href="./code-can-be-beautiful.html"> Code CAN Be Beautiful  </a></h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+
+            
+            <p>In his <a href="http://www.codinghorror.com/blog/archives/001062.html">review</a> of <em><a href="http://www.amazon.com/gp/product/0596510047/">Code Is Beautiful</a></em>, Jeff Atwood decides that no,
+actually it isn't. He's fairly adamant about it too:</p>
+<blockquote>
+<p>Ideas are beautiful. Algorithms are beautiful. Well executed ideas and
+algorithms are even more beautiful. But the code itself is not beautiful.
+The beauty of code lies in the architecture, the ideas, the grander
+algorithms and strategies that code represents.</p>
+</blockquote>
+<p>I just can't agree with this. It's effectively saying that a representation
+cannot be beautiful; only the underlying thing that's <em>being represented</em> can
+be beautiful. Worse, this argument is extended to literature and art as well,
+and quotes a reader review from Amazon that quotes a little Russian poetry and
+rhetorically asks whether any non-Russian-speaking reader can see beauty in
+it.</p>
+<p>This drives me nuts, it really does. <strong>Of course</strong> the representation can be
+beautiful, and it can also be ugly. And the beauty of the representation can
+have an amplifying effect on the subject of the representation. Form and
+content are related. A non-Russian-speaker may not appreciate Russian poetry,
+but that doesn't mean that form itself has no value - it means that, in this
+case at least, the value of form is dependent on the content. If you don't
+understand the content, you don't appreciate the form.</p>
+<p>This isn't an absolute, though. In literature, there are many techniques for
+adding value to form. Alliteration, assonance, metre, and many more techniques
+are all structural techniques for beautifying form. I'd argue that pretty much
+anyone can appreciate the compact and succinct beauty of the phrase <em>veni,
+vidi, vici</em> without understanding what it means ("I came, I saw, I
+conquered").</p>
+<p>There are countless other examples. You don't need to understand Italian to
+enjoy opera, for instance. In fact, I've even heard it argued that
+understanding the content of an opera can diminish the experience, since the
+actual meaning is often fairly bland and distracts from the simple
+appreciation of the complex sounds and interplay of the language in the hands
+(or lungs) of a world-class performer.</p>
+<p>So what's the equivalent in software? I think expressiveness and elegance are
+key. In particular, code that is able to express ideas without adding a lot of
+noise. I'm very partial to Haskell for this sort of thing - for instance the
+canonical quicksort implementation is wonderfully precise:</p>
+<div class="highlight"><pre><span></span><span class="nf">quicksort</span> <span class="kt">[]</span>        <span class="ow">=</span> <span class="kt">[]</span>
+<span class="nf">quicksort</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span>    <span class="ow">=</span> <span class="n">quicksort</span> <span class="n">less</span> <span class="o">++</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">++</span> <span class="n">quicksort</span> <span class="n">greater</span>
+    <span class="kr">where</span> <span class="n">less</span>      <span class="ow">=</span> <span class="p">[</span> <span class="n">y</span> <span class="o">|</span> <span class="n">y</span> <span class="ow">&lt;-</span> <span class="n">xs</span><span class="p">,</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="n">x</span> <span class="p">]</span>
+          <span class="n">greater</span>   <span class="ow">=</span> <span class="p">[</span> <span class="n">y</span> <span class="o">|</span> <span class="n">y</span> <span class="ow">&lt;-</span> <span class="n">xs</span><span class="p">,</span> <span class="n">y</span> <span class="o">&gt;=</span> <span class="n">x</span> <span class="p">]</span>
+</pre></div>
+
+
+<p>If you know the quicksort algorithm, then the 2nd line of code there is about
+as precise an expression of the underlying concept as you could hope for. If
+you write the same algorithm in C or Visual Basic, I believe that you can
+objectively distinguish the 'beauty' of these representations of the same
+underlying concept. This is only possible if the representations do indeed
+have the quality of beauty.</p>
+<p>Another, perhaps even better, example is the naive-recursive Fibonacci
+generator in the same language, which is remarkably close to the mathematical
+definition:</p>
+<p><img alt="image" src="http://en.literateprograms.org/images/math/4/c/4/4c42de46d22d22305c59b9ba88e387e9.png"></p>
+<p>(from <a href="http://en.literateprograms.org/Fibonacci_numbers_(Haskell)">literateprograms.org</a>)</p>
+<div class="highlight"><pre><span></span><span class="nf">fib</span> <span class="n">n</span>
+    <span class="o">|</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span>    <span class="ow">=</span> <span class="mi">0</span>
+    <span class="o">|</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span>    <span class="ow">=</span> <span class="mi">1</span>
+    <span class="o">|</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">1</span>     <span class="ow">=</span> <span class="n">fib</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">fib</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+
+<p>Note I haven't read the actual book under review here, and I have no reason to
+doubt the assertions that the book doesn't deliver. I do, however, take
+umbrage at the statement that code (or language) cannot be beautiful.</p>
+            
+            
+    <div class="accordion" id="accordion2">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#comments">
+                Comments (25) </a>
+            </div>
+
+            <div id="comments" class="accordion-body collapse">
+                <div class="accordion-inner">
+                    <div class="comments">
+                        <ul>
+                            <li>gwenhwyfaer said: <p>&quot;If you know the quicksort algorithm, then the 2nd line of code there is about as precise an expression of the underlying concept as you could hope for.&quot;</p>
+<p>Unfortunately, handing it a pre-sorted list will demonstrate the gulf between beauty and practicality.</p>
+<p>In any case, since Haskell&#39;s data structures are immutable, mergesort is a much better match for it; the only advantage of qsort is that it can execute in-place - which...</p></li>
+                            <li>Jonathan Ville said: <p>Firstly, if you think code is beautiful, then:</p>
+<div class="highlight"><pre><span></span><span class="nf">qsort</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="kt">[]</span>
+<span class="nf">qsort</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="ow">=</span> <span class="n">qsort</span> <span class="p">(</span><span class="n">filter</span> <span class="p">(</span><span class="ow">=</span> <span class="n">x</span><span class="p">)</span> <span class="n">xs</span><span class="p">)</span>
+</pre></div>
+
+
+<p>is a far more elegant implementation of quicksort, which essentially does the same things as your list comprehensions, but in a more succinct way (list comprehensions are implemented using filter and map anyway).</p>
+<p>Secondly, the reason this is &#39;beautiful&#39; has nothing to do with the elegant syntax and much more to do with the fundamental ideas behind functional programming, and the maths used to show that the lower assymptotic bound of the running time is n log n (which is analysis of algorithms - a beautiful subject). And of course, there&#39;s always the fantastic proofs by induction you can do in functional programming.</p>
+<p>And I bet you can&#39;t write a functional program that finds fibonacci numbers much faster using matrix multiplication (and diagonalisation of matrices to make this fast). The maths behind that is truly beautiful.</p>
+<p>There is good syntax and bad syntax, but at the end of the day syntax is transient and a bad way to judge a language.</p></li>
+                            <li>Brantley said: <p>No, it really just depends on the font.  :)</p></li>
+                            <li>she said: <p>"A non-Russian-speaker may not appreciate Russian poetry, but that doesn't
+"mean that form itself has no value - it means that, in this case at least,
+"the value of form is dependent on the content.</p>
+<p>That is true, but of course one also has to understand the language in
+question. And when one does, even speaks and writes multiple questions, there
+are two points:</p>
+<ul>
+<li>how easy is the given language (write, speak, think)</li>
+<li>how beautiful is it</li>
+</ul>
+<p>An algorithm will ultimately stay the same, but it does matter how it will
+look in different languages. And there we are at languages which are just
+plain ugly.</p>
+<p>By the way, algorithm's are in itself quite beautiful but let's look at
+reallife examples of code at work, like a somewhat-complicated task that is
+done by code. To me, languages such as C or Java simply have less appeal than
+say python.</p></li>
+                            <li>Aaron said: <p>Unfortunately, that's <em>not</em> quicksort, but an out-of-order lazily evaluated
+mergesort equivalent.  Quicksort is in-place.</p></li>
+                            <li>russ said: <blockquote>
+<p>Firstly, if you think code is beautiful, then:</p>
+<div class="highlight"><pre><span></span><span class="nf">qsort</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="kt">[]</span>
+<span class="nf">qsort</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="ow">=</span> <span class="n">qsort</span> <span class="p">(</span><span class="n">filter</span> <span class="p">(</span><span class="ow">=</span> <span class="n">x</span><span class="p">)</span> <span class="n">xs</span><span class="p">)</span>
+</pre></div>
+
+
+<p>is a far more elegant implementation of quicksort, which essentially does the
+same things as your list comprehensions, but in a more succinct way (list
+comprehensions are implemented using filter and map anyway).</p>
+</blockquote>
+<p>Actually, I prefer the one I posted. Probably a subjective thing, but I find
+mine maps more directly onto how I conceptualise the algorithm in my head. But
+hey, as so many people have already said, beauty is in the eye of the
+beholder, right? Also, I agree with you that syntax is a bad way to judge a
+language, but that's not really what I'm trying to do here. Haskell's
+qualities as a language don't really influence my perception of certain
+Haskell snippets as 'beautiful'.</p></li>
+                            <li>russ said: <blockquote>
+<p>Unfortunately, handing it a pre-sorted list will demonstrate
+the gulf between beauty and practicality.</p>
+</blockquote>
+<p>Yes indeed, but isn't that the case in so many other disciplines? I don't
+write emails to my boss in iambic pentameter, after all.</p></li>
+                            <li>Alan said: <blockquote>
+<p>Firstly, if you think code is beautiful, then:</p>
+<div class="highlight"><pre><span></span><span class="nf">qsort</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="kt">[]</span>
+<span class="nf">qsort</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="ow">=</span> <span class="n">qsort</span> <span class="p">(</span><span class="n">filter</span> <span class="p">(</span><span class="ow">=</span> <span class="n">x</span><span class="p">)</span> <span class="n">xs</span><span class="p">)</span>
+</pre></div>
+
+
+<p>is a far more elegant implementation of quicksort, which essentially does the
+same things as your list comprehensions, but in a more succinct way (list
+comprehensions are implemented using filter and map anyway).</p>
+</blockquote>
+<p>I don't see how this will return anything except an empty list.  Is there
+something missing?</p></li>
+                            <li>Weave Jester said: <blockquote>
+<p>qsort [] = []
+  qsort (x:xs) = qsort (filter (= x) xs)</p>
+<p>is a far more elegant implementation of quicksort</p>
+</blockquote>
+<p>The comment system ate everything between the less-than and greater-than operators. Hopefully this will come out right:</p>
+<div class="highlight"><pre><span></span><span class="nf">qsort</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="kt">[]</span>
+<span class="nf">qsort</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="ow">=</span> <span class="n">qsort</span> <span class="p">(</span><span class="n">filter</span> <span class="p">(</span><span class="o">&lt;</span> <span class="n">x</span><span class="p">)</span> <span class="n">xs</span><span class="p">)</span> <span class="o">++</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">++</span> <span class="n">qsort</span> <span class="p">(</span><span class="n">filter</span> <span class="p">(</span><span class="o">&gt;=</span> <span class="n">x</span><span class="p">)</span> <span class="n">xs</span><span class="p">)</span>
+</pre></div></li>
+                            <li>Georgi Y. Dimitrov said: <p>How beautiful is the code is important, because it makes the difference between programming languages. If the code is beautiful, it is readable and maintainable and vice versa. Lisp and Smalltalk have many virtues but ugly looking code and are unsuccessful and always will be. C, C++ and Perl have a bit less, but still ugly code and their popularity goes down. Java, C#, Ruby and Python have more beautiful code and their popularity is on the increase.</p></li>
+                            <li>yaxu said: <p>Well said, of course representation can be beautiful!</p>
+<p>It's a chain of representation -- e.g. some code represents an algorithm,
+which in turn represents the tenets of some mathematical model, which in turn
+represents some aspect of the physical world. Each step can be beautiful
+and/or ugly.</p>
+<p>It's not as if a piece of code was ever a perfect representation of an
+algorithm. There are always interesting details of implementation which may
+have profound aesthetic effects on the results.</p></li>
+                            <li>Jonathan Ville said: <blockquote>
+<p>Unfortunately, that's <em>not</em> quicksort, but an out-of-order lazily evaluated
+mergesort equivalent. Quicksort is in-place.</p>
+</blockquote>
+<p>This is actually correct, and I think quite important to note. The function
+should be re-named 'msort'.</p>
+<p>However, merge sort has an average and worse case time complexity of O(n log
+n). Quicksort has a lower bound of O(n log n) and upper bound of O(n^2), but
+in practice is very fast, if you have a randomized, fat pivot, and an un-
+sorted list.</p></li>
+                            <li>beza1e1 said: <p>Mergesort is more stable than Quicksort, though. This is why GHC now uses
+Mergesort for List.sort and dropped it's old Quicksort.</p>
+<p>Neither of them looks beautiful in the real world by the way.</p></li>
+                            <li>Pete said: <p>You must see the point about the Russian poetry though.  I agree that code can
+be beautiful, but not knowing anything about Haskel, I found your examples to
+be ugly and mostly unreadable (even the second, which I wouldn't have
+connected to the maths without the diagram right above it).</p></li>
+                            <li>anonymous said: <blockquote>
+<p>Unfortunately, that's <em>not</em> quicksort, but an out-of-order lazily evaluated
+mergesort equivalent. Quicksort is in-place.</p>
+</blockquote>
+<p>Quicksort: divide is interesting, conquer is trivial.
+Mergesort: divide is trivial, conquer is interesting.</p>
+<p>In other words, the algorithm presented in the post is not mergesort or an
+equivalent of it. It's entirely fine to call it quicksort even though it's not
+in-place.</p></li>
+                            <li>russ said: <blockquote>
+<p>You must see the point about the Russian poetry though.</p>
+</blockquote>
+<p>I do indeed see the point about the Russian poetry - I didn't see much that
+was beautiful about it either. I just believe that this isn't always the case.
+Some representations may lack beauty, but it doesn't follow that ALL
+representations lack beauty. The point of this post was simply to refute that
+statement by providing counterexamples.</p></li>
+                            <li>Daily Links - February 24, 2008 | Alvin Ashcraft's Daily Geek Bits said: <p>[...] Code CAN Be Beautiful (Russ Gray) [...]</p></li>
+                            <li>Programming expert said: <ol>
+<li>
+<p>Quicksort (and mergsort) have nothing to do with being 'in-place' or not.
+There are in-place versions of both (though in place merge sort is usually
+called heap sort) and.... functional-friendly versions of both. :)</p>
+</li>
+<li>
+<p>Understanding is very much bound with beuty.  When I used to read Smalltalk
+code I thought it was awful because I didn't understand it (the same problem
+Georgi has above).  After I learned the syntax and saw the elegance of what it
+was doing it quickly became the most beutiful language I have ever seen.  Lisp
+is high on that list as well, based on it's simplicity and elegance.</p>
+</li>
+</ol>
+<p>Things we don't understand we tend to see as <em>ugly</em>.  Especially when the
+thing in question is from a domain we expect to understand.</p>
+<p>You point about Italian opera misses the mark because for many who enjoy opera
+they content is the sounds and visuals.  We understand very well what sites
+and sounds are pleasing to us (though we probably wont know why).  Probably a
+similar percentage of people watch opera for the plot as do for a porno.</p></li>
+                            <li>anonymous said: <blockquote>
+<p>I am partial to c++ in this case,
+See the inplace quicksort in c++ compared to haskell's not-inplace one.
+taken from: http://erikhaugen.blogspot.com/</p>
+</blockquote>
+<p>Nice all right.  'm not too sure about the entirely in-place bit though.  When
+I looked up stable_partition to see what it did,  it seems that most
+implementation partition through allocating a temporary buffer...</p></li>
+                            <li>Michael Trick's Operations Research Blog » P.G. Wodehouse approach to Modeling? said: <p>[...] Unfortunately, not, but close. Refactoring in this context is “any change to a computer program's code that improves its readability or simplifies its structure without changing its results”, according to wikipedia. So when a computer program is built on over the years, at some point there is a wish to rewrite or otherwise consolidate the code so it is back looking new, ideally with the effects of all the changes intact. Of course, this is relevant to OR also. We often put together models that have been added on to, changed, and modified to within an inch of their lives. And at some point we would like to have the model “we should have written” in the first place. So there is a temptation to toss everything out and start again. In fact, I often recommend doing so in my classes. But that isn't very good practice, according to contemporary work in refactorization: Now, the first mistake to avoid here is the compulsion to throw it away and rewrite from scratch. So often when confronted with a vast seething moiling spiritless mass of code a developer throws his hands into the air and declares it a lost cause. How seductive is the thought that 31,000 lines of code could be thrown away and replaced with ~15,000 lines of clean, well-designed, beautiful code? [...]</p></li>
+                            <li>Thomas said: <p>Not only can code be beautiful, but programming itself should be counted among
+the 'fine arts'. Or so argued Pierre Lévy in his 1992 book <em>De la
+programmation considérée comme un des beaux arts</em> (On computer programming as
+a fine art): http://www.amazon.fr/dp/2707121541/</p></li>
+                            <li>-jn- said: <p>Ah, how we programmers LOVE to refuse to separate our concerns!  ;-)</p>
+<p>All the quibbling about programming language preferences and "I can write that
+function in fewer characters" puts me in mind of the book <em>Strictly Speaking</em>
+by Edwin Newman. Written in the immediately-post-Watergate era, the book is a
+wonderful extended lament on the difference between elegant ideas expressed in
+homely fashion (with examples from Yogi Berra, Casey Stengel, etc. IIRC) vs
+empty ideas expressed in flowery language (most of the politicians and
+advertisers of the day).</p>
+<p>I'd also recommend <em>The Crystal Goblet</em> by Beatrice Warde for the same
+principles applied to typography. (See
+http://gmunch.home.pipeline.com/typo-L/misc/clar.htm for discussion.)</p></li>
+                            <li>vFiles said: <p>-regards to all</p>
+<p>,what is important is that your code flows smoothly and it is according to your algorithm and most especially you can predict wether  you can maximize its capability and upgrade its limitation. Thats how beautiful your work is, your programme!</p>
+<p>,other than that, can someone analyze the program that i developed it is a sorting algorithm. I made this program not to surpass the quicksort but since im in the process i used to attempt surpassing the fastest quicksort. Now i already finished it and based from the demonstrations and observation it is many times faster than the quicksort. I still want somebody who really knows how to evaluate so that i am confident that my algorithm was beautiful.</p>
+<p>, thanks</p></li>
+                            <li>Max said: <p>This blog is simply smashing. In my humble opinion of course. As this post is
+rather debatable I don't think all your blog visitors are going to agree with
+it.</p></li>
+                            <li>-= Linkage 2007.02.25 =- said: <p>[...] Beautiful Code? Yes!
+This drives me nuts, it really does. Of course the representation can be beautiful, and it can also be ugly. And the beauty of the representation can have an amplifying effect on the subject of the representation. Form and content are related. [...]</p></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+            <hr/>
+            <aside>
+            <nav>
+            <ul class="articles-timeline">
+                <li class="previous-article">« <a href="./extending-technical-debt-metaphor.html" title="Previous: Extending the Technical Debt Metaphor">Extending the Technical Debt Metaphor</a></li>
+                <li class="next-article"><a href="./c-30-parallel-linq-and-betfair-api.html" title="Next: C# 3.0, Parallel LINQ, And The Betfair API - An Introduction">C# 3.0, Parallel LINQ, And The Betfair API - An Introduction</a> »</li>
+            </ul>
+            </nav>
+            </aside>
+        </div>
+        <section>
+        <div class="span2" style="float:right;font-size:0.9em;">
+            <h4>Published</h4>
+            <time pubdate="pubdate" datetime="2008-02-22T17:57:00+00:00">Feb 22, 2008</time>
+            <h4>Category</h4>
+            <a class="category-link" href="./categories.html#commentary-ref">commentary</a>
+            <h4>Tags</h4>
+            <ul class="list-of-tags tags-in-article">
+                <li><a href="./tags.html#rants-ref">rants
+                    <span>7</span>
+</a></li>
+            </ul>
+<h4>Contact</h4>
+    <a href="http://twitter.com/russgray" title="My Twitter Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-twitter sidebar-social-links"></i></a>
+    <a href="http://github.com/russgray" title="My Github Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-github sidebar-social-links"></i></a>
+    <a href="http://uk.linkedin.com/in/russgray/" title="My LinkedIn Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-linkedin sidebar-social-links"></i></a>
+    <a href="mailto:russgray@gmail.com" title="My Email Address" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-envelope sidebar-social-links"></i></a>
+        </div>
+        </section>
+</div>
+</article>
+                </div>
+                <div class="span1"></div>
+            </div>
+        </div>
+        <div id="push"></div>
+    </div>
+<footer>
+<div id="footer">
+    <ul class="footer-content">
+        <li class="elegant-power">Powered by <a href="http://getpelican.com/" title="Pelican Home Page">Pelican</a>. Theme: <a href="http://oncrashreboot.com/pelican-elegant" title="Theme Elegant Home Page">Elegant</a> by <a href="http://oncrashreboot.com" title="Talha Mansoor Home Page">Talha Mansoor</a></li>
+    </ul>
+</div>
+</footer>            <script src="https://code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+    
+    </body>
+    <!-- Theme: Elegant built for Pelican
+    License : http://oncrashreboot.com/pelican-elegant -->
+</html>

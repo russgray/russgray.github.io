@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8"> 
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Russell Gray" />
+        <meta name="copyright" content="Russell Gray" />
+
+        <link rel="author" href=https://plus.google.com/u/0/102559471807447493728 />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content="coding, patterns, development, " />
+
+<meta property="og:title" content="Trendy Asshole "/>
+<meta property="og:url" content="../drafts/trendy-asshole.html" />
+<meta property="og:description" content="This is an opinionated tutorial on setting up a front-end web development environment. I developed monitor-match as a simple site to try out some of the latest webdev hotness and establish for myself a &#39;preferred&#39; stack for hobby projects (I mostly do backend performance work at my day job). This …" />
+<meta property="og:site_name" content="Basildon Coder" />
+<meta property="og:article:author" content="Russell Gray" />
+<meta property="og:article:published_time" content="2018-05-15T15:51:37.757459+01:00" />
+<meta name="twitter:title" content="Trendy Asshole ">
+<meta name="twitter:description" content="This is an opinionated tutorial on setting up a front-end web development environment. I developed monitor-match as a simple site to try out some of the latest webdev hotness and establish for myself a &#39;preferred&#39; stack for hobby projects (I mostly do backend performance work at my day job). This …">
+
+        <title>Trendy Asshole  · Basildon Coder
+</title>
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="../theme/css/pygments.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="../theme/tipuesearch/tipuesearch.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="../theme/css/elegant.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="../theme/css/custom.css" media="screen">
+    </head>
+    <body>
+        <div id="content-sans-footer">
+        <div class="navbar navbar-static-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <div class="span1"></div>
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="../"><span class=site-name>Basildon Coder</span></a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav pull-right top-menu">
+                            <li ><a href="..">Home</a></li>
+                            <li ><a href="../categories.html">Categories</a></li>
+                            <li ><a href="../tags.html">Tags</a></li>
+                            <li ><a href="../archives.html">Archives</a></li>
+                            <li><form class="navbar-search" action="../search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span1"></div>
+                <div class="span10">
+<article>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+    <h1><a href="../drafts/trendy-asshole.html"> Trendy Asshole  </a></h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+
+            
+            <p>This is an opinionated tutorial on setting up a front-end web development environment.</p>
+<p>I developed monitor-match as a simple site to try out some of the latest webdev hotness and establish for myself a 'preferred' stack for hobby projects (I mostly do backend performance work at my day job). This site has no backend at all - the dataset it works with is small enough that it can just be kept in code and downloaded in full by the browser.</p>
+<p>The goal of monitor-match is simply to suggest good secondary monitors based on the calculated DPI of your primary monitor (the idea being that text will render at the same size on both, making it feel seamless to switch from one to the other). There are a few DPI calculators out there already, and some even allow comparisons, but none are very streamlined for what I want to do.</p>
+<p>After reading around the subject for some time, I selected the following tools for my stack:</p>
+<ul>
+<li><strong>Vagrant</strong> - I'll be using a Linux VM for creating the environment and running the build pipeline. Actual code editing can then be done on any host OS and editor - I'll mostly be using Sublime on Windows, switching to OSX if I'm on my laptop.</li>
+<li><strong>GulpJS</strong> - selecting this kinda sets the tone for everything else. It means node and npm become the path of least resistance for getting dependencies.</li>
+<li><strong>Coffeescript</strong> - gets a lot of hate for some reason. Fuck you, I like it.</li>
+<li><strong>SASS/Bourbon/Bitters/Neat/Refills</strong> - like most backend devs, I have the aesthetic sense of a dung beetle. Using handy pre-baked kits like this gives me modern, standard, pretty CSS at the expense of looking a little...undistinguished. Still, at least it won't be another default bootstrap site, eh?</li>
+<li><strong>Handlebars</strong> - rendered server-side, so I can pass some build-time parameters into my markup.</li>
+<li><strong>Bower</strong> - for when npm gets boring.</li>
+<li><strong>React.js</strong> - philosophically I prefer this to AngularJS. Simple, fast, and I like the one-way binding and readonly props, and I don't have to learn all the weird Angular vocabulary. Plus, no 2.0 debacle (yet). I won't be using the JSX markup though.</li>
+<li><strong>Jasmine</strong> - yes, testing. Mmm, testing.</li>
+</ul>
+<p>Quite the list there. With the wonders of modern development, this means I'll be pulling in half a gig of VM and about 70MB of libs to build a static site that will be less than 100KB minified. Hooray!</p>
+<h1 id="fair-warning">Fair Warning</h1>
+<p>I've been writing software for 20 years, but I only really do front-end work for amusement. This tutorial is written from the perspective of someone who knows how to code, but isn't current with modern webdev. If you're a total newbie to coding, this may not be the tutorial for you.</p>
+<h1 id="the-environment">The Environment</h1>
+<p>Create a new directory. Run <code>git init</code>. Then run <code>vagrant init &lt;preferred-distro&gt;</code>. I'm using Ubuntu Trusty, which has implications for installing node. If you use something else, tweak the bootstrap script (below) as appropriate. When it completes, type <code>vagrant ssh</code> and then switch to the <code>/vagrant</code> directory, and you're all set.</p>
+<h1 id="the-model">The Model</h1>
+<p>Create a <code>src</code> directory and a file called <code>monitor.coffee</code>. This will contain our basic monitor class and initialise the search corpus. We will want the following data:</p>
+<ul>
+<li>Resolution</li>
+<li>Diagonal screen size in inches</li>
+<li>DPI (calculated if necessary)</li>
+<li>Some metadata - a photo, description, Amazon link etc)</li>
+</ul>
+<p>We'll suggest a specific monitor at each size though obviously any monitor at the same spec will match.</p>
+<p>Here's the initial code:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nx">Monitor</span>
+    <span class="nv">constructor: </span><span class="nf">(@x, @y, @diag, @dpi=null, @name=&#39;&#39;, @uri=&#39;&#39;, @img=&#39;&#39;) -&gt;</span>
+        <span class="vi">@dpi = </span><span class="nx">round_number</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">sqrt</span><span class="p">(</span><span class="nx">@x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="nx">@y</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="nx">@diag</span><span class="p">)</span> <span class="k">if</span> <span class="o">not</span> <span class="nx">@dpi</span>
+</pre></div>
+
+
+<p>If no DPI is provided, it is a simple calculation to work it out.</p>
+            
+            
+            <hr/>
+        </div>
+        <section>
+        <div class="span2" style="float:right;font-size:0.9em;">
+            <h4>Published</h4>
+            <time pubdate="pubdate" datetime="2018-05-15T15:51:37.757459+01:00">May 15, 2018</time>
+            <h4>Category</h4>
+            <a class="category-link" href="../categories.html#development-ref">development</a>
+            <h4>Tags</h4>
+            <ul class="list-of-tags tags-in-article">
+                <li><a href="../tags.html#coding-ref">coding
+                    <span>13</span>
+</a></li>
+                <li><a href="../tags.html#patterns-ref">patterns
+                    <span>3</span>
+</a></li>
+            </ul>
+<h4>Contact</h4>
+    <a href="http://twitter.com/russgray" title="My Twitter Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-twitter sidebar-social-links"></i></a>
+    <a href="http://github.com/russgray" title="My Github Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-github sidebar-social-links"></i></a>
+    <a href="http://uk.linkedin.com/in/russgray/" title="My LinkedIn Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-linkedin sidebar-social-links"></i></a>
+    <a href="mailto:russgray@gmail.com" title="My Email Address" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-envelope sidebar-social-links"></i></a>
+        </div>
+        </section>
+</div>
+</article>
+                </div>
+                <div class="span1"></div>
+            </div>
+        </div>
+        <div id="push"></div>
+    </div>
+<footer>
+<div id="footer">
+    <ul class="footer-content">
+        <li class="elegant-power">Powered by <a href="http://getpelican.com/" title="Pelican Home Page">Pelican</a>. Theme: <a href="http://oncrashreboot.com/pelican-elegant" title="Theme Elegant Home Page">Elegant</a> by <a href="http://oncrashreboot.com" title="Talha Mansoor Home Page">Talha Mansoor</a></li>
+    </ul>
+</div>
+</footer>            <script src="https://code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+    
+    </body>
+    <!-- Theme: Elegant built for Pelican
+    License : http://oncrashreboot.com/pelican-elegant -->
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8"> 
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Russell Gray" />
+        <meta name="copyright" content="Russell Gray" />
+
+        <link rel="author" href=https://plus.google.com/u/0/102559471807447493728 />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content="coding, java, postgres, security, coding, " />
+
+<meta property="og:title" content="PostgreSQL, JDBC, and Client Certificates "/>
+<meta property="og:url" content="./postgresql-jdbc-client-certificates.html" />
+<meta property="og:description" content="There is a distressing lack of info out there about configuring the postgresql JDBC driver to present a client certificate to a database server when using SSL. It appears that checking the server certificate works out of the box, but not the client certificate. In this post I am using …" />
+<meta property="og:site_name" content="Basildon Coder" />
+<meta property="og:article:author" content="Russell Gray" />
+<meta property="og:article:published_time" content="2015-03-30T16:12:56+01:00" />
+<meta name="twitter:title" content="PostgreSQL, JDBC, and Client Certificates ">
+<meta name="twitter:description" content="There is a distressing lack of info out there about configuring the postgresql JDBC driver to present a client certificate to a database server when using SSL. It appears that checking the server certificate works out of the box, but not the client certificate. In this post I am using …">
+
+        <title>PostgreSQL, JDBC, and Client Certificates  · Basildon Coder
+</title>
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="./theme/css/pygments.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/tipuesearch/tipuesearch.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/elegant.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/custom.css" media="screen">
+    </head>
+    <body>
+        <div id="content-sans-footer">
+        <div class="navbar navbar-static-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <div class="span1"></div>
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="./"><span class=site-name>Basildon Coder</span></a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav pull-right top-menu">
+                            <li ><a href=".">Home</a></li>
+                            <li ><a href="./categories.html">Categories</a></li>
+                            <li ><a href="./tags.html">Tags</a></li>
+                            <li ><a href="./archives.html">Archives</a></li>
+                            <li><form class="navbar-search" action="./search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span1"></div>
+                <div class="span10">
+<article>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+    <h1><a href="./postgresql-jdbc-client-certificates.html"> PostgreSQL, JDBC, and Client Certificates  </a></h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+
+            
+            <p>There is a distressing lack of info out there about configuring the postgresql JDBC driver to present a client certificate to a database server when using SSL. It appears that checking the <em>server</em> certificate works out of the box, but not the client certificate.</p>
+<p>In this post I am using the following software versions:</p>
+<ul>
+<li>PostgreSQL 8.1 (yes, old, I know)</li>
+<li>postgresql-9.4-1200-jdbc41</li>
+</ul>
+<p>If you are using different versions then results may vary, but this should be fairly widely-applicable.</p>
+<p>The postgres <a href="https://jdbc.postgresql.org/documentation/81/ssl-factory.html">JDBC docs</a> hint that a custom SSLSocketFactory is required in order to establish an SSLContext instance that uses your client cert, but rather unhelpfully goes on to say they don't know how to do it:</p>
+<blockquote>
+<p>The Java SSL API is not very well known to the JDBC driver developers and we
+would be interested in any interesting and generally useful extensions that
+you have implemented using this mechanism. Specifically it would be nice to
+be able to provide client certificates to be validated by the server</p>
+</blockquote>
+<p>Yes, it would be nice. And indeed, someone already has - but it seems to be woefully undocumented. In the org.postgresql.ssl.jdbc4 package we find the <a href="https://github.com/pgjdbc/pgjdbc/blob/master/org/postgresql/ssl/jdbc4/LibPQFactory.java">LibPQFactory</a> class, which handles everything we need - and, in what I personally consider a bonus, works with .crt files directly rather than mucking about with keystores and the perenially stupid keytool.</p>
+<p>By default, this class looks in <code>~/.postgresql/</code> for the files it needs to work, though you can override the location. You need a <code>root.crt</code> containing the CA for the server certificate, plus your client certificate (<code>postgresql.crt</code>) and private key (<code>postgresql.pk8</code>). </p>
+<p>Assuming you are using the default locations, you can test the basic connection using psql:</p>
+<div class="highlight"><pre><span></span>psql <span class="s2">&quot;sslmode=verify-full host=&lt;hostname&gt; dbname=postgres user=&lt;username&gt;&quot;</span>
+</pre></div>
+
+
+<p>If all is well, you will be prompted for your password and a connection will be established. If not, things to look at include your postgres config (is there a <code>hostssl</code> line in <code>pg_hba.config</code> for your client host?) and your firewall.</p>
+<p>Although psql has no trouble, the JDBC driver has format restrictions. The private key must be PKCS8 and stored in DER format, whereas the certificate is fine in PEM format (because of course it is). If your key is in PEM format (i.e. starts with something like <code>-----BEGIN PRIVATE KEY-----</code>) you can convert it with openssl:</p>
+<div class="highlight"><pre><span></span> openssl pkcs8 -topk8 -inform PEM -outform DER -in postgresql.key -out postgresql.pk8 -nocrypt
+</pre></div>
+
+
+<p>Note that this creates an unencrypted key file; leave off the <code>-nocrypt</code> parameter if you want it encrypted, and specify the password at runtime.</p>
+<p>Then, finally, specify your connection string like so:</p>
+<div class="highlight"><pre><span></span><span class="n">jdbc</span><span class="o">:</span><span class="n">postgresql</span><span class="o">://&lt;</span><span class="n">hostname</span><span class="o">&gt;/</span><span class="n">postgres</span><span class="o">?</span><span class="n">ssl</span><span class="o">=</span><span class="kc">true</span><span class="o">&amp;</span><span class="n">sslfactory</span><span class="o">=</span><span class="n">org</span><span class="o">.</span><span class="na">postgresql</span><span class="o">.</span><span class="na">ssl</span><span class="o">.</span><span class="na">jdbc4</span><span class="o">.</span><span class="na">LibPQFactory</span><span class="o">&amp;</span><span class="n">sslmode</span><span class="o">=</span><span class="n">verify</span><span class="o">-</span><span class="n">full</span>
+</pre></div>
+
+
+<p>Note the <code>sslmode</code> parameter - this is one of a number of parameters that control behaviour of the factory. The full list is in the source; the interesting ones include <code>sslcert</code>, <code>sslkey</code>, and <code>sslrootcert</code> (overrides the location/name of <code>root.crt</code>, <code>postgresql.crt</code> and <code>postgresql.pk8</code>); and <code>sslpassword</code> (decryption password if you encrypted your private key).</p>
+            
+            
+            <hr/>
+            <aside>
+            <nav>
+            <ul class="articles-timeline">
+                <li class="previous-article">« <a href="./a-handy-settings-pattern.html" title="Previous: A Handy Settings Pattern">A Handy Settings Pattern</a></li>
+                <li class="next-article"><a href="./logging-connections-with-firewalld.html" title="Next: Logging Connections With firewalld">Logging Connections With firewalld</a> »</li>
+            </ul>
+            </nav>
+            </aside>
+        </div>
+        <section>
+        <div class="span2" style="float:right;font-size:0.9em;">
+            <h4>Published</h4>
+            <time pubdate="pubdate" datetime="2015-03-30T16:12:56+01:00">Mar 30, 2015</time>
+            <h4>Category</h4>
+            <a class="category-link" href="./categories.html#coding-ref">coding</a>
+            <h4>Tags</h4>
+            <ul class="list-of-tags tags-in-article">
+                <li><a href="./tags.html#coding-ref">coding
+                    <span>13</span>
+</a></li>
+                <li><a href="./tags.html#java-ref">java
+                    <span>1</span>
+</a></li>
+                <li><a href="./tags.html#postgres-ref">postgres
+                    <span>1</span>
+</a></li>
+                <li><a href="./tags.html#security-ref">security
+                    <span>1</span>
+</a></li>
+            </ul>
+<h4>Contact</h4>
+    <a href="http://twitter.com/russgray" title="My Twitter Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-twitter sidebar-social-links"></i></a>
+    <a href="http://github.com/russgray" title="My Github Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-github sidebar-social-links"></i></a>
+    <a href="http://uk.linkedin.com/in/russgray/" title="My LinkedIn Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-linkedin sidebar-social-links"></i></a>
+    <a href="mailto:russgray@gmail.com" title="My Email Address" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-envelope sidebar-social-links"></i></a>
+        </div>
+        </section>
+</div>
+</article>
+                </div>
+                <div class="span1"></div>
+            </div>
+        </div>
+        <div id="push"></div>
+    </div>
+<footer>
+<div id="footer">
+    <ul class="footer-content">
+        <li class="elegant-power">Powered by <a href="http://getpelican.com/" title="Pelican Home Page">Pelican</a>. Theme: <a href="http://oncrashreboot.com/pelican-elegant" title="Theme Elegant Home Page">Elegant</a> by <a href="http://oncrashreboot.com" title="Talha Mansoor Home Page">Talha Mansoor</a></li>
+    </ul>
+</div>
+</footer>            <script src="https://code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+    
+    </body>
+    <!-- Theme: Elegant built for Pelican
+    License : http://oncrashreboot.com/pelican-elegant -->
+</html>

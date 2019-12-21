@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8"> 
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Russell Gray" />
+        <meta name="copyright" content="Russell Gray" />
+
+        <link rel="author" href=https://plus.google.com/u/0/102559471807447493728 />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content=", tools, " />
+
+<meta property="og:title" content="Bash History Spelunking "/>
+<meta property="og:url" content="./bash-history-spelunking.html" />
+<meta property="og:description" content="Learned from Weiqi, who learned from KageSenshi, about a Fedora Planet shell history meme - post the results of running the following command on your linux box: history | awk &#39;{a[$2]++ } END{for(i in a){print a[i] &#34; &#34; i}}&#39; | sort -rn | head I won&#39;t bother repeating the inevitable warning about …" />
+<meta property="og:site_name" content="Basildon Coder" />
+<meta property="og:article:author" content="Russell Gray" />
+<meta property="og:article:published_time" content="2008-04-14T14:50:00+01:00" />
+<meta name="twitter:title" content="Bash History Spelunking ">
+<meta name="twitter:description" content="Learned from Weiqi, who learned from KageSenshi, about a Fedora Planet shell history meme - post the results of running the following command on your linux box: history | awk &#39;{a[$2]++ } END{for(i in a){print a[i] &#34; &#34; i}}&#39; | sort -rn | head I won&#39;t bother repeating the inevitable warning about …">
+
+        <title>Bash History Spelunking  · Basildon Coder
+</title>
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="./theme/css/pygments.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/tipuesearch/tipuesearch.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/elegant.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/custom.css" media="screen">
+    </head>
+    <body>
+        <div id="content-sans-footer">
+        <div class="navbar navbar-static-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <div class="span1"></div>
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="./"><span class=site-name>Basildon Coder</span></a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav pull-right top-menu">
+                            <li ><a href=".">Home</a></li>
+                            <li ><a href="./categories.html">Categories</a></li>
+                            <li ><a href="./tags.html">Tags</a></li>
+                            <li ><a href="./archives.html">Archives</a></li>
+                            <li><form class="navbar-search" action="./search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span1"></div>
+                <div class="span10">
+<article>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+    <h1><a href="./bash-history-spelunking.html"> Bash History Spelunking  </a></h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+
+            
+            <p>Learned from Weiqi, who learned from <a href="http://blog.kagesenshi.org/2008/04/me-me.html">KageSenshi</a>, about a <a href="http://planet.fedoraproject.org/">Fedora
+Planet</a> shell history meme - post the results of running the following
+command on your linux box:</p>
+<div class="highlight"><pre><span></span><span class="nb">history</span> <span class="p">|</span> awk <span class="s1">&#39;{a[$2]++ } END{for(i in a){print a[i] &quot; &quot; i}}&#39;</span> <span class="p">|</span> sort -rn <span class="p">|</span> head
+</pre></div>
+
+
+<p>I won't bother repeating the inevitable warning about the dangers of executing
+random shell scripts you find on the Internet, because I'm lazy and mean.
+Anyway, here's the results from my webhosting box:</p>
+<div class="highlight"><pre><span></span><span class="m">231</span> ll
+<span class="m">171</span> vim
+<span class="m">132</span> <span class="nb">cd</span>
+<span class="m">50</span> screen
+<span class="m">43</span> cat
+<span class="m">39</span> tail
+<span class="m">34</span> ls
+<span class="m">34</span> cls
+<span class="m">32</span> <span class="nb">exit</span>
+<span class="m">31</span> wget
+</pre></div>
+
+
+<p>'ll' is an alias for 'ls -l', and 'cls' an alias for 'clear'. No real
+surprises otherwise - I use vim for development over ssh, I tail my logs
+occasionally, and live in GNU Screen.</p>
+<p>Here's the output from my home box:</p>
+<div class="highlight"><pre><span></span><span class="m">254</span> ll
+<span class="m">181</span> <span class="nb">cd</span>
+<span class="m">148</span> sudo
+<span class="m">123</span> rm
+<span class="m">123</span> ffmpeg
+<span class="m">86</span> screen
+<span class="m">83</span> ls
+<span class="m">75</span> cls
+<span class="m">72</span> vim
+<span class="m">60</span> find
+</pre></div>
+
+
+<p>Quite similar actually, guess I'm set in my ways. The ffmpeg count is a bit of
+an anomaly, since I used it a lot recently to re-encode a bunch of
+<a href="http://en.wikipedia.org/wiki/Futurama">Futurama</a> rips for my mobile.</p>
+<p>Not sure what to do with this remarkable intel, however. Perhaps I'll use the
+data to generate an <a href="http://blog.docuverse.com/2011/07/29/what-is-identicon/">Identicon</a> and use it as a favicon? Or, perhaps not.</p>
+            
+            
+    <div class="accordion" id="accordion2">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#comments">
+                Comments (2) </a>
+            </div>
+
+            <div id="comments" class="accordion-body collapse">
+                <div class="accordion-inner">
+                    <div class="comments">
+                        <ul>
+                            <li>Random Musings said: <p><strong>Fedora Bash History Meme...</strong></p>
+<p>I just learned about a Bash History Meme originated at Planet Fedora from a blog I read regularly.
+In short, you run the following command in bash, and show your results.</p>
+<div class="highlight"><pre><span></span><span class="nb">history</span> <span class="p">|</span> awk <span class="s1">&#39;{a[$2]++ } END{for(i in a){print a[i] &quot; &quot; i}}&#39;</span><span class="p">|</span>sort -...
+</pre></div></li>
+                            <li>Mike said: <p>Mine came out:</p>
+<div class="highlight"><pre><span></span>20 nethack
+6 vi
+5 ssh
+5 ping
+5 history
+3 mount
+3 cshore
+2 man
+2 find
+2 eject
+</pre></div>
+
+
+<p>Oh Dearie Me!</p></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+            <hr/>
+            <aside>
+            <nav>
+            <ul class="articles-timeline">
+                <li class="previous-article">« <a href="./evil-important-apparently.html" title="Previous: Evil = Important. Apparently.">Evil = Important. Apparently.</a></li>
+                <li class="next-article"><a href="./test-specific-shims-in-production-code.html" title="Next: Test-specific Shims in Production Code">Test-specific Shims in Production Code</a> »</li>
+            </ul>
+            </nav>
+            </aside>
+        </div>
+        <section>
+        <div class="span2" style="float:right;font-size:0.9em;">
+            <h4>Published</h4>
+            <time pubdate="pubdate" datetime="2008-04-14T14:50:00+01:00">Apr 14, 2008</time>
+            <h4>Category</h4>
+            <a class="category-link" href="./categories.html#tools-ref">tools</a>
+<h4>Contact</h4>
+    <a href="http://twitter.com/russgray" title="My Twitter Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-twitter sidebar-social-links"></i></a>
+    <a href="http://github.com/russgray" title="My Github Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-github sidebar-social-links"></i></a>
+    <a href="http://uk.linkedin.com/in/russgray/" title="My LinkedIn Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-linkedin sidebar-social-links"></i></a>
+    <a href="mailto:russgray@gmail.com" title="My Email Address" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-envelope sidebar-social-links"></i></a>
+        </div>
+        </section>
+</div>
+</article>
+                </div>
+                <div class="span1"></div>
+            </div>
+        </div>
+        <div id="push"></div>
+    </div>
+<footer>
+<div id="footer">
+    <ul class="footer-content">
+        <li class="elegant-power">Powered by <a href="http://getpelican.com/" title="Pelican Home Page">Pelican</a>. Theme: <a href="http://oncrashreboot.com/pelican-elegant" title="Theme Elegant Home Page">Elegant</a> by <a href="http://oncrashreboot.com" title="Talha Mansoor Home Page">Talha Mansoor</a></li>
+    </ul>
+</div>
+</footer>            <script src="https://code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+    
+    </body>
+    <!-- Theme: Elegant built for Pelican
+    License : http://oncrashreboot.com/pelican-elegant -->
+</html>

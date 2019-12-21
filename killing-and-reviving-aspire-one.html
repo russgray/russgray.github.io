@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8"> 
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Russell Gray" />
+        <meta name="copyright" content="Russell Gray" />
+
+        <link rel="author" href=https://plus.google.com/u/0/102559471807447493728 />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content=", misc, " />
+
+<meta property="og:title" content="Killing and Reviving an Aspire One "/>
+<meta property="og:url" content="./killing-and-reviving-aspire-one.html" />
+<meta property="og:description" content="I just spent 2 hours reviving my Aspire One netbook after inadvertently killing it whilst fiddling about configuring dropbox. I found the whole process unnecessarily fiddly and information on the interwebs to be a bit scarcer than I would have liked, so I&#39;m documenting it here in case I need …" />
+<meta property="og:site_name" content="Basildon Coder" />
+<meta property="og:article:author" content="Russell Gray" />
+<meta property="og:article:published_time" content="2009-02-08T21:01:00+00:00" />
+<meta name="twitter:title" content="Killing and Reviving an Aspire One ">
+<meta name="twitter:description" content="I just spent 2 hours reviving my Aspire One netbook after inadvertently killing it whilst fiddling about configuring dropbox. I found the whole process unnecessarily fiddly and information on the interwebs to be a bit scarcer than I would have liked, so I&#39;m documenting it here in case I need …">
+
+        <title>Killing and Reviving an Aspire One  · Basildon Coder
+</title>
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="./theme/css/pygments.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/tipuesearch/tipuesearch.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/elegant.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/custom.css" media="screen">
+    </head>
+    <body>
+        <div id="content-sans-footer">
+        <div class="navbar navbar-static-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <div class="span1"></div>
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="./"><span class=site-name>Basildon Coder</span></a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav pull-right top-menu">
+                            <li ><a href=".">Home</a></li>
+                            <li ><a href="./categories.html">Categories</a></li>
+                            <li ><a href="./tags.html">Tags</a></li>
+                            <li ><a href="./archives.html">Archives</a></li>
+                            <li><form class="navbar-search" action="./search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span1"></div>
+                <div class="span10">
+<article>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+    <h1><a href="./killing-and-reviving-aspire-one.html"> Killing and Reviving an Aspire One  </a></h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+
+            
+            <p>I just spent 2 hours reviving my Aspire One netbook after inadvertently
+killing it whilst fiddling about configuring <a href="http://www.getdropbox.com">dropbox</a>. I found the whole
+process unnecessarily fiddly and information on the interwebs to be a bit
+scarcer than I would have liked, so I'm documenting it here in case I need it
+in the future. Hopefully it'll be useful to someone else too.</p>
+<p>So, the cause of death was a typo when trying to set up the dropboxd daemon to
+start automatically on boot. I'm not running nautilus so couldn't use one of
+the prepackaged releases, and it's completely my fault that I made a mess of
+installing the vanilla x86 build.</p>
+<p>After making the fatal change and rebooting, the system would only boot up to
+a blank black screen with a default X mouse cursor. This is because the system
+was trying to run my broken command, failing, and therefore never getting to
+the main desktop.</p>
+<p>In the world of normal linux, there's all sorts of ways of dealing with this,
+but despite plenty of googling I couldn't find a way to use run-level 2 or 3
+on an Aspire One, and the Ctrl+Alt+F1-F6 key combos for switching away from X
+to a terminal don't work either. There seems to be no way of preventing the
+system following the same doomed process over and again if you break X.</p>
+<p>Frustrated, I thought about using the restore disk, but that's a nuclear
+option - it re-paves the whole machine, so bye-bye data. That seemed a bit
+drastic when all I needed to do was edit a single text file to fix the system.</p>
+<p>Ironically, this was happening as a result of me trying to install a file sync
+system as a simple backup. Grr.</p>
+<p>Still, like countless thousands before me, I was saved by a live linux distro
+- in this case, a USB bootable one (since the Aspire One has no optical
+drive). Following the <a href="http://www.pendrivelinux.com/feather-linux-on-usb/">instructions</a><sup id="fnref-1"><a class="footnote-ref" href="#fn-1">1</a></sup>  at <a href="http://www.pendrivelinux.com/">pendrivelinux</a> I created a
+bootable Feather Linux USB drive, and booted the netbook from it by hitting
+F12 on the post screen and selecting to boot from the USB stick.</p>
+<p>At the boot prompt, I used 'knoppix 3' to boot the system up to a command
+line, mounted /dev/hdc1 as an ext2 filesystem, and fixed my typo. Reboot, and
+tada! Everything was working again (well, after hitting Fn-F7 to reenable the
+touchpad, which I had accidentally disabled whilst mashing the keyboard in
+frustration at the sight of a blank screen about an hour earlier, heh).</p>
+<div class="footnote">
+<hr>
+<ol>
+<li id="fn-1">
+<p>Note that I had to use a newer version of syslinux than the one
+referenced on pendrivelinux. <a href="http://www.kernel.org/pub/linux/utils/boot/syslinux/Old/syslinux-3.36.zip">This one</a> worked for me.&#160;<a class="footnote-backref" href="#fnref-1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+            
+            
+            <hr/>
+            <aside>
+            <nav>
+            <ul class="articles-timeline">
+                <li class="previous-article">« <a href="./macros-you-oughta-know.html" title="Previous: Macros: You Oughta Know">Macros: You Oughta Know</a></li>
+                <li class="next-article"><a href="./project-euler-problem-8.html" title="Next: Project Euler Problem 8">Project Euler Problem 8</a> »</li>
+            </ul>
+            </nav>
+            </aside>
+        </div>
+        <section>
+        <div class="span2" style="float:right;font-size:0.9em;">
+            <h4>Published</h4>
+            <time pubdate="pubdate" datetime="2009-02-08T21:01:00+00:00">Feb 8, 2009</time>
+            <h4>Category</h4>
+            <a class="category-link" href="./categories.html#misc-ref">misc</a>
+<h4>Contact</h4>
+    <a href="http://twitter.com/russgray" title="My Twitter Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-twitter sidebar-social-links"></i></a>
+    <a href="http://github.com/russgray" title="My Github Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-github sidebar-social-links"></i></a>
+    <a href="http://uk.linkedin.com/in/russgray/" title="My LinkedIn Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-linkedin sidebar-social-links"></i></a>
+    <a href="mailto:russgray@gmail.com" title="My Email Address" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-envelope sidebar-social-links"></i></a>
+        </div>
+        </section>
+</div>
+</article>
+                </div>
+                <div class="span1"></div>
+            </div>
+        </div>
+        <div id="push"></div>
+    </div>
+<footer>
+<div id="footer">
+    <ul class="footer-content">
+        <li class="elegant-power">Powered by <a href="http://getpelican.com/" title="Pelican Home Page">Pelican</a>. Theme: <a href="http://oncrashreboot.com/pelican-elegant" title="Theme Elegant Home Page">Elegant</a> by <a href="http://oncrashreboot.com" title="Talha Mansoor Home Page">Talha Mansoor</a></li>
+    </ul>
+</div>
+</footer>            <script src="https://code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+    
+    </body>
+    <!-- Theme: Elegant built for Pelican
+    License : http://oncrashreboot.com/pelican-elegant -->
+</html>

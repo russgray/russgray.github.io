@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8"> 
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Russell Gray" />
+        <meta name="copyright" content="Russell Gray" />
+
+        <link rel="author" href=https://plus.google.com/u/0/102559471807447493728 />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content="coding, .net, patterns, coding, " />
+
+<meta property="og:title" content="A Handy Settings Pattern "/>
+<meta property="og:url" content="./a-handy-settings-pattern.html" />
+<meta property="og:description" content=".Net has a fairly nice strongly-typed settings file, but unfortunately the most common pattern of access is the big fat static accessor Settings.Default. Whilst refactoring some old code recently to use dependency injection, I found myself struggling a bit to manage settings nicely so that this static wart worked …" />
+<meta property="og:site_name" content="Basildon Coder" />
+<meta property="og:article:author" content="Russell Gray" />
+<meta property="og:article:published_time" content="2015-02-20T11:44:20+00:00" />
+<meta name="twitter:title" content="A Handy Settings Pattern ">
+<meta name="twitter:description" content=".Net has a fairly nice strongly-typed settings file, but unfortunately the most common pattern of access is the big fat static accessor Settings.Default. Whilst refactoring some old code recently to use dependency injection, I found myself struggling a bit to manage settings nicely so that this static wart worked …">
+
+        <title>A Handy Settings Pattern  · Basildon Coder
+</title>
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="./theme/css/pygments.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/tipuesearch/tipuesearch.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/elegant.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/custom.css" media="screen">
+    </head>
+    <body>
+        <div id="content-sans-footer">
+        <div class="navbar navbar-static-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <div class="span1"></div>
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="./"><span class=site-name>Basildon Coder</span></a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav pull-right top-menu">
+                            <li ><a href=".">Home</a></li>
+                            <li ><a href="./categories.html">Categories</a></li>
+                            <li ><a href="./tags.html">Tags</a></li>
+                            <li ><a href="./archives.html">Archives</a></li>
+                            <li><form class="navbar-search" action="./search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span1"></div>
+                <div class="span10">
+<article>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+    <h1><a href="./a-handy-settings-pattern.html"> A Handy Settings Pattern  </a></h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+
+            
+            <p>.Net has a fairly nice <a href="http://bit.ly/1DC4tKk">strongly-typed settings file</a>, but unfortunately
+the most common pattern of access is the big fat static accessor
+<code>Settings.Default</code>. Whilst refactoring some old code recently to use
+dependency injection, I found myself struggling a bit to manage settings
+nicely so that this static wart worked correctly. I came up with the following
+little pattern which, so far, works well for me so I thought I'd share it.</p>
+<p>Firstly, in any project that needs runtime configuration, define an interface
+that contains readonly properties for the data it needs.</p>
+<div class="highlight"><pre><span></span><span class="k">namespace</span> <span class="nn">MyClassLibraryProject</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">interface</span> <span class="n">ISettings</span>
+    <span class="p">{</span>
+        <span class="kt">string</span> <span class="n">MyStringSetting</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+        <span class="kt">bool</span> <span class="n">SomeFlag</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Then in any class that depends on the settings, make sure the constructor
+accepts that interface (the DI container will inject it).</p>
+<div class="highlight"><pre><span></span><span class="k">namespace</span> <span class="nn">MyClassLibraryProject</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">class</span> <span class="nc">MyConfigurableClass</span> <span class="p">:</span> <span class="n">IMyConfigurableClass</span>
+    <span class="p">{</span>
+        <span class="k">private</span> <span class="k">readonly</span> <span class="n">ISettings</span> <span class="n">_settings</span><span class="p">;</span>
+
+        <span class="k">public</span> <span class="nf">MyConfigurableClass</span><span class="p">(</span><span class="n">ISettings</span> <span class="n">settings</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">_settings</span> <span class="p">=</span> <span class="n">settings</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Then, in whatever project builds your actual executable (e.g. a Console app,
+Windows Service, or even just your unit tests) define your Settings.settings
+file as normal, making sure that it contains settings names that match the
+properties you defined. This will generate a <code>Settings</code> class for you with the
+properties needed to implement the interface defined by your class library.</p>
+<div class="highlight"><pre><span></span><span class="k">namespace</span> <span class="nn">MyExecutableProject.Properties</span> <span class="p">{</span>
+
+
+<span class="na">    [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]</span>
+<span class="na">    [global::System.CodeDom.Compiler.GeneratedCodeAttribute(</span>
+<span class="na">        &quot;Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator&quot;,</span>
+<span class="na">        &quot;12.0.0.0&quot;)]</span>
+    <span class="k">internal</span> <span class="k">sealed</span> <span class="k">partial</span> <span class="k">class</span> <span class="nc">Settings</span> <span class="p">:</span>
+        <span class="k">global</span><span class="p">::</span><span class="n">System</span><span class="p">.</span><span class="n">Configuration</span><span class="p">.</span><span class="n">ApplicationSettingsBase</span> <span class="p">{</span>
+
+        <span class="k">private</span> <span class="k">static</span> <span class="n">Settings</span> <span class="n">defaultInstance</span> <span class="p">=</span> <span class="p">((</span><span class="n">Settings</span><span class="p">)</span>
+            <span class="p">(</span><span class="k">global</span><span class="p">::</span><span class="n">System</span><span class="p">.</span><span class="n">Configuration</span><span class="p">.</span><span class="n">ApplicationSettingsBase</span><span class="p">.</span><span class="n">Synchronized</span><span class="p">(</span>
+                <span class="k">new</span> <span class="nf">Settings</span><span class="p">())));</span>
+
+        <span class="k">public</span> <span class="k">static</span> <span class="n">Settings</span> <span class="n">Default</span> <span class="p">{</span>
+            <span class="k">get</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="n">defaultInstance</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+<span class="na">        [global::System.Configuration.ApplicationScopedSettingAttribute()]</span>
+<span class="na">        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]</span>
+<span class="na">        [global::System.Configuration.DefaultSettingValueAttribute(</span>
+<span class="na">            &quot;some string value&quot;)]</span>
+        <span class="k">public</span> <span class="kt">string</span> <span class="n">MyStringSetting</span> <span class="p">{</span>
+            <span class="k">get</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="p">((</span><span class="kt">string</span><span class="p">)(</span><span class="k">this</span><span class="p">[</span><span class="s">&quot;MyStringSetting&quot;</span><span class="p">]));</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+<span class="na">        [global::System.Configuration.ApplicationScopedSettingAttribute()]</span>
+<span class="na">        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]</span>
+<span class="na">        [global::System.Configuration.DefaultSettingValueAttribute(&quot;False&quot;)]</span>
+        <span class="k">public</span> <span class="kt">bool</span> <span class="n">SomeFlag</span> <span class="p">{</span>
+            <span class="k">get</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="p">((</span><span class="kt">bool</span><span class="p">)(</span><span class="k">this</span><span class="p">[</span><span class="s">&quot;SomeFlag&quot;</span><span class="p">]));</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Importantly, this generated class is <code>partial</code>, so you can extend it. The
+extension doesn't need to do anything other that declare that it implements
+the settings interface.</p>
+<div class="highlight"><pre><span></span><span class="c1">// ReSharper disable once CheckNamespace</span>
+<span class="k">namespace</span> <span class="nn">MyExecutableProject.Properties</span>
+<span class="p">{</span>
+    <span class="k">internal</span> <span class="k">partial</span> <span class="k">class</span> <span class="nc">Settings</span> <span class="p">:</span> <span class="n">MyClassLibraryProject</span><span class="p">.</span><span class="n">ISettings</span>
+    <span class="p">{</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Finally, in your composition root map the static accessor for this Settings
+class to the interface. In this example I'm using <a href="https://simpleinjector.org/">SimpleInjector</a>.</p>
+<div class="highlight"><pre><span></span><span class="kt">var</span> <span class="n">container</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Container</span><span class="p">();</span>
+<span class="n">container</span><span class="p">.</span><span class="n">RegisterSingle</span><span class="p">&lt;</span><span class="n">MyClassLibraryProject</span><span class="p">.</span><span class="n">ISettings</span><span class="p">&gt;(</span><span class="n">Settings</span><span class="p">.</span><span class="n">Default</span><span class="p">);</span>
+<span class="n">container</span><span class="p">.</span><span class="n">Register</span><span class="p">&lt;</span><span class="n">MyClassLibraryProject</span><span class="p">.</span><span class="n">IMyConfigurableClass</span><span class="p">,</span>
+    <span class="n">MyClassLibraryProject</span><span class="p">.</span><span class="n">MyConfigurableClass</span><span class="p">&gt;();</span>
+</pre></div>
+
+
+<p>SimpleInjector will now automatically inject <code>Settings.Default</code> into every
+instance of <code>MyConfigurableClass</code>, behind the <code>ISettings</code> interface. This of
+course makes it trivial to mock settings in tests to check configurable
+behaviour without having to muck around with a settings file.</p>
+<div class="highlight"><pre><span></span><span class="na">[Test]</span>
+<span class="k">public</span> <span class="k">void</span> <span class="nf">TestSomething</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">var</span> <span class="n">settings</span> <span class="p">=</span> <span class="n">Mock</span><span class="p">.</span><span class="n">Of</span><span class="p">&lt;</span><span class="n">ISettings</span><span class="p">&gt;(</span>
+        <span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span><span class="p">.</span><span class="n">MyStringSetting</span> <span class="p">==</span> <span class="s">&quot;test with this value&quot;</span><span class="p">);</span>
+    <span class="kt">var</span> <span class="n">sut</span> <span class="p">=</span> <span class="k">new</span> <span class="n">MyConfigurableClass</span><span class="p">(</span><span class="n">settings</span><span class="p">);</span>
+
+    <span class="n">Assert</span><span class="p">.</span><span class="n">IsTrue</span><span class="p">(</span><span class="n">sut</span><span class="p">.</span><span class="n">DoesTheRightThing</span><span class="p">());</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>As a bonus, because this is all strongly-typed, automated renames work as you
+expect. Rename a property on the interface and it will rename the property on
+the Settings class automatically (at least, Resharper does - not sure about
+vanilla Visual Studio).</p>
+            
+            
+            <hr/>
+            <aside>
+            <nav>
+            <ul class="articles-timeline">
+                <li class="previous-article">« <a href="./windows-debugging-armoury.html" title="Previous: Windows Debugging Armoury">Windows Debugging Armoury</a></li>
+                <li class="next-article"><a href="./postgresql-jdbc-client-certificates.html" title="Next: PostgreSQL, JDBC, and Client Certificates">PostgreSQL, JDBC, and Client Certificates</a> »</li>
+            </ul>
+            </nav>
+            </aside>
+        </div>
+        <section>
+        <div class="span2" style="float:right;font-size:0.9em;">
+            <h4>Published</h4>
+            <time pubdate="pubdate" datetime="2015-02-20T11:44:20+00:00">Feb 20, 2015</time>
+            <h4>Category</h4>
+            <a class="category-link" href="./categories.html#coding-ref">coding</a>
+            <h4>Tags</h4>
+            <ul class="list-of-tags tags-in-article">
+                <li><a href="./tags.html#coding-ref">coding
+                    <span>13</span>
+</a></li>
+                <li><a href="./tags.html#net-ref">.net
+                    <span>7</span>
+</a></li>
+                <li><a href="./tags.html#patterns-ref">patterns
+                    <span>3</span>
+</a></li>
+            </ul>
+<h4>Contact</h4>
+    <a href="http://twitter.com/russgray" title="My Twitter Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-twitter sidebar-social-links"></i></a>
+    <a href="http://github.com/russgray" title="My Github Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-github sidebar-social-links"></i></a>
+    <a href="http://uk.linkedin.com/in/russgray/" title="My LinkedIn Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-linkedin sidebar-social-links"></i></a>
+    <a href="mailto:russgray@gmail.com" title="My Email Address" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-envelope sidebar-social-links"></i></a>
+        </div>
+        </section>
+</div>
+</article>
+                </div>
+                <div class="span1"></div>
+            </div>
+        </div>
+        <div id="push"></div>
+    </div>
+<footer>
+<div id="footer">
+    <ul class="footer-content">
+        <li class="elegant-power">Powered by <a href="http://getpelican.com/" title="Pelican Home Page">Pelican</a>. Theme: <a href="http://oncrashreboot.com/pelican-elegant" title="Theme Elegant Home Page">Elegant</a> by <a href="http://oncrashreboot.com" title="Talha Mansoor Home Page">Talha Mansoor</a></li>
+    </ul>
+</div>
+</footer>            <script src="https://code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+    
+    </body>
+    <!-- Theme: Elegant built for Pelican
+    License : http://oncrashreboot.com/pelican-elegant -->
+</html>

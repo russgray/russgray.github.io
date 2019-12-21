@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8"> 
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Russell Gray" />
+        <meta name="copyright" content="Russell Gray" />
+
+        <link rel="author" href=https://plus.google.com/u/0/102559471807447493728 />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content=".net, coding, software engineering, tools, " />
+
+<meta property="og:title" content="Reporting on NCover Exclusions "/>
+<meta property="og:url" content="./reporting-on-ncover-exclusions.html" />
+<meta property="og:description" content="On a recent project, my team was set the task of achieving 100% unit test pass-rate and code coverage. If you&#39;ve ever been in this position, you&#39;ll know it&#39;s a double-edged sword - whilst it&#39;s great when the Powers That Be embrace quality instead of fixating, limpet-like, on the next deadline …" />
+<meta property="og:site_name" content="Basildon Coder" />
+<meta property="og:article:author" content="Russell Gray" />
+<meta property="og:article:published_time" content="2008-02-20T19:54:00+00:00" />
+<meta name="twitter:title" content="Reporting on NCover Exclusions ">
+<meta name="twitter:description" content="On a recent project, my team was set the task of achieving 100% unit test pass-rate and code coverage. If you&#39;ve ever been in this position, you&#39;ll know it&#39;s a double-edged sword - whilst it&#39;s great when the Powers That Be embrace quality instead of fixating, limpet-like, on the next deadline …">
+
+        <title>Reporting on NCover Exclusions  · Basildon Coder
+</title>
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="./theme/css/pygments.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/tipuesearch/tipuesearch.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/elegant.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/custom.css" media="screen">
+    </head>
+    <body>
+        <div id="content-sans-footer">
+        <div class="navbar navbar-static-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <div class="span1"></div>
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="./"><span class=site-name>Basildon Coder</span></a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav pull-right top-menu">
+                            <li ><a href=".">Home</a></li>
+                            <li ><a href="./categories.html">Categories</a></li>
+                            <li ><a href="./tags.html">Tags</a></li>
+                            <li ><a href="./archives.html">Archives</a></li>
+                            <li><form class="navbar-search" action="./search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span1"></div>
+                <div class="span10">
+<article>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+    <h1><a href="./reporting-on-ncover-exclusions.html"> Reporting on NCover Exclusions  </a></h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+
+            
+            <p>On a recent project, my team was set the task of achieving 100% unit test
+pass-rate and code coverage. If you've ever been in this position, you'll know
+it's a double-edged sword - whilst it's great when the Powers That Be embrace
+quality instead of fixating, limpet-like, on the next deadline, it can be a
+nightmare when that percentage figure on the weekly summary becomes the new
+focus for managerial concentration, especially given <a href="http://www.ericsink.com/articles/Code_Coverage.html">how difficult it can
+be</a> to hit 100%.</p>
+<p>The problem is that achieving the magical 100% is, in many cases, neither
+practical nor particularly useful. It can even be a problem, if the warm fuzzy
+feeling you get when you see "Coverage: 100%" leads to complacency. Even with
+100% coverage and pass-rate, <a href="http://www-128.ibm.com/developerworks/java/library/j-cq01316/">you don't necessarily have quality software</a>.</p>
+<p>Our high-level project architecture involved a .Net client talking to a suite
+of web services written in Java. The .Net client, as an application with a GUI
+and a web service proxy, contained a great deal of generated code and was my
+main concern when the targets were set.</p>
+<p>Now, it's my belief that in most cases there's no benefit to writing tests for
+generated code (unless you also wrote the generator). Unless you have a very,
+very good reason not to, you should trust that the tools are doing their job
+and generating sane code. That's what they're there for. If the tools are
+flaky, you probably shouldn't use them at all - though I suppose that if you
+sometimes fell foul of a particular bug you could write a test to detect
+it<sup id="fnref-1"><a class="footnote-ref" href="#fn-1">1</a></sup>.</p>
+<p>The cause of my concern was that the UI and web reference code accounted for
+about 30-35% of the <a href="http://en.wikipedia.org/wiki/Source_lines_of_code">SLOC</a> in the application, and so any coverage report
+that covered the whole app would be way short of the targets we were set.
+There are a number of ways to deal with this:</p>
+<ol>
+<li>
+<p>Bite the bullet and write tests for <em>everything</em>. That includes
+InitializeComponent(), drag 'n' drop handlers, and the sync and async versions
+of every web service stub. Best of luck, and see you in 2017<sup id="fnref-2"><a class="footnote-ref" href="#fn-2">2</a></sup>.</p>
+</li>
+<li>
+<p>Explain patiently that some code does not need testing (or at least, is on
+the wrong side of the productivity bell curve and subject to massively
+diminishing returns in terms of effort/value). Of course, then you'll be asked
+to prove that you're not pulling a fast one and that the delta of your target
+and actual coverage percentage can be accounted for entirely by generated
+code. This will be tricky if you count SLOC for the generated code and use
+decision points for your test coverage, and maintaining this is another
+administrative task that you probably don't want to do.</p>
+</li>
+<li>
+<p>Separate your code such that some assemblies contain <em>only</em> generated code,
+and the rest contain <em>only</em> business logic. Then exclude the former from your
+test suite so they don't show on the coverage report. This is probably
+achievable, though it can lead to some fairly hideous contortions to maintain
+the boundary, and can even result in sensible design decisions being discarded
+in favour of wacky ones that have no redeeming feature other than supporting
+your arbitrary separation rules.</p>
+</li>
+<li>
+<p>Swear indiscriminately and refuse. Then clear your desk, probably.</p>
+</li>
+</ol>
+<p>None of those appealed, so we set out to find another approach. What we wanted
+was a more flexible variant of option 3, where we could exclude methods or
+classes without having to exclude the whole assembly. If we could exclude code
+at a fairly granular level, then it became both more realistic and useful to
+aim for 100% coverage of our actual business code.</p>
+<p>It turns out that code exclusion isn't so tough - <a href="http://www.ncover.com/">NCover</a> will ignore
+methods and classes tagged with an <a href="http://www.ericsink.com/articles/Code_Coverage.html">attribute named CoverageExclude in the
+global namespace</a><sup id="fnref-3"><a class="footnote-ref" href="#fn-3">3</a></sup>.</p>
+<p>This still requires a little discipline - for example making sure that if Joe
+marks a class as excluded, Jim doesn't add some business logic to that class a
+week later without removing the attribute - but nothing that can't easily be
+dealt with in regular code reviews.</p>
+<p>The Powers That Be are wily, alas, and when we pitched the idea to them they
+approved in principle but were wary of allowing bits of code to be arbitrarily
+dropped off the coverage reports. If a class was excluded, who excluded it and
+why?</p>
+<p>This seemed reasonable for accountability - the information would be available
+in the source check-in notes, but that's a bit fiddly since you don't know
+<em>when</em> the attribute was added; our source control system doesn't have
+anything analogous to subversion's 'blame' so you have to go rummaging through
+a potentially very long version history. A better solution would be to find a
+way to add the information directly to the coverage report, so that it's right
+there for all to see. So, how?</p>
+<p>The first step was to get the appropriate metadata into the code. The
+<a href="http://weblogs.asp.net/nunitaddin/archive/2006/10/04/CoverageExclude.aspx">reference implementation</a> for the CoverageExclude attribute is as follows:</p>
+<div class="highlight"><pre><span></span><span class="k">public</span> <span class="k">class</span> <span class="nc">CoverageExcludeAttribute</span> <span class="p">:</span> <span class="n">Attribute</span> <span class="p">{</span> <span class="p">}</span>
+</pre></div>
+
+
+<p>We wanted to capture additional information when the attribute was used,
+however, so we added a couple of read-only properties and did away with the
+default constructor.</p>
+<div class="highlight"><pre><span></span><span class="k">public</span> <span class="k">class</span> <span class="nc">CoverageExcludeAttribute</span> <span class="p">:</span> <span class="n">Attribute</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="kt">string</span> <span class="n">m_author</span><span class="p">;</span>
+    <span class="k">private</span> <span class="kt">string</span> <span class="n">m_reason</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nf">CoverageExcludeAttribute</span><span class="p">(</span><span class="kt">string</span> <span class="n">reason</span><span class="p">,</span>
+        <span class="kt">string</span> <span class="n">author</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="n">m_reason</span> <span class="p">=</span> <span class="n">reason</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="n">m_author</span> <span class="p">=</span> <span class="n">author</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">Author</span>
+    <span class="p">{</span>
+        <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="n">m_author</span><span class="p">;</span> <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">Reason</span>
+    <span class="p">{</span>
+        <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="n">m_reason</span><span class="p">;</span> <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Now, when anyone uses the attribute, the compiler forces them to add some
+additional data.</p>
+<div class="highlight"><pre><span></span><span class="na">[CoverageExclude(&quot;John Q Dev&quot;, &quot;No testable code here, buster&quot;)]</span>
+<span class="k">public</span> <span class="k">void</span> <span class="nf">MethodToBeExcluded</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// ...</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>NCover can be told to pay attention to this attribute with the
+excludeAttributes parameter, as explained <a href="http://www.kiwidude.com/blog/2006/07/nant-and-msbuild-tasks-for-ncover.html">here</a>.</p>
+<p>With the easy bit out of the way, the next task was to report on these
+exclusions. Our build system, after running the test suite, used
+NCoverExplorer to generate a summary report. You can tell NCoverExplorer to
+list exclusions in reports, so we figured that would be a good place to start.
+The appropriate NAnt incantation is:</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;ncoverexplorer</span> <span class="na">failonerror=</span><span class="s">&quot;false&quot;</span>
+    <span class="na">program=</span><span class="s">&quot;C:\NCoverExplorer\NCoverExplorer.Console.exe&quot;</span>
+    <span class="na">projectName=</span><span class="s">&quot;Atmosphere Processor::LV426&quot;</span>
+    <span class="na">reportType=</span><span class="s">&quot;4&quot;</span>
+    <span class="na">xmlReportName=</span><span class="s">&quot;Report.xml&quot;</span>
+    <span class="na">mergeFileName=</span><span class="s">&quot;CoverageMerge.xml&quot;</span>
+    <span class="na">showExcluded=</span><span class="s">&quot;True&quot;</span>
+    <span class="na">satisfactoryCoverage=</span><span class="s">&quot;80&quot;</span><span class="nt">&gt;</span>
+
+    <span class="nt">&lt;fileset&gt;</span>
+        <span class="nt">&lt;include</span> <span class="na">name=</span><span class="s">&quot;Coverage.xml&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/fileset&gt;</span>
+
+    <span class="nt">&lt;exclusions&gt;</span>
+        <span class="nt">&lt;exclusion</span> <span class="na">type=</span><span class="s">&quot;Assembly&quot;</span> <span class="na">pattern=</span><span class="s">&quot;*Tests&quot;</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;exclusion</span> <span class="na">type=</span><span class="s">&quot;Assembly&quot;</span> <span class="na">pattern=</span><span class="s">&quot;*Fixtures*&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/exclusions&gt;</span>
+<span class="nt">&lt;/ncoverexplorer&gt;</span>
+</pre></div>
+
+
+<p>Note the reportType and showExcluded attributes, which specify the summary
+report we want, with details of excluded code appended to the report. Note
+also the exclusion nodes, which specify that we want our test assemblies
+excluded from coverage metrics. The report will include a table like this:</p>
+<p><img alt="image" src="./images/ncoverexplorer-report-unmodified.png"></p>
+<p>Our goal was to somehow get our custom properties (Author and Reason) into
+this report. To do so, firstly we needed to modify the above table with two
+extra columns to hold this custom data. NCoverExplorer ships with stylesheet
+called CoverageReport.xsl; the table modification was achieved by tweaking the
+'exclusions summary' section as follows:</p>
+<div class="highlight"><pre><span></span><span class="c">&lt;!-- Exclusions Summary --&gt;</span>
+<span class="nt">&lt;xsl:template</span> <span class="na">name=</span><span class="s">&quot;exclusionsSummary&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;tr&gt;</span>
+        <span class="nt">&lt;td</span> <span class="na">colspan=</span><span class="s">&quot;5&quot;</span><span class="nt">&gt;</span><span class="ni">&amp;#160;</span><span class="nt">&lt;/td&gt;</span>
+    <span class="nt">&lt;/tr&gt;</span>
+
+    <span class="nt">&lt;tr&gt;</span>
+        <span class="nt">&lt;td</span> <span class="na">class=</span><span class="s">&quot;exclusionTable mainTableHeaderLeft&quot;</span> <span class="na">colspan=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+            Excluded From Coverage Results<span class="nt">&lt;/td&gt;</span>
+        <span class="nt">&lt;td</span> <span class="na">class=</span><span class="s">&quot;exclusionTable mainTableGraphHeader&quot;</span> <span class="na">colspan=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+            All Code Within<span class="nt">&lt;/td&gt;</span>
+        <span class="nt">&lt;td</span> <span class="na">class=</span><span class="s">&quot;exclusionTable mainTableGraphHeader&quot;</span> <span class="na">colspan=</span><span class="s">&quot;2&quot;</span><span class="nt">&gt;</span>
+            Reason For Exclusion<span class="nt">&lt;/td&gt;</span>
+        <span class="nt">&lt;td</span> <span class="na">class=</span><span class="s">&quot;exclusionTable mainTableGraphHeader&quot;</span> <span class="na">colspan=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+            Developer<span class="nt">&lt;/td&gt;</span>
+    <span class="nt">&lt;/tr&gt;</span>
+
+    <span class="nt">&lt;xsl:for-each</span> <span class="na">select=</span><span class="s">&quot;./exclusions/exclusion&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;tr&gt;</span>
+            <span class="nt">&lt;td</span> <span class="na">class=</span><span class="s">&quot;mainTableCellBottom exclusionTableCellItem&quot;</span> <span class="na">colspan=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;xsl:value-of</span> <span class="na">select=</span><span class="s">&quot;@name&quot;</span> <span class="nt">/&gt;&lt;/td&gt;</span>
+            <span class="nt">&lt;td</span> <span class="na">class=</span><span class="s">&quot;mainTableCellBottom mainTableCellGraph&quot;</span> <span class="na">colspan=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;xsl:value-of</span> <span class="na">select=</span><span class="s">&quot;@category&quot;</span> <span class="nt">/&gt;&lt;/td&gt;</span>
+            <span class="nt">&lt;td</span> <span class="na">class=</span><span class="s">&quot;mainTableCellBottom mainTableCellGraph&quot;</span> <span class="na">colspan=</span><span class="s">&quot;2&quot;</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;xsl:value-of</span> <span class="na">select=</span><span class="s">&quot;@reason&quot;</span> <span class="nt">/&gt;&lt;/td&gt;</span>
+            <span class="nt">&lt;td</span> <span class="na">class=</span><span class="s">&quot;mainTableCellBottom mainTableCellGraph&quot;</span> <span class="na">colspan=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;xsl:value-of</span> <span class="na">select=</span><span class="s">&quot;@author&quot;</span> <span class="nt">/&gt;&lt;/td&gt;</span>
+        <span class="nt">&lt;/tr&gt;</span>
+    <span class="nt">&lt;/xsl:for-each&gt;</span>
+<span class="nt">&lt;/xsl:template&gt;</span>
+</pre></div>
+
+
+<p>The next step was to actually inject our custom data into the report.
+This was a two-stage process:</p>
+<ol>
+<li>
+<p>Use reflection to iterate through the application assemblies, looking for
+anything tagged with our attribute</p>
+</li>
+<li>
+<p>Open the report data file generated by NCoverExplorer and shoehorn our new
+data into it.</p>
+</li>
+</ol>
+<p>We created a simple little post-processor application to perform this work. To
+complete stage 1, we needed to iterate through a directory of assemblies,
+loading each one in turn. In each assembly, we iterated through the types
+contained therein, and looked for our custom attribute on each one. Then, we
+iterated through the methods on each type, and looked for the custom attribute
+there too. This is actually very simple - the code skeleton looks like this:</p>
+<div class="highlight"><pre><span></span><span class="k">foreach</span> <span class="p">(</span><span class="n">FileInfo</span> <span class="n">assemblyFile</span> <span class="k">in</span> <span class="n">assemblies</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">try</span>
+    <span class="p">{</span>
+        <span class="c1">// Attempt to load the file as an assembly, and grab  </span>
+        <span class="c1">// all the types defined therein</span>
+        <span class="n">Assembly</span> <span class="n">assembly</span> <span class="p">=</span> <span class="n">Assembly</span><span class="p">.</span><span class="n">LoadFrom</span><span class="p">(</span><span class="n">assemblyFile</span><span class="p">.</span><span class="n">FullName</span><span class="p">);</span>
+        <span class="n">Type</span><span class="p">[]</span> <span class="n">types</span> <span class="p">=</span> <span class="n">assembly</span><span class="p">.</span><span class="n">GetTypes</span><span class="p">();</span>
+
+        <span class="c1">// Spin through the types, looking for classes and </span>
+        <span class="c1">// methods tagged with CoverageExclude</span>
+        <span class="k">foreach</span> <span class="p">(</span><span class="n">Type</span> <span class="n">type</span> <span class="k">in</span> <span class="n">types</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="kt">object</span><span class="p">[]</span> <span class="n">classAttributes</span> <span class="p">=</span> <span class="n">type</span><span class="p">.</span><span class="n">GetCustomAttributes</span><span class="p">(</span>
+                <span class="k">typeof</span><span class="p">(</span><span class="n">CoverageExcludeAttribute</span><span class="p">),</span> <span class="k">false</span><span class="p">);</span>
+            <span class="k">foreach</span> <span class="p">(</span><span class="n">CoverageExcludeAttribute</span> <span class="n">classAttribute</span> <span class="k">in</span> <span class="n">classAttributes</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="c1">// ...</span>
+            <span class="p">}</span>
+
+            <span class="n">MethodInfo</span><span class="p">[]</span> <span class="n">methods</span> <span class="p">=</span> <span class="n">type</span><span class="p">.</span><span class="n">GetMethods</span><span class="p">(</span>
+                <span class="n">BindingFlags</span><span class="p">.</span><span class="n">Public</span> <span class="p">|</span>
+                <span class="n">BindingFlags</span><span class="p">.</span><span class="n">NonPublic</span> <span class="p">|</span>
+                <span class="n">BindingFlags</span><span class="p">.</span><span class="n">Instance</span> <span class="p">|</span>
+                <span class="n">BindingFlags</span><span class="p">.</span><span class="n">Static</span><span class="p">);</span>
+            <span class="k">foreach</span> <span class="p">(</span><span class="n">MethodInfo</span> <span class="n">method</span> <span class="k">in</span> <span class="n">methods</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="kt">object</span><span class="p">[]</span> <span class="n">methodAttributes</span> <span class="p">=</span>
+                    <span class="n">method</span><span class="p">.</span><span class="n">GetCustomAttributes</span><span class="p">(</span>
+                    <span class="k">typeof</span><span class="p">(</span><span class="n">CoverageExcludeAttribute</span><span class="p">),</span> <span class="k">false</span><span class="p">);</span>
+                <span class="k">foreach</span> <span class="p">(</span><span class="n">CoverageExcludeAttribute</span> <span class="n">methodAttribute</span>
+                    <span class="k">in</span> <span class="n">methodAttributes</span><span class="p">)</span>
+                <span class="p">{</span>
+                    <span class="c1">// ...</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="n">ex</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// Probably not a .Net assembly, do some appropriate </span>
+        <span class="c1">// complaining to the user</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>In the loops, we cached the fully-qualified names of the types and
+methods tagged with the attribute.</p>
+<p>Stage 2 was implemented by tweaking the XML data file NCoverExplorer
+generates for the report. This is straightforward too - suck the report
+into an XmlDocument, grab the exclusion nodes, and add a couple of
+attributes to each one. All the types and methods were already listed
+since we'd set the excludeAttributes parameter in the NAnt configuration
+(see above).</p>
+<p>Therefore, all we needed to do was match up the FQNs we cached in stage
+1 with the nodes already in the report:</p>
+<div class="highlight"><pre><span></span><span class="n">XmlDocument</span> <span class="n">doc</span> <span class="p">=</span> <span class="k">new</span> <span class="n">XmlDocument</span><span class="p">();</span>
+<span class="n">doc</span><span class="p">.</span><span class="n">Load</span><span class="p">(</span><span class="n">coverageFile</span><span class="p">.</span><span class="n">FullName</span><span class="p">);</span>
+
+<span class="c1">// Go through all the exclusion nodes and try to match </span>
+<span class="c1">// them up against the exclusion data we have sucked </span>
+<span class="c1">// out of the assemblies</span>
+<span class="k">foreach</span> <span class="p">(</span><span class="n">XmlNode</span> <span class="n">node</span> <span class="k">in</span> <span class="n">doc</span><span class="p">.</span><span class="n">SelectNodes</span><span class="p">(</span><span class="s">&quot;//exclusion&quot;</span><span class="p">))</span>
+<span class="p">{</span>
+    <span class="k">switch</span> <span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">Attributes</span><span class="p">[</span><span class="s">&quot;category&quot;</span><span class="p">].</span><span class="n">Value</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">case</span> <span class="s">&quot;Class&quot;</span><span class="p">:</span>
+            <span class="c1">// Find and remove the first exclusion reason for </span>
+            <span class="c1">// this class</span>
+            <span class="n">FindExclusionAndModifyNode</span><span class="p">(</span><span class="n">exclusions</span><span class="p">.</span><span class="n">ClassExclusions</span><span class="p">,</span>
+                <span class="n">node</span><span class="p">);</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="s">&quot;Method&quot;</span><span class="p">:</span>
+            <span class="c1">// Find and remove the first exclusion reason for</span>
+            <span class="c1">// this method</span>
+            <span class="n">FindExclusionAndModifyNode</span><span class="p">(</span><span class="n">exclusions</span><span class="p">.</span><span class="n">MethodExclusions</span><span class="p">,</span>
+                <span class="n">node</span><span class="p">);</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">default</span><span class="p">:</span>
+            <span class="c1">// Exclusion at either assembly or namespace level</span>
+            <span class="k">break</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>The implementation of FindExclusionAndModifyNode simply loops through
+the cached FQNs to see if we have data that corresponds to the current
+node, and if so it creates two new attributes - one containing the name
+of the developer that added the CoverageExcludeAttribute to the code,
+and another containing their justification for doing so. Then the
+modified XmlDocument is written out to disk, overriding the original.</p>
+<p>The end result is a report that looks something like <a href="https://gist.github.com/russgray/5871d545f24a12fafc00">this</a>, with all the
+excluded code neatly documented to keep suspicious managers happy.</p>
+<p>Since the post-processor was written as a simple command-line
+application, we could create a custom NAnt task for it and integrate the
+whole process seamlessly with our continuous integration setup.</p>
+<div class="footnote">
+<hr>
+<ol>
+<li id="fn-1">
+<p>I've seen it happen a few times before, for example an XML generator
+(which shall remain nameless) that occasionally 'forgot' our custom
+namespace and used a default, which caused parsers of that XML to scream
+in agony. It's rare though, unless you regularly dig up tools from
+CodeProject and use them in your production code, in which case you
+deserve everything you get ;-)&#160;<a class="footnote-backref" href="#fnref-1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn-2">
+<p>Written in 2008. So if you're reading this on December 31st 2016,
+adjust accordingly and don't come crying to me.&#160;<a class="footnote-backref" href="#fnref-2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn-3">
+<p>Yes, I know that NCover 2.x has built-in regex-based exclusions that
+do all this, but a) not everyone has an NCover 2.x pro licence, and b)
+we weren't using NCover 2.x as it hadn't been released at the
+time.&#160;<a class="footnote-backref" href="#fnref-3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+            
+            
+    <div class="accordion" id="accordion2">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#comments">
+                Comments (2) </a>
+            </div>
+
+            <div id="comments" class="accordion-body collapse">
+                <div class="accordion-inner">
+                    <div class="comments">
+                        <ul>
+                            <li>Envelopes Online said: <p>I will be working at the NCover booth. Finally, I got a lot information with your posting.</p></li>
+                            <li>venki said: <p>hey, i m using Ncover 1.5.8 version. can u please tell me where to excude the
+code coverage at namespace level  and assembly level.</p>
+<p>clearly, where to exclude the asembly name.. pls give the path! Thanks in
+advance</p></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+            <hr/>
+            <aside>
+            <nav>
+            <ul class="articles-timeline">
+                <li class="previous-article">« <a href="./descent-into-incompetence.html" title="Previous: Descent Into Incompetence">Descent Into Incompetence</a></li>
+                <li class="next-article"><a href="./extending-technical-debt-metaphor.html" title="Next: Extending the Technical Debt Metaphor">Extending the Technical Debt Metaphor</a> »</li>
+            </ul>
+            </nav>
+            </aside>
+        </div>
+        <section>
+        <div class="span2" style="float:right;font-size:0.9em;">
+            <h4>Published</h4>
+            <time pubdate="pubdate" datetime="2008-02-20T19:54:00+00:00">Feb 20, 2008</time>
+            <h4>Category</h4>
+            <a class="category-link" href="./categories.html#tools-ref">tools</a>
+            <h4>Tags</h4>
+            <ul class="list-of-tags tags-in-article">
+                <li><a href="./tags.html#coding-ref">coding
+                    <span>13</span>
+</a></li>
+                <li><a href="./tags.html#net-ref">.net
+                    <span>7</span>
+</a></li>
+                <li><a href="./tags.html#software-engineering-ref">software engineering
+                    <span>8</span>
+</a></li>
+            </ul>
+<h4>Contact</h4>
+    <a href="http://twitter.com/russgray" title="My Twitter Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-twitter sidebar-social-links"></i></a>
+    <a href="http://github.com/russgray" title="My Github Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-github sidebar-social-links"></i></a>
+    <a href="http://uk.linkedin.com/in/russgray/" title="My LinkedIn Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-linkedin sidebar-social-links"></i></a>
+    <a href="mailto:russgray@gmail.com" title="My Email Address" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-envelope sidebar-social-links"></i></a>
+        </div>
+        </section>
+</div>
+</article>
+                </div>
+                <div class="span1"></div>
+            </div>
+        </div>
+        <div id="push"></div>
+    </div>
+<footer>
+<div id="footer">
+    <ul class="footer-content">
+        <li class="elegant-power">Powered by <a href="http://getpelican.com/" title="Pelican Home Page">Pelican</a>. Theme: <a href="http://oncrashreboot.com/pelican-elegant" title="Theme Elegant Home Page">Elegant</a> by <a href="http://oncrashreboot.com" title="Talha Mansoor Home Page">Talha Mansoor</a></li>
+    </ul>
+</div>
+</footer>            <script src="https://code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+    
+    </body>
+    <!-- Theme: Elegant built for Pelican
+    License : http://oncrashreboot.com/pelican-elegant -->
+</html>

@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8"> 
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Russell Gray" />
+        <meta name="copyright" content="Russell Gray" />
+
+        <link rel="author" href=https://plus.google.com/u/0/102559471807447493728 />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content=", projecteuler, " />
+
+<meta property="og:title" content="Project Euler Problem 4 "/>
+<meta property="og:url" content="./project-euler-problem-4.html" />
+<meta property="og:description" content="Problem 4 is as follows: A palindromic number reads the same both ways. The largest palindrome made from the product of two 2-digit numbers is 9009 = 91 × 99. Find the largest palindrome made from the product of two 3-digit numbers. Bit of an easy one, this. The approach is pretty …" />
+<meta property="og:site_name" content="Basildon Coder" />
+<meta property="og:article:author" content="Russell Gray" />
+<meta property="og:article:published_time" content="2008-04-22T00:53:00+01:00" />
+<meta name="twitter:title" content="Project Euler Problem 4 ">
+<meta name="twitter:description" content="Problem 4 is as follows: A palindromic number reads the same both ways. The largest palindrome made from the product of two 2-digit numbers is 9009 = 91 × 99. Find the largest palindrome made from the product of two 3-digit numbers. Bit of an easy one, this. The approach is pretty …">
+
+        <title>Project Euler Problem 4  · Basildon Coder
+</title>
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="./theme/css/pygments.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/tipuesearch/tipuesearch.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/elegant.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/custom.css" media="screen">
+    </head>
+    <body>
+        <div id="content-sans-footer">
+        <div class="navbar navbar-static-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <div class="span1"></div>
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="./"><span class=site-name>Basildon Coder</span></a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav pull-right top-menu">
+                            <li ><a href=".">Home</a></li>
+                            <li ><a href="./categories.html">Categories</a></li>
+                            <li ><a href="./tags.html">Tags</a></li>
+                            <li ><a href="./archives.html">Archives</a></li>
+                            <li><form class="navbar-search" action="./search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span1"></div>
+                <div class="span10">
+<article>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+    <h1><a href="./project-euler-problem-4.html"> Project Euler Problem 4  </a></h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+
+            
+            <p><strong><em><a href="http://projecteuler.net/index.php?section=problems&amp;id=4">Problem 4</a></em></strong> is as follows:</p>
+<blockquote>
+<p>A palindromic number reads the same both ways. The largest palindrome
+made from the product of two 2-digit numbers is 9009 = 91 × 99.</p>
+<p>Find the largest palindrome made from the product of two 3-digit
+numbers.</p>
+</blockquote>
+<p>Bit of an easy one, this. The approach is pretty simple to understand -
+first calculate all the products of every pair of numbers between 100
+and 999, then filter for the palindromic ones, and finally select the
+largest. The only even vaguely tricky bit is determining if the number
+is palindromic. The easiest check is to simply convert the number to a
+string, and check if the string is equal to itself when reversed.</p>
+<p>To shake myself out of C#/python complacency, I decided to write my
+first attempt at this in good old C. I'm a bit rusty so this took a few
+goes to get right (the shame).</p>
+<p>First, I need a string reverse function. For those of us that learned to
+program when C and C++ were king (before that upstart Java came long and
+ousted languages with pointers from classrooms up and down the land),
+this is bread and butter.</p>
+<div class="highlight"><pre><span></span><span class="kt">char</span><span class="o">*</span> <span class="nf">strrev</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span> <span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">char</span> <span class="o">*</span><span class="n">s1</span><span class="p">,</span> <span class="o">*</span><span class="n">s2</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="n">c</span><span class="p">;</span>
+
+    <span class="n">s1</span> <span class="o">=</span> <span class="n">s2</span> <span class="o">=</span> <span class="n">s</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="o">*</span><span class="n">s2</span><span class="p">)</span>
+        <span class="n">s2</span><span class="o">++</span><span class="p">;</span>
+
+    <span class="k">while</span> <span class="p">(</span><span class="n">s1</span> <span class="o">&lt;</span> <span class="n">s2</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="o">--</span><span class="n">s2</span><span class="p">);</span>
+        <span class="o">*</span><span class="n">s2</span> <span class="o">=</span> <span class="o">*</span><span class="n">s1</span><span class="p">;</span>
+        <span class="o">*</span><span class="n">s1</span><span class="o">++</span> <span class="o">=</span> <span class="n">c</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">s</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>If you can't read that, shame on you, go and pick up a copy of <a href="http://www.amazon.co.uk/C-Programming-Language-2nd/dp/0131103628/">K&amp;R</a> and
+read it until you weep. In the meantime, basically what happens here is I set
+pointers to the start (s1) and end (s2) of the original string (s), then swap
+the pointed-to characters using a temporary variable (c) and move both
+pointers 1 character towards each other. Repeat until they meet in the middle.</p>
+<p>In this day and age of immutable strings, this old friend now feels a little
+weird - although I retain (and eventually return) the original pointer, I have
+in fact modified the actual string that was passed in. Contrast this with C's
+trendy modern progeny, where you can't change a string at all and have to use
+a StringB[uilder|uffer] when mutating strings (unless lousy performance makes
+you smile, of course).</p>
+<p>Still, now it is fairly simple to solve the problem. A nested for loop will
+let me calculate all the products, and then I just need to convert the results
+to strings and do the palindrome test. I keep track of the largest palindromic
+number found so far, and print it at the end.</p>
+<div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">largest</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="n">s1</span><span class="p">[</span><span class="mi">7</span><span class="p">];</span>
+    <span class="kt">char</span> <span class="n">s2</span><span class="p">[</span><span class="mi">7</span><span class="p">];</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">j</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="p">;</span> <span class="o">++</span><span class="n">j</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="n">i</span> <span class="o">*</span> <span class="n">j</span><span class="p">;</span>
+            <span class="n">sprintf</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="s">&quot;%d&quot;</span><span class="p">,</span> <span class="n">sum</span><span class="p">);</span>
+            <span class="n">strcpy</span><span class="p">(</span><span class="n">s2</span><span class="p">,</span> <span class="n">s1</span><span class="p">);</span>
+            <span class="n">strrev</span><span class="p">(</span><span class="n">s2</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">strcmp</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">sum</span> <span class="o">&gt;</span> <span class="n">largest</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">largest</span> <span class="o">=</span> <span class="n">sum</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">largest</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Note I'm using the much-maligned strcpy function here (the cause of most
+of the buffer overflow attacks that were so endemic a few years back),
+but since I completely control the input it's no problem. Also note the
+use of sprintf to convert the int to a string, and I have to make a copy
+of the resulting string since my strrev function is destructive. The
+char arrays are of size 7, since the largest possible product in the
+problem space is 999*999=998001 which is 6 digits - plus 1 for the null
+terminator. Which I didn't forget about at all in my first attempt at
+this, nosirree.</p>
+<p>To make the code a bit more 'modern' I could do the allocation and copy
+in the strrev function, so that the passed-in string remains unchanged
+and a new string gets returned, but without a garbage collector to rely
+on this potentially leads to memory leaks (since strrev allocates the
+memory but relies on the caller to free it - easy to forget!). Anyway,
+I'm wallowing in nostalgia here so who cares about modern idioms.</p>
+<p>Whilst I chose C for this on a whim, it is (as always) enlightening to
+write a little C now and then, as it reminds you of the cost of things
+that are often taken for granted. Some people <em>still</em> don't understand
+why a StringBuilder offers better performance (trust me, I have
+interviewed more than a few of them), and are happy to write string
+manipulation code using immutable strings that results in countless
+allocations and destructions taking place, for no justifiable reason.
+Writing some string manipulation (or anything else) in C is a nice way
+to regain a bit of insight and perspective if you are spoiled by
+quad-core PCs and high-falutin' generational garbage collectors and
+smartass runtimes that don't let you write past the end of an array.</p>
+<p>So, now we've got a nuts 'n' bolts reference implementation, let's look
+at some more exotic approaches.</p>
+<p>As regular readers will have noticed by now, I'm fairly keen on LINQ -
+so it should be no surprise that C# is my next port of call. I was
+amused to recall that the .Net string class lacks a Reverse method so I
+had to write my own for this, about 20 minutes after I finished
+pontificating about the clean healthy virtue of doing so in C! (I didn't
+plan it this way, honest.)</p>
+<p>There are of course many ways of writing a string reversal routine, but
+rather than attempt to mimic the fairly idiomatic C code above, I did
+the simple thing:</p>
+<div class="highlight"><pre><span></span><span class="k">public</span> <span class="k">static</span> <span class="kt">string</span> <span class="nf">Reverse</span><span class="p">(</span><span class="k">this</span> <span class="kt">string</span> <span class="n">s</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">char</span><span class="p">[]</span> <span class="n">ch</span> <span class="p">=</span> <span class="n">s</span><span class="p">.</span><span class="n">ToCharArray</span><span class="p">();</span>
+    <span class="n">Array</span><span class="p">.</span><span class="n">Reverse</span><span class="p">(</span><span class="n">ch</span><span class="p">);</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nf">string</span><span class="p">(</span><span class="n">ch</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Since the Array class contains a Reverse method, I can just convert my
+string to an array (of chars), reverse that, then create a new string
+from it. Done. Things to meditate on regarding this approach:</p>
+<ol>
+<li>It relies on a char array. Strings may look like a native type these
+    days, but I have to expose their dark and shameful lineage to get
+    the job done here.</li>
+<li>The throwback nature of this implementation does not, of course,
+    extend as far as modifying the parameter. A new string is returned
+    and the original remains intact. The garbage collector will take
+    care of deallocation.</li>
+<li>This is an extension method on System.String, so I can use it
+    naturally on any string.</li>
+</ol>
+<p>Whatever faults it may have, it's definitely easier to read than the C
+code, since the syntax is much closer to the problem domain. This is a
+recurring theme when looking at expressiveness. The C code has to
+specify the entire algorithm for reversing the string, whereas here the
+Array.Reverse method allows us to ignore the details of <em>how</em> the string
+is reversed. For the purposes of this problem, we don't really care how
+the string is reversed, just that it <em>is</em> reversed.</p>
+<p>It's still warty, however, in that we have to know to turn the string
+into an array first, which may be completely non-intuitive to someone
+who's never tangled with C-style strings.</p>
+<p>With this minor omission from the .Net libraries sorted, the problem can
+be solved with a single compound LINQ query:</p>
+<div class="highlight"><pre><span></span><span class="k">return</span> <span class="p">(</span><span class="k">from</span> <span class="n">product</span> <span class="k">in</span>
+            <span class="p">(</span><span class="k">from</span> <span class="n">i</span> <span class="k">in</span> <span class="n">Enumerable</span><span class="p">.</span><span class="n">Range</span><span class="p">(</span><span class="m">100</span><span class="p">,</span> <span class="m">900</span><span class="p">)</span>
+             <span class="k">from</span> <span class="n">j</span> <span class="k">in</span> <span class="n">Enumerable</span><span class="p">.</span><span class="n">Range</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="m">1000</span> <span class="p">-</span> <span class="n">i</span><span class="p">)</span>
+             <span class="k">select</span> <span class="n">i</span> <span class="p">*</span> <span class="n">j</span><span class="p">)</span>
+        <span class="k">where</span> <span class="n">product</span><span class="p">.</span><span class="n">ToString</span><span class="p">()</span> <span class="p">==</span> <span class="n">product</span><span class="p">.</span><span class="n">ToString</span><span class="p">().</span><span class="n">Reverse</span><span class="p">()</span>
+        <span class="k">select</span> <span class="n">product</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">Max</span><span class="p">();</span>
+</pre></div>
+
+
+<p>I think that's pretty concise, and quite readable too. The main thing I
+don't like about it is the use of Enumerable.Range, which takes 'start'
+and 'count' parameters rather than 'from' and 'to', which would look
+more natural in this case.</p>
+<p>Parameters aside, it's interesting to note the relative clumsiness of
+the twin calls to Enumerable.Range. Back when looking at <a href="./project-euler-problems-1-and-2.html">problem
+1</a>,
+replacing a for loop with a more declarative alternative made the code
+considerably more expressive. In this case, however, I don't think it
+helps quite so much. Once again, it's to do with the nature of the
+problem domain - a nested for loop is quite a natural way to represent
+the process of generating the products, so the benefit of a declarative
+approach is less marked.</p>
+<p>How to improve it? For fun, lets go the whole hog and make a simple
+fluent interface to improve readability of the LINQ query. This is what
+we want:</p>
+<div class="highlight"><pre><span></span><span class="k">return</span> <span class="p">(</span><span class="k">from</span> <span class="n">product</span> <span class="k">in</span> <span class="n">AllProducts</span><span class="p">.</span><span class="n">From</span><span class="p">(</span><span class="m">100</span><span class="p">).</span><span class="n">To</span><span class="p">(</span><span class="m">999</span><span class="p">)</span>
+        <span class="k">where</span> <span class="n">product</span><span class="p">.</span><span class="n">ToString</span><span class="p">()</span> <span class="p">==</span> <span class="n">product</span><span class="p">.</span><span class="n">ToString</span><span class="p">().</span><span class="n">Reverse</span><span class="p">()</span>
+        <span class="k">select</span> <span class="n">product</span><span class="p">).</span><span class="n">Max</span><span class="p">();</span>
+</pre></div>
+
+
+<p>Nifty, huh? Well actually I have my reservations about fluent
+interfaces, but it's quite the fashion these days so I thought I'd give
+it a chance. The example above is trivial to achieve. On a class called
+AllProducts we need a static method called From which acts as a factory
+method, and an instance method called To which returns an
+<code>IEnumerable&lt;int&gt;</code> for use in the LINQ query. The class looks like this:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">AllProducts</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="kt">int</span> <span class="n">m_from</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nf">AllProducts</span><span class="p">(</span><span class="kt">int</span> <span class="n">@from</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">m_from</span> <span class="p">=</span> <span class="n">@from</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">static</span> <span class="n">AllProducts</span> <span class="nf">From</span><span class="p">(</span><span class="kt">int</span> <span class="k">from</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">AllProducts</span><span class="p">(</span><span class="n">@from</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="n">To</span><span class="p">(</span><span class="kt">int</span> <span class="n">to</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">inclusiveTo</span> <span class="p">=</span> <span class="n">to</span> <span class="p">+</span> <span class="m">1</span><span class="p">;</span> <span class="c1">// to is inclusive</span>
+
+        <span class="k">return</span> <span class="k">from</span> <span class="n">i</span> <span class="k">in</span> <span class="n">Enumerable</span><span class="p">.</span><span class="n">Range</span><span class="p">(</span>
+                   <span class="n">m_from</span><span class="p">,</span> <span class="n">inclusiveTo</span> <span class="p">-</span> <span class="n">m_from</span><span class="p">)</span>
+               <span class="k">from</span> <span class="n">j</span> <span class="k">in</span> <span class="n">Enumerable</span><span class="p">.</span><span class="n">Range</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">inclusiveTo</span> <span class="p">-</span> <span class="n">i</span><span class="p">)</span>
+               <span class="k">select</span> <span class="n">i</span> <span class="p">*</span> <span class="n">j</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Fluent interfaces are definitely this season's black. I heard about a
+guy who wrote a mocking library without using fluent interfaces for
+expectations, and 500 angry TDD advocates chased him out of the building
+with pitchforks.</p>
+<p>I'm still a bit wary though, tweedy programmer as I am - I just get a
+bit nervous about writing hideously contorted classes with a mixture of
+static and instance methods, some returning the this ref, some returning
+arbitrary IEnumerables, some acting as factories - and all so the
+calling code can prance about in a tailored coat and a cool pair of
+shades. A noble goal, to be sure, but is the price too high? I guess
+we'll know in a year or two when some maintenance programmer has to try
+and debug it.</p>
+<p>Enough of the lousy clothes metaphor. To finish up what turned out to be
+a longer post than expected, here's an F# solution I hacked together
+before getting sidetracked with the whole fluent thing. I read a blog
+post
+<a href="http://geekswithblogs.net/Erik/archive/2008/02/18/119727.aspx">here</a>
+about problem 4 (<strong>warning</strong> - also contains solution to problem 6)
+but didn't like it too much. It seems to be quite common when reading
+F# code on the web for there to be a reliance on Seq.unfold - I'm not
+sure it's always the right tool. Then again, my F# is sketchy at best
+for the moment, so maybe I should shut up. For balance, however, this is
+my solution without using unfold.</p>
+<p>Note first that F#, as a .Net language, also lacks a built-in way to
+reverse strings. The implementation is extremely similar to the C#
+approach above:</p>
+<div class="highlight"><pre><span></span><span class="k">let</span> <span class="nv">rev</span> <span class="o">(</span><span class="n">s</span><span class="o">:</span><span class="kt">string</span><span class="o">)</span> <span class="o">=</span>
+    <span class="k">let</span> <span class="nv">ch</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">ToCharArray</span><span class="bp">()</span>
+    <span class="k">let</span> <span class="nv">ra</span> <span class="o">=</span> <span class="nn">Array</span><span class="p">.</span><span class="n">rev</span> <span class="n">ch</span>
+    <span class="k">let</span> <span class="nv">r</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">string</span><span class="o">(</span><span class="n">ra</span><span class="o">)</span>
+    <span class="n">r</span>
+</pre></div>
+
+
+<p>The actual implementation involves two helpers: a small recursive
+function to produce all possible products of the numbers contained in
+two lists, and a simple check to see if a string is equal to itself
+reversed.</p>
+<div class="highlight"><pre><span></span><span class="k">let</span> <span class="nv">Euler4</span> <span class="o">=</span>
+    <span class="k">let</span> <span class="nv">rec</span> <span class="n">allProducts</span> <span class="n">l1</span> <span class="n">l2</span> <span class="o">=</span>
+        <span class="k">let</span> <span class="nv">mul</span> <span class="n">a</span> <span class="n">lst</span> <span class="o">=</span>
+            <span class="nn">List</span><span class="p">.</span><span class="n">map</span> <span class="o">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">a</span> <span class="o">*</span> <span class="n">x</span><span class="o">)</span> <span class="n">lst</span>
+        <span class="k">match</span> <span class="n">l1</span> <span class="k">with</span>
+        <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="bp">[]</span>
+        <span class="o">|</span> <span class="n">h</span><span class="o">::</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="n">mul</span> <span class="n">h</span> <span class="n">l2</span><span class="o">)</span> <span class="o">@</span> <span class="o">(</span><span class="n">allProducts</span> <span class="n">t</span> <span class="n">l2</span><span class="o">)</span>
+
+    <span class="k">let</span> <span class="nv">isPalindrome</span> <span class="n">x</span> <span class="o">=</span>
+        <span class="k">let</span> <span class="nv">str</span> <span class="o">=</span> <span class="nn">Int32</span><span class="p">.</span><span class="n">to_string</span> <span class="n">x</span>
+        <span class="n">str</span> <span class="o">=</span> <span class="n">rev</span> <span class="n">str</span>
+</pre></div>
+
+
+<p>With the plumbing in place, we can use the very groovy forward pipe
+operator to chain together some very readable code. The only thing to
+note in here is the reverse ordering of the parameters in the call to
+compare - this is because we want the results in descending order, so
+that the largest is at the head of the list and easily accessible with
+List.hd.</p>
+<div class="highlight"><pre><span></span><span class="n">allProducts</span> <span class="o">[</span><span class="mi">100</span><span class="o">..</span><span class="mi">999</span><span class="o">][</span><span class="mi">5</span><span class="o">]</span>
+    <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">filter</span> <span class="n">isPalindrome</span>
+    <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">sort</span> <span class="o">(</span><span class="k">fun</span> <span class="n">x</span> <span class="n">y</span> <span class="o">=</span> <span class="n">compare</span> <span class="n">y</span> <span class="n">x</span><span class="o">)</span>
+    <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">hd</span>
+</pre></div>
+            
+            
+    <div class="accordion" id="accordion2">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#comments">
+                Comments (9) </a>
+            </div>
+
+            <div id="comments" class="accordion-body collapse">
+                <div class="accordion-inner">
+                    <div class="comments">
+                        <ul>
+                            <li>Sol said: <p>I don't see why you just don't check the string directly to see if it is a
+palindrome.  Unless I'm missing something, it's exactly the same complexity as
+your C string reverse function up there, conceptually cleaner, and more
+efficient.  Obviously the reverse thing makes more sense when you've got the
+fancy language and you care more about the programmer's efficiency than you do
+about the program's efficiency....</p></li>
+                            <li>russ said: <p>You're right, but I should point out that programmer efficiency - or more
+specifically expressiveness - is indeed what I am interested in here. The goal
+of this series is to complete a solution to each problem in multiple
+languages, and evaluate the solutions subjectively.</p>
+<p>Of course, the language choice is fairly arbitrary for each post (bar C#,
+which I'm currently coding for a living and therefore tends to pop up a lot)
+so I don't claim this will be anything definitive. It's more an exploration.</p>
+<p>Actually, I've missed a fairly obvious final step here to increase
+expressiveness further, which I'll do a separate post on later.</p></li>
+                            <li>Sol said: <p>Yeah, my thoughts on this seem to be muddled.  I think I have two issues.</p>
+<p>It seems to me that the solution of converting the string to an array,
+reversing the array, then converting the array back to a string is both
+grotesquely inefficient and somewhat inelegant.  But on the flip side, it's
+dead easy to program quickly and be certain that you've got it right.</p>
+<p>My corresponding instinct is that you should probably only be dropping into C
+if program efficiency is important.  So even though I'd agree that your second
+C solution (in the next post) is probably the most elegant solution, my
+programming instincts look at it and go "Ack!  Why is he doing the simple
+greater than check only after doing all the string manipulation?!"</p>
+<p>I guess my overall instinct is that if programmer efficiency is of paramount
+importance, you shouldn't be working in C at all.  Combined with a slight
+layer of bitterness at all the very high level language advocates who are
+always trying to tell me that program efficiency isn't that important anymore,
+when in my work it is still crucial (and likely will remain so for at least
+another decade).  :)</p></li>
+                            <li>russ said: <p>Again, you're right in all details, I just think we're looking at it through
+slightly different lenses. I worked on embedded software for a few years so I
+do have some exposure to areas where efficiency is paramount, and it still
+does crop up in desktop and web development (which is where I earn a crust
+these days), so I'd never claim it's completely irrelevant. In fact, maybe
+part of the reason I'm not pandering to it here is because I'm indulging
+myself by ignoring it ;-)</p>
+<p>Regarding the choice of C in this post, if you look at some of the other posts
+in the series you'll see that I often do a straightforward imperative solution
+first, as to most developers that is still the most recognisable form. I chose
+C here partly in line with that, and partly on a whim - but not because I had
+performance (or lack of it) in mind. I haven't written any C code in anger for
+a couple of years, and this seemed like a good chance to review some of the
+basics.</p>
+<p>The string reversal/comparison stuff was simply the first straightforward
+solution that popped into my head. It was also convenient in that it was an
+approach that would work in most other languages, whereas mutating the string
+with pointers is a bit less universal :-)</p></li>
+                            <li>Sol said: <p>Oh sure, my last comment wasn't meant to contradict, just explain my "lens" a
+little bit better.  I forgot to say that I do, in fact, do lots of work in
+"higher" languages, most often Perl, and look forward to the day I have enough
+spare to to explore one of these fancy new functional languages in depth.</p></li>
+                            <li>russ said: <p>You can do some fancy functional stuff without leaving Perl, if you've got the stomach for it ;-) Try the <a href="http://search.cpan.org/~lbrocard/Language-Functional-0.03/Functional.pm">Language::Functional</a> module from CPAN, which gives you map, foldl, filter, take, and lots of other fundamental functions, though it doesn't really approach something like Haskell or F# (so you might find it tricky to emulate the pipeline of the F# solution above).</p></li>
+                            <li>progra said: <div class="highlight"><pre><span></span><span class="c1">// this is how i wrote the program the first time.</span>
+
+
+<span class="kn">import</span> <span class="nn">java.util.*</span><span class="o">;</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">euler4</span> <span class="o">{</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * @param args</span>
+<span class="cm">     */</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// TODO Auto-generated method stub</span>
+        <span class="kt">int</span> <span class="n">num1</span><span class="o">=</span><span class="mi">999</span><span class="o">;</span>
+        <span class="kt">int</span> <span class="n">num2</span><span class="o">=</span><span class="mi">999</span><span class="o">;</span>
+        <span class="kt">int</span> <span class="n">sum</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span>
+        <span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span>
+        <span class="kt">int</span> <span class="o">[]</span> <span class="n">arr</span><span class="o">=</span><span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="mi">6</span><span class="o">];</span>
+        <span class="kt">int</span> <span class="n">orig</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span>
+        <span class="kt">int</span> <span class="n">biggest</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span>
+
+        <span class="k">for</span><span class="o">(</span><span class="n">num1</span><span class="o">=</span><span class="mi">999</span><span class="o">;</span><span class="n">num1</span><span class="o">&gt;=</span><span class="mi">100</span><span class="o">;</span><span class="n">num1</span><span class="o">--){</span>
+            <span class="k">for</span><span class="o">(</span><span class="n">num2</span><span class="o">=</span><span class="mi">999</span><span class="o">;</span><span class="n">num2</span><span class="o">&gt;=</span><span class="mi">100</span><span class="o">;</span><span class="n">num2</span><span class="o">--){</span>
+                <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span>
+                <span class="n">sum</span><span class="o">=</span><span class="n">num1</span><span class="o">*</span><span class="n">num2</span><span class="o">;</span>
+                <span class="n">orig</span><span class="o">=</span><span class="n">num1</span><span class="o">*</span><span class="n">num2</span><span class="o">;</span>
+                <span class="k">while</span><span class="o">(</span><span class="n">sum</span><span class="o">&gt;</span><span class="mi">0</span><span class="o">){</span>
+                    <span class="n">arr</span><span class="o">[</span><span class="n">i</span><span class="o">]=</span><span class="n">sum</span><span class="o">%</span><span class="mi">10</span><span class="o">;</span>
+                    <span class="n">sum</span><span class="o">=</span><span class="n">sum</span><span class="o">/</span><span class="mi">10</span><span class="o">;</span>
+                    <span class="n">i</span><span class="o">++;</span>
+                <span class="o">}</span>
+                <span class="k">if</span><span class="o">(</span><span class="n">arr</span><span class="o">[</span><span class="mi">0</span><span class="o">]==</span><span class="n">arr</span><span class="o">[</span><span class="mi">5</span><span class="o">]&amp;&amp;</span><span class="n">arr</span><span class="o">;[</span><span class="mi">1</span><span class="o">]==</span><span class="n">arr</span><span class="o">[</span><span class="mi">4</span><span class="o">]&amp;&amp;</span><span class="n">arr</span><span class="o">;[</span><span class="mi">2</span><span class="o">]==</span><span class="n">arr</span><span class="o">[</span><span class="mi">3</span><span class="o">]){</span>
+                    <span class="k">if</span><span class="o">(</span><span class="n">biggest</span><span class="o">&lt;</span><span class="n">orig</span><span class="o">)</span>
+                        <span class="n">biggest</span><span class="o">=</span><span class="n">orig</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+
+        <span class="o">}</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">print</span><span class="o">(</span><span class="n">biggest</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div></li>
+                            <li>NiMuSi said: <p>Very useful information on string handling in various languages.</p>
+<p>The only tweak I could think of was to keep a record of the largest answer
+found so far. It would not be necessary to reverse and check all results, only
+those that were larger than the current highest.</p>
+<p>I have a Delphi (Pascal) implementation of this on my blog.</p></li>
+                            <li>sseraph said: <p>I used python.  I made a simple generate to generate 6 digit palindromes
+highest to lowest. For each one I got its prime factors and checked to see if
+a pair of 3 digit numbers could be generated from those factors.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">factor</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+    <span class="nb">max</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">num</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">gen</span> <span class="o">=</span> <span class="n">primes_upto</span><span class="p">(</span><span class="nb">max</span><span class="p">)</span>
+    <span class="n">factors</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">gen</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">f</span> <span class="o">&gt;</span> <span class="n">num</span><span class="p">:</span> <span class="k">break</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">num</span> <span class="o">%</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">num</span> <span class="o">=</span> <span class="n">num</span> <span class="o">/</span> <span class="n">f</span>
+            <span class="n">factors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">num</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span> <span class="n">factors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">factors</span>
+
+
+<span class="k">def</span> <span class="nf">gen_pal6</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                <span class="n">pal</span> <span class="o">=</span> <span class="n">i</span> <span class="o">*</span> <span class="mi">100000</span> <span class="o">+</span> <span class="n">j</span> <span class="o">*</span> <span class="mi">10000</span> <span class="o">+</span> <span class="n">k</span> <span class="o">*</span> <span class="mi">1000</span> <span class="o">+</span> <span class="n">k</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">+</span> <span class="n">j</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="mi">1</span>
+                <span class="k">yield</span> <span class="n">pal</span>
+
+<span class="k">def</span> <span class="nf">factor_pairs</span><span class="p">(</span><span class="n">factors</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; given list of factors find pairs of factors of given size equal to the factored number.  Presumes factors are prime and in increasing order.&#39;&#39;&#39;</span>
+    <span class="n">pair</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">maxv</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">size</span>
+    <span class="n">minv</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ilen</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="c1">#if largest factor is &gt; size then impossible</span>
+    <span class="n">last</span> <span class="o">=</span> <span class="n">factors</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">factors</span> <span class="o">=</span> <span class="n">factors</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">last</span> <span class="o">&lt;</span> <span class="n">maxv</span><span class="p">:</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">last</span> <span class="o">*</span> <span class="n">factors</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">maxv</span><span class="p">:</span>
+            <span class="n">last</span> <span class="o">=</span> <span class="n">last</span> <span class="o">*</span> <span class="n">factors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">factors</span> <span class="o">=</span> <span class="n">factors</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">rest</span> <span class="o">=</span> <span class="nb">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">:</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span><span class="p">,</span> <span class="n">factors</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ilen</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span> <span class="o">==</span> <span class="n">size</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">rest</span><span class="p">,</span><span class="n">last</span>
+    <span class="k">return</span> <span class="bp">None</span>
+
+
+
+<span class="k">def</span> <span class="nf">euler4</span><span class="p">():</span>
+    <span class="n">gen</span> <span class="o">=</span> <span class="n">gen_pal6</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">gen</span><span class="p">:</span>
+        <span class="n">pairs</span> <span class="o">=</span> <span class="n">factor_pairs</span><span class="p">(</span><span class="n">factor</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">pairs</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">i</span><span class="p">,</span> <span class="n">pairs</span>
+</pre></div></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+            <hr/>
+            <aside>
+            <nav>
+            <ul class="articles-timeline">
+                <li class="previous-article">« <a href="./test-specific-shims-in-production-code.html" title="Previous: Test-specific Shims in Production Code">Test-specific Shims in Production Code</a></li>
+                <li class="next-article"><a href="./project-euler-problem-4-extra.html" title="Next: Project Euler Problem 4: Extra">Project Euler Problem 4: Extra</a> »</li>
+            </ul>
+            </nav>
+            </aside>
+        </div>
+        <section>
+        <div class="span2" style="float:right;font-size:0.9em;">
+            <h4>Published</h4>
+            <time pubdate="pubdate" datetime="2008-04-22T00:53:00+01:00">Apr 22, 2008</time>
+            <h4>Category</h4>
+            <a class="category-link" href="./categories.html#projecteuler-ref">projecteuler</a>
+<h4>Contact</h4>
+    <a href="http://twitter.com/russgray" title="My Twitter Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-twitter sidebar-social-links"></i></a>
+    <a href="http://github.com/russgray" title="My Github Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-github sidebar-social-links"></i></a>
+    <a href="http://uk.linkedin.com/in/russgray/" title="My LinkedIn Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-linkedin sidebar-social-links"></i></a>
+    <a href="mailto:russgray@gmail.com" title="My Email Address" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-envelope sidebar-social-links"></i></a>
+        </div>
+        </section>
+</div>
+</article>
+                </div>
+                <div class="span1"></div>
+            </div>
+        </div>
+        <div id="push"></div>
+    </div>
+<footer>
+<div id="footer">
+    <ul class="footer-content">
+        <li class="elegant-power">Powered by <a href="http://getpelican.com/" title="Pelican Home Page">Pelican</a>. Theme: <a href="http://oncrashreboot.com/pelican-elegant" title="Theme Elegant Home Page">Elegant</a> by <a href="http://oncrashreboot.com" title="Talha Mansoor Home Page">Talha Mansoor</a></li>
+    </ul>
+</div>
+</footer>            <script src="https://code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+    
+    </body>
+    <!-- Theme: Elegant built for Pelican
+    License : http://oncrashreboot.com/pelican-elegant -->
+</html>
